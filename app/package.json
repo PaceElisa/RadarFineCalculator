@@ -4,6 +4,7 @@
   "description": "Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di autoveicoli differenti tra differenti varchi autostradali",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
