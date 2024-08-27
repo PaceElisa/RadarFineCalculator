@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { Database } from '../config/database';
-import Transit from './transit';
+import Transit from './Transit';
 
 const sequelize: Sequelize = Database.getSequelize();
 

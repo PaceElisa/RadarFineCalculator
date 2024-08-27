@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { Database } from '../config/database';
-import Gateway from './gateway';
+import Gateway from './Gateway';
 
 const sequelize: Sequelize = Database.getSequelize();
 

@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { Database } from '../config/database';
-import Vehicle from './vehicle';
-import Segment from './segment';
+import Vehicle from './Vehicle';
+import Segment from './Segment';
 
 const sequelize: Sequelize = Database.getSequelize();
 
