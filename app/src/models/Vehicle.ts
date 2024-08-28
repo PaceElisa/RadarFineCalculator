@@ -9,7 +9,7 @@ interface VehicleAttributes {
     plate: string;
     type: string;
     id_user: number;
-    deletedAt?: Date;
+    deleted_at?: Date;
 }
 
 // Interfaccia per gli attributi necessari solo alla creazione
@@ -20,7 +20,7 @@ class Vehicle extends Model<VehicleAttributes, VehicleCreationAttributes> implem
     public plate!: string;
     public type!: string;
     public id_user!: number;
-    public deletedAt?: Date;
+    public deleted_at?: Date;
 }
 
 // Inizializzazione del modello
@@ -42,7 +42,7 @@ Vehicle.init({
             key: 'id'
         }
     },
-    deletedAt: {
+    deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,
         field: 'deleted_at',

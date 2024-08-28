@@ -8,7 +8,7 @@ const sequelize: Sequelize = Database.getSequelize();
 interface SegmentAttributes {
     id_gateway1: number; 
     id_gateway2: number; 
-    distance: number;
+    distance: number; //TODO CALCOLO DA SOLO
     deleted_at?: Date; 
 }
 
@@ -57,7 +57,15 @@ Segment.init({
     paranoid: true, 
     createdAt: false, 
     updatedAt: false, 
-    deletedAt: 'deleted_at', 
+    deletedAt: 'deleted_at',
+    validate: {
+        // id_gateway1 e id_gateway2 devono essere differenti
+        idGatewaysAreDifferent() {
+            if (this.id_gateway1 === this.id_gateway2) {
+                throw new Error('id_gateway1 and id_gateway2 must be different.');
+            }
+        }
+    } 
 });
 
 // Definizione delle associazioni

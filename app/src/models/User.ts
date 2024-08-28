@@ -9,7 +9,7 @@ interface UserAttributes {
     role: string;
     username: string;
     password: string;
-    deletedAt?: Date;
+    deleted_at?: Date;
 }
 
 // Interfaccia per gli attributi necessari solo alla creazione
@@ -21,7 +21,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public role!: string;
     public username!: string;
     public password!: string;
-    public deletedAt?: Date;
+    public deleted_at?: Date;
 }
 
 // Inizializzazione del modello
@@ -44,7 +44,7 @@ User.init({
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    deletedAt: {
+    deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,
         field: 'deleted_at'
