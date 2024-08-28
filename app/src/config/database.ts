@@ -11,23 +11,23 @@ export class Database{
     private constructor() {
          // Controlla se le variabili sono impostate
          if (
-            !process.env.DB_NAME ||
-            !process.env.DB_USER ||
-            !process.env.DB_PASSWORD ||
-            !process.env.DB_HOST ||
-            !process.env.DB_PORT
+            !process.env.POSTGRES_DB ||
+            !process.env.POSTGRES_USER ||
+            !process.env.POSTGRES_PASSWORD ||
+            !process.env.POSTGRES_HOST ||
+            !process.env.POSTGRES_PORT
         ) {
             throw new Error("Environment variables are not set");
         }
 
         // Configura sequelize utilizzando le variabili di ambiente
         this.sequelize = new Sequelize(
-            process.env.DB_NAME,
-            process.env.DB_USER,
-            process.env.DB_PASSWORD,
+            process.env.POSTGRES_DB,
+            process.env.POSTGRES_USER,
+            process.env.POSTGRES_PASSWORD,
             {
-                host: process.env.DB_HOST,
-                port: Number(process.env.DB_PORT),
+                host: process.env.POSTGRES_HOST,
+                port: Number(process.env.POSTGRES_PORT),
                 dialect: 'postgres',
             }
         );
