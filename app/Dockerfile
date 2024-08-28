@@ -1,13 +1,14 @@
 FROM node:latest
 
+COPY package*.json /usr/
 WORKDIR /usr
-COPY package*.json .
+
 #COPY tsconfig.json .
 
 RUN npm install
-RUN npm install typescript -g
+RUN npm install -g typescript 
 
-#WORKDIR /usr/app
+WORKDIR /usr/app
 
 COPY . .
 

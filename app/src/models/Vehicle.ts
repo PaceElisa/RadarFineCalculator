@@ -56,6 +56,6 @@ Vehicle.init({
     deletedAt: 'deleted_at', 
 });
 
-// TODO: MANCA ASSOCIAZIONE INOLTRE CONTROLLARE LE ALTRE ASSOCIAZIONI!!
+Vehicle.belongsTo(User, { foreignKey: 'id_user', onDelete: 'CASCADE' });
 
 export default Vehicle;

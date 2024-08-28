@@ -12,8 +12,10 @@ interface SegmentAttributes {
     deleted_at?: Date; 
 }
 
+interface SegmentCreationAttributes extends Optional<SegmentAttributes, 'id_gateway1' | 'id_gateway2'> {}
+
 // Definizione del modello Segment
-class Segment extends Model<SegmentAttributes> implements SegmentAttributes {
+class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implements SegmentAttributes {
     public id_gateway1!: number;
     public id_gateway2!: number;
     public distance!: number;
@@ -57,5 +59,10 @@ Segment.init({
     updatedAt: false, 
     deletedAt: 'deleted_at', 
 });
+
+// Definizione delle associazioni
+// Un segmento appartiene a due gateway
+Segment.belongsTo(Gateway, { as: 'Gateway1', foreignKey: 'id_gateway1', onDelete: 'CASCADE' });
+Segment.belongsTo(Gateway, { as: 'Gateway2', foreignKey: 'id_gateway2', onDelete: 'CASCADE' });
 
 export default Segment;

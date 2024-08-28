@@ -57,6 +57,6 @@ Violation.init({
 });
 
 // Definizione delle associazioni
-Violation.belongsTo(Transit, { foreignKey: 'id_transit', onDelete: 'CASCADE' }); // Associa Violations a Transit tramite id_transit
+Violation.belongsTo(Transit, { foreignKey: 'id_transit', onDelete: 'CASCADE' });
 
 export default Violation;
