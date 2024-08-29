@@ -8,7 +8,7 @@ const sequelize: Sequelize = Database.getSequelize();
 interface SegmentAttributes {
     id_gateway1: number; 
     id_gateway2: number; 
-    distance: number; //TODO CALCOLO DA SOLO
+    distance: number;
     deleted_at?: Date; 
 }
 
@@ -20,6 +20,19 @@ class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implem
     public id_gateway2!: number;
     public distance!: number;
     public deleted_at?: Date;
+
+    // Metodo di istanza per calcolare la distanza
+    public async calculateDistance(): Promise<void> {
+        const gateway1 = await Gateway.findByPk(this.id_gateway1);
+        const gateway2 = await Gateway.findByPk(this.id_gateway2);
+
+        if (gateway1 && gateway2) {
+            // calcolo della distanza basata sulla differenza tra i chilometri
+            this.distance = Math.abs(gateway1.kilometer - gateway2.kilometer);
+        } else {
+            this.distance = 0;
+        }
+    }
 }
 
 // Inizializzazione del modello
@@ -66,6 +79,13 @@ Segment.init({
             }
         }
     } 
+});
+
+// Hook per calcolare la distanza prima di salvare il record
+Segment.beforeSave(async (segment: Segment) => {
+    if (segment instanceof Segment) {
+        await segment.calculateDistance();
+    }
 });
 
 // Definizione delle associazioni
