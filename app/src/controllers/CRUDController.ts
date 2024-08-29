@@ -1,21 +1,21 @@
-// src/controllers/CrudController.ts
 import { Request, Response } from 'express';
 import { Model, ModelStatic, WhereOptions } from 'sequelize';
 
 class CRUDController {
 
     // Crea un record
-    async createRecord<T extends Model<T>>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
+    async createRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         try {
             const record = await model.create(req.body);
             return res.status(201).json(record);
         } catch (error) {
-            return res.status(500).json({ error: error.message });
+            console.error(`Error: `, error);
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 
     // Leggi un solo record data la sua chiave primaria (o piu di una)
-    async readOneRecord<T extends Model<T>>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
+    async readOneRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
@@ -38,12 +38,13 @@ class CRUDController {
                 return res.status(404).json({ message: 'Not found' });
             }
         } catch (error) {
-            return res.status(500).json({ error: error.message });
+            console.error(`Error: `, error);
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 
     // aggiorna un record data la sua chiave primaria (o piu di una)
-    async updateRecord<T extends Model<T>>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
+    async updateRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
@@ -74,12 +75,13 @@ class CRUDController {
                 return res.status(404).json({ message: 'Not found' });
             }
         } catch (error) {
-            return res.status(500).json({ error: error.message });
+            console.error(`Error: `, error);
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 
     // cancella un record data la sua chiave primaria (o piu di una)
-    async deleteRecord<T extends Model<T>>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
+    async deleteRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
@@ -99,10 +101,10 @@ class CRUDController {
                 return res.status(404).json({ message: 'Not found' });
             }
         } catch (error) {
-            return res.status(500).json({ error: error.message });
+            console.error(`Error: `, error);
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 }
 
-export default new CRUDController;
-
+export default new CRUDController();
