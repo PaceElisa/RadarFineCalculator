@@ -7,6 +7,7 @@ import Gateway from '../models/Gateway';
 import Segment from '../models/Segment';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
+import Limit from '../models/Limit';
 
 // Controllers
 
@@ -27,8 +28,8 @@ router.put("/api/users/:id", async (req, res) => { await User.update(req.body, {
 // Vehicle
 router.post("/api/vehicles", async (req, res) => { const vehicle = await Vehicle.create(req.body); return res.status(201).json(vehicle);});
 router.get("/api/vehicles", async (req, res) => { const vehicles = await Vehicle.findAll(); return res.status(200).json(vehicles);});
-router.delete("/api/vehicles/:id", async (req, res) => { await Vehicle.destroy({ where: { plate: req.params.id } }); return res.status(204).send();});
-router.put("/api/vehicles/:id", async (req, res) => { await Vehicle.update(req.body, { where: { plate: req.params.id } }); const updatedVehicle = await Vehicle.findByPk(req.params.id); return res.status(200).json(updatedVehicle);});
+router.delete("/api/vehicles/:plate", async (req, res) => { await Vehicle.destroy({ where: { plate: req.params.plate } }); return res.status(204).send();});
+router.put("/api/vehicles/:plate", async (req, res) => { await Vehicle.update(req.body, { where: { plate: req.params.plate } }); const updatedVehicle = await Vehicle.findByPk(req.params.plate); return res.status(200).json(updatedVehicle);});
 
 // Gateway
 router.post("/api/gateways", async (req, res) => { const gateway = await Gateway.create(req.body); return res.status(201).json(gateway);});
@@ -53,5 +54,11 @@ router.post("/api/violations", async (req, res) => { const violation = await Vio
 router.get("/api/violations", async (req, res) => { const violations = await Violation.findAll(); return res.status(200).json(violations);});
 router.delete("/api/violations/:id", async (req, res) => { await Violation.destroy({ where: { id: req.params.id } }); return res.status(204).send();});
 router.put("/api/violations/:id", async (req, res) => { await Violation.update(req.body, { where: { id: req.params.id } }); const updatedViolation = await Violation.findByPk(req.params.id); return res.status(200).json(updatedViolation);});
+
+// Limit
+router.post("/api/limits", async (req, res) => { const limit = await Limit.create(req.body); return res.status(201).json(limit);});
+router.get("/api/limits", async (req, res) => { const limits = await Limit.findAll(); return res.status(200).json(limits);});
+router.delete("/api/limits/:vehicle_type", async (req, res) => { await Limit.destroy({ where: { vehicle_type: req.params.vehicle_type } }); return res.status(204).send();});
+router.put("/api/limits/:vehicle_type", async (req, res) => { await Limit.update(req.body, { where: { vehicle_type: req.params.vehicle_type } }); const updatedUser = await Limit.findByPk(req.params.vehicle_type); return res.status(200).json(updatedUser);});
 
 export default router;
