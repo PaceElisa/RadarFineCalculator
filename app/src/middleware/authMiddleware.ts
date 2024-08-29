@@ -12,12 +12,22 @@ class authMiddleware {
         const token = authHeader && authHeader.split(' ')[1];
 
         if (token == null) return res.sendStatus(401);
+        
+        try {
+            const verified = jwt.verify(token, JWT_SECRET);
 
-        jwt.verify(token, JWT_SECRET, (err, user) => {
-            if (err) return res.sendStatus(403);
-            req.body.user = user; // Aggiungi le informazioni dell'utente alla richiesta
+            // Controlla il login se per utente o gateway
+            if (verified && (verified as any).username) {
+                req.body.user = verified;
+            } else if (verified && (verified as any).highway_name && (verified as any).kilometer) {
+                req.body.passage = verified;
+            } else {
+                return res.sendStatus(403);
+            }
             next();
-        });
+        } catch (err) {
+            return res.sendStatus(403);
+        }
     }
 }
 

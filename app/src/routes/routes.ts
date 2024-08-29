@@ -21,8 +21,9 @@ const router = Router();
 // index prova
 router.get("/", (req: any, res: any) => res.send("TEST"));
 
-// Route per il login
+// Route per i login
 router.post('/login', loginController.login);
+router.post('/loginGateway', loginController.loginGateway);
 
 // Esempio di una route protetta
 router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
