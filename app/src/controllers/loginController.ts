@@ -8,6 +8,10 @@ dotenv.config();
 import User from '../models/User'
 import Gateway from '../models/Gateway';
 
+import { MessageFactory, HttpStatus } from '../factory/Messages';
+
+const MessageFact: MessageFactory = new MessageFactory();
+
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 interface LoginRequestBody { //togliere poiche password non serve piu dopo il validator
@@ -23,6 +27,7 @@ interface LoginGatewayRequestBody { // serve per gateway
 class LoginController {
     // metodo per login utente operatore e automobilista 
     async login(req: Request, res: Response): Promise<Response> {
+        var result: any;
         const { username, password }: LoginRequestBody = req.body; //levare password perche serve solo username (qui è usato per il controllo)
 
         try {
@@ -30,12 +35,14 @@ class LoginController {
             const user = await User.findOne({ where: { username: username } });
 
             if (!user) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                const message = MessageFact.createMessage(HttpStatus.UNAUTHORIZED, 'Credenziali Utente non valide');
+                return res.json({ error: message });
             }
 
             // Verifica la password in chiaro (si consiglia di utilizzare hash e salatura per la produzione) usare MIDDLEWARE
             if (password !== user.password) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                const message = MessageFact.createMessage(HttpStatus.UNAUTHORIZED, 'Credenziali Utente non valide');
+                return res.json({ error: message });
             }
             
             const payload = {
@@ -48,16 +55,19 @@ class LoginController {
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 
             // Ritorna token
-            return res.status(200).json({ token: token });
+            const message = MessageFact.createMessage(HttpStatus.OK, 'Login effettuato con successo');
+            result = res.json({ success: message, token: token });
         } catch (error) {
             // Gestisci l'errore con un messaggio generico per evitare di esporre dettagli sensibili
-            console.error('Login error:', error);
-            return res.status(500).json({ message: 'Internal server error' });
+            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR);
+            result = res.json({ error: message });
         }
+        return result;
     }
 
     // metodo per login Gateway 
     async loginGateway(req: Request, res: Response): Promise<Response> {
+        var result: any;
         const { highway_name, kilometer }: LoginGatewayRequestBody = req.body; //levare password perche serve solo username (qui è usato per il controllo)
 
         try {
@@ -65,7 +75,8 @@ class LoginController {
             const gateway = await Gateway.findOne({ where: { highway_name: highway_name, kilometer: kilometer } });
 
             if (!gateway) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                const message = MessageFact.createMessage(HttpStatus.UNAUTHORIZED, 'Credenziali Gateway non valide');
+                return res.json({ error: message });
             }
             
             const payload = {
@@ -78,12 +89,14 @@ class LoginController {
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 
             // Ritorna token
-            return res.status(200).json({ token: token });
+            const message = MessageFact.createMessage(HttpStatus.OK, 'Login effettuato con successo');
+            result = res.json({ success: message, token: token });
         } catch (error) {
             // Gestisci l'errore con un messaggio generico per evitare di esporre dettagli sensibili
-            console.error('Login error:', error);
-            return res.status(500).json({ message: 'Internal server error' });
+            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR);
+            result = res.json({ error: message });
         }
+        return result;
     }
 }
 
