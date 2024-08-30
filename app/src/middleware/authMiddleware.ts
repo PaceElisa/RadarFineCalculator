@@ -4,15 +4,20 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+import { MessageFactory, HttpStatus } from '../factory/Messages';
+
+const MessageFact: MessageFactory = new MessageFactory();
+
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 class authMiddleware {
     authenticateJWT(req: Request, res: Response, next: NextFunction) {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.header('Authorization')?.split(' ')[1];
 
-        if (token == null) return res.sendStatus(401);
-        
+        if (token == null) {
+            return next(MessageFact.createMessage(HttpStatus.UNAUTHORIZED, 'Token mancante')); // return usato per correggere errore con variabile token
+        }
+
         try {
             const verified = jwt.verify(token, JWT_SECRET);
 
@@ -22,11 +27,11 @@ class authMiddleware {
             } else if (verified && (verified as any).highway_name && (verified as any).kilometer) {
                 req.body.passage = verified;
             } else {
-                return res.sendStatus(403);
+                next(MessageFact.createMessage(HttpStatus.FORBIDDEN, 'Accesso vietato'));
             }
             next();
         } catch (err) {
-            return res.sendStatus(403);
+            next(MessageFact.createMessage(HttpStatus.FORBIDDEN, 'Token non valido'));
         }
     }
 }
