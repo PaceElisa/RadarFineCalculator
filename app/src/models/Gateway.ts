@@ -49,15 +49,7 @@ Gateway.init({
     paranoid: true,
     createdAt: false, 
     updatedAt: false, 
-    deletedAt: 'deleted_at',
-    validate: {
-        // id_gateway1 e id_gateway2 devono essere differenti
-        idGatewaysAreDifferent() {
-            if (this.id_gateway1 === this.id_gateway2) {
-                throw new Error('id_gateway1 and id_gateway2 must be different.');
-            }
-        }
-    }
+    deletedAt: 'deleted_at'
 });
 
 export default Gateway;

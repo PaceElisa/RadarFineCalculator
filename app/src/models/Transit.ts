@@ -8,13 +8,12 @@ const sequelize: Sequelize = Database.getSequelize();
 // Interfaccia per gli attributi del modello
 interface TransitAttributes {
     id: number;
-    created_at: Date;
+    enter_at: Date;
+    exit_at: Date;
     plate: string;
     id_gateway1: number;
     id_gateway2: number;
-    average_speed: number;
     weather_conditions: string;
-    delta: number;
     img_route: string;
     img_readable: boolean;
     deleted_at?: Date;
@@ -26,13 +25,12 @@ interface TransitCreationAttributes extends Optional<TransitAttributes, 'id'> {}
 // Definizione del modello Transit
 class Transit extends Model<TransitAttributes, TransitCreationAttributes> implements TransitAttributes {
     public id!: number;
-    public created_at!: Date;
+    public enter_at!: Date;
+    public exit_at!: Date;
     public plate!: string;
     public id_gateway1!: number;
     public id_gateway2!: number;
-    public average_speed!: number;
     public weather_conditions!: string;
-    public delta!: number;
     public img_route!: string;
     public img_readable!: boolean;
     public deleted_at?: Date;
@@ -45,10 +43,14 @@ Transit.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    created_at: {
+    enter_at: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
+    },
+    exit_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
     },
     plate: {
         type: DataTypes.STRING(10),
@@ -74,16 +76,8 @@ Transit.init({
             key: 'id_gateway2',
         }
     },
-    average_speed: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-    },
     weather_conditions: {
         type: DataTypes.STRING(32),
-        allowNull: false,
-    },
-    delta: {
-        type: DataTypes.FLOAT,
         allowNull: false,
     },
     img_route: {
@@ -105,7 +99,7 @@ Transit.init({
     sequelize: sequelize,
     tableName: 'transits',
     paranoid: true, 
-    createdAt: 'created_at', 
+    createdAt: false, 
     updatedAt: false, 
     deletedAt: 'deleted_at', 
 });

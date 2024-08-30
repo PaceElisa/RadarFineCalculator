@@ -5,6 +5,7 @@ services:
     build: 
       context: ./app
       dockerfile: Dockerfile 
+    restart: always
     depends_on:
       - database
     env_file:
