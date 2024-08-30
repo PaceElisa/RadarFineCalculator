@@ -20,6 +20,19 @@ class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implem
     public id_gateway2!: number;
     public distance!: number;
     public deleted_at?: Date;
+
+    // Metodo di istanza per calcolare la distanza
+    public async calculateDistance(): Promise<void> {
+        const gateway1 = await Gateway.findByPk(this.id_gateway1);
+        const gateway2 = await Gateway.findByPk(this.id_gateway2);
+
+        if (gateway1 && gateway2) {
+            // calcolo della distanza basata sulla differenza tra i chilometri
+            this.distance = Math.abs(gateway1.kilometer - gateway2.kilometer);
+        } else {
+            this.distance = 0;
+        }
+    }
 }
 
 // Inizializzazione del modello
@@ -57,7 +70,22 @@ Segment.init({
     paranoid: true, 
     createdAt: false, 
     updatedAt: false, 
-    deletedAt: 'deleted_at', 
+    deletedAt: 'deleted_at',
+    validate: {
+        // id_gateway1 e id_gateway2 devono essere differenti
+        idGatewaysAreDifferent() {
+            if (this.id_gateway1 === this.id_gateway2) {
+                throw new Error('id_gateway1 and id_gateway2 must be different.');
+            }
+        }
+    } 
+});
+
+// Hook per calcolare la distanza prima di salvare il record
+Segment.beforeSave(async (segment: Segment) => {
+    if (segment instanceof Segment) {
+        await segment.calculateDistance();
+    }
 });
 
 // Definizione delle associazioni
