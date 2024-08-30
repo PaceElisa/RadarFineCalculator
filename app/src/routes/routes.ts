@@ -60,6 +60,7 @@ router.post("/api/transits", async (req: any, res: any) => CRUDController.create
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 router.put("/api/transits/:id", async (req: any, res: any) => CRUDController.updateRecord(Transit, req, res));
+//router.post("/api/transits/upload")
 
 // Violation (operatore e utente ma in modo particolare)
 router.post("/api/violations", async (req: any, res: any) => CRUDController.createRecord(Violation, req, res));
