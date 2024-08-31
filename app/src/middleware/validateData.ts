@@ -13,7 +13,10 @@ import Violation from "../models/Violation";
 import { MessageFactory } from "../factory/Messages";
 import { HttpStatus } from "../factory/Messages";
 
-const MessageFact: MessageFactory = new MessageFactory();
+//Import CustomRequest
+import { ICustomRequest } from "./check";
+
+const messageFact: MessageFactory = new MessageFactory();
 
 //create class validateData
 class validateData{
@@ -23,7 +26,7 @@ class validateData{
 
         //Check if the id is specified and a valid number
         if(!id || isNaN(Number(id))){
-            return next(MessageFact.createMessage(HttpStatus.BAD_REQUEST, "ID Not Valid"));
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "ID Not Valid"));
         }
         
         next();
@@ -69,8 +72,36 @@ class validateData{
         next();
     }
 
-    validatePlate(req:Request, res: Response, next:NextFunction){
-        const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/; 
+    validatePlate(req:ICustomRequest, res: Response, next:NextFunction){
+        const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
+        const plate:string = req.body.plate;
+        const islicenseplateValid: boolean = plateRegex.test(plate);
+
+        //If an image has been uploaded I have to check that the license plate was recognized correctly without stopping the middleware
+        if(req.imageUpload){
+
+            if (!req.messages) {
+                req.messages = [];
+            }
+
+            if(!islicenseplateValid){
+                req.body.img_readable = false;//Specificy that the plate is unreadable
+
+                //Set the license plate with a custom license plate assigned as unreadable
+                req.body.plate = "ZZ999ZZ";
+                req.messages.push(messageFact.createMessage(HttpStatus.OK, "Transit memorized as Unreadable"));
+            }else{
+                //Plate must be readable and valid, so if not, set img_readable at true
+                req.body.img_readable = true;
+                req.messages.push(messageFact.createMessage(HttpStatus.OK, "Transit memorized as Readable"));
+
+            }
+            
+        }else{
+            if(!plate || !islicenseplateValid ){
+            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid License Plate"));
+            }
+        }
         next();
     }
 
