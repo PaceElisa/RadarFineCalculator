@@ -5,6 +5,7 @@ import Vehicle from "../models/Vehicle";
 import Limit from "../models/Limit";
 import { recognizeTextFromImage } from "../services/ocrService";
 import { upload } from "../middleware/uploadMIddleware";
+import CRUDController from "./CRUDController";
 
 //Define class TransitController class
 class TransitController {
@@ -40,7 +41,7 @@ class TransitController {
 
   // AGGIORNARE LA FUNZIONE SOTTO POICHE SI USANO I MIDDLEWARE DI VALIDATION
   // dopo che aggiorno un transit con la data di uscita dal segment controllo se c'è stata una violazione dei limiti
-  async checkViolation(req: Request, res: Response): Promise<boolean | null> {
+  async checkViolation(req: Request, res: Response): Promise<boolean | null> { //modificare in Promise Response
     var result: any;
     try {
       // Extract plate from route parameters
@@ -96,7 +97,7 @@ class TransitController {
 
       // Calcola la durata del transito in minuti
       const duration = (exitAtDate.getTime() - enterAtDate.getTime()) / (1000 * 60); // Converti millisecondi in minuti
-      
+
       // Calcola la velocità media in km/h
       const averageSpeed = (segmentDistance / duration) * 60; // Converti km/min in km/h
 
@@ -107,10 +108,13 @@ class TransitController {
         console.log(`Invalid weather condition '${weather_conditions}'`);
         return null;
       }
-
+      
+      const delta = averageSpeed - applicableLimit;
+      console.log("delta: ", delta);
       // Verifica se la velocità media supera il limite
       if (averageSpeed > applicableLimit) {
         // Crea una violazione
+        CRUDController.createViolation(lastTransit.id, averageSpeed, delta);
         console.log(`Violation detected for vehicle with plate ${plate}. Average Speed: ${averageSpeed.toFixed(2)} km/h, Limit: ${applicableLimit} km/h.`);
         result = true;
       } else {

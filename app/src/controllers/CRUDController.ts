@@ -4,6 +4,7 @@ import { Model, ModelStatic, WhereOptions } from 'sequelize';
 import { MessageFactory, HttpStatus } from '../factory/Messages';
 import TransitController from './TransitController';
 import Transit from '../models/Transit';
+import Violation from '../models/Violation';
 
 const MessageFact: MessageFactory = new MessageFactory();
 
@@ -158,6 +159,26 @@ class CRUDController {
             console.error('Errore durante l\'aggiornamento del transito:', error);
             const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento del transito per il veicolo con targa ${req.params.plate}`);
             result = res.status(500).json({ error: message });
+        }
+        return result;
+    }
+
+    // crea violation
+    async createViolation(id_transit: number, average_speed: number, delta: number): Promise<Response> {
+        var result: any;
+        try {
+            // Crea una nuova violazione
+            const violation = await Violation.create({
+                id_transit,
+                average_speed,
+                delta,
+                fine: 0 //verrà calcolata automaticamente
+            });
+
+            result = violation;
+        } catch (error) {
+            console.log("errore durante la creazione della risorsa.", error);
+            result = null;
         }
         return result;
     }

@@ -124,7 +124,7 @@ Transit.init({
     img_readable: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: true,
     },
     deleted_at: {
         type: DataTypes.DATE,

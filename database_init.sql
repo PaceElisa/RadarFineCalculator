@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS transits (
 -- Creazione della tabella "violations"
 CREATE TABLE IF NOT EXISTS violations (
   id SERIAL PRIMARY KEY,
-  id_transit INTEGER NOT NULL,
+  id_transit INTEGER NOT NULL UNIQUE,
   fine FLOAT NOT NULL,
   average_speed FLOAT NOT NULL,
   delta FLOAT NOT NULL,
@@ -110,9 +110,9 @@ VALUES
     ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 2, 'good', 'path/to/image.jpg', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
-INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)
-VALUES 
-    (1, 150.00, 140.00, 10.00, NULL);
+-- INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)
+-- VALUES 
+--    (1, 150.00, 140.00, 10.00, NULL);
 
 
 

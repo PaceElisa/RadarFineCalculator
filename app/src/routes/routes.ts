@@ -64,7 +64,7 @@ router.put("/api/transits/:plate", async (req: any, res: any) => {
     CRUDController.updateLastTransit(req, res)
     if (await TransitController.checkViolation(req,res)){
         //Controller CRUD per aggiunta Violation
-        console.log("TEST VIOLATION!");
+        console.log("TEST VIOLATION!"); //valutare se mettere tutto dentro checkViolation (aggiunta CRUD violazione; in Violation.ts mettere una funzione che calcola automaticamente la fine da pagare in base alla velocità e al delta)
     }
 });
 //router.post("/api/transits/upload")
