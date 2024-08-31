@@ -12,6 +12,7 @@ import Limit from '../models/Limit';
 // Controllers
 import CRUDController from '../controllers/CRUDController';
 import loginController from '../controllers/loginController';
+import TransitController from "../controllers/TransitController";
 
 // Middlewares
 import authMiddleware from '../middleware/authMiddleware';
@@ -59,7 +60,13 @@ router.put("/api/segments/:id_gateway1/:id_gateway2", async (req: any, res: any)
 router.post("/api/transits", async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
-router.put("/api/transits/:id", async (req: any, res: any) => CRUDController.updateRecord(Transit, req, res));
+router.put("/api/transits/:plate", async (req: any, res: any) => {
+    CRUDController.updateLastTransit(req, res)
+    if (await TransitController.checkViolation(req,res)){
+        //Controller CRUD per aggiunta Violation
+        console.log("TEST VIOLATION!");
+    }
+});
 //router.post("/api/transits/upload")
 
 // Violation (operatore e utente ma in modo particolare)

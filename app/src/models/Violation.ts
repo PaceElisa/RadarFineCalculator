@@ -9,6 +9,8 @@ interface ViolationAttributes {
     id: number;
     id_transit: number;
     fine: number;
+    average_speed: number;
+    delta: number;
     deleted_at?: Date; 
 }
 
@@ -20,6 +22,8 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     public id!: number;
     public id_transit!: number;
     public fine!: number;
+    public average_speed!: number;
+    public delta!: number;
     public deleted_at?: Date;
 }
 
@@ -39,6 +43,14 @@ Violation.init({
         }
     },
     fine: {
+        type: DataTypes.FLOAT,
+        allowNull: false,  
+    },
+    average_speed: {
+        type: DataTypes.FLOAT,
+        allowNull: false,  
+    },
+    delta: {
         type: DataTypes.FLOAT,
         allowNull: false,  
     },

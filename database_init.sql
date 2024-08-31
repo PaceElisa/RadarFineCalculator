@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS violations (
   id SERIAL PRIMARY KEY,
   id_transit INTEGER NOT NULL,
   fine FLOAT NOT NULL,
+  average_speed FLOAT NOT NULL,
+  delta FLOAT NOT NULL,
   deleted_at TIMESTAMP WITH TIME ZONE,
   FOREIGN KEY (id_transit) REFERENCES transits(id) ON DELETE CASCADE
 );
@@ -105,12 +107,12 @@ VALUES
 -- Inserimento di un record nella tabella "transits"
 INSERT INTO transits (enter_at, exit_at, plate, id_gateway1, id_gateway2, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
-    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 2, 'Clear', 'path/to/image.jpg', FALSE, NULL);
+    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 2, 'good', 'path/to/image.jpg', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
-INSERT INTO violations (id_transit, fine, deleted_at)
+INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)
 VALUES 
-    (1, 150.00, NULL);
+    (1, 150.00, 140.00, 10.00, NULL);
 
 
 
