@@ -70,7 +70,7 @@ class validateData{
     }
 
     validatePlate(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
+        const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/; 
         next();
     }
 
