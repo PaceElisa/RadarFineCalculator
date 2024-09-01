@@ -26,16 +26,26 @@ const messageFactory: MessageFactory = new MessageFactory();
 
 class generalCheck{
 
-    //Method that check if the passed ID exists
+    //Method that check if the passed ID exists as a record
     checkIDExist<T extends Model>(model:ModelStatic<T>){
         return async (req:Request, res: Response, next: NextFunction) => {
             try{
+                //This type of trasformation consent to avoid error when casting type
+                const id = req.params.id as unknown as number| string;
+
+                const record = await model.findByPk(id);
+
+                if(!record){
+                    next(messageFactory.createMessage(HttpStatus.NOT_FOUND, `The record for the specified id: ${id} was not found or not existing. `))
+                }
+
+                //If the record exist, go to the next middleware
                 next();
-            }catch{
+            }catch(err){
+                next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `An error occurs while checking ${model.name} existence.`))
 
             }
-
-        
+       
         };
     }
 
