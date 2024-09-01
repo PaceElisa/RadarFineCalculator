@@ -88,14 +88,68 @@ class validateData{
         
     }
 
-    validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
-        next();
+    async validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
+        const {id_gateway1, id_gateway2, distance} = req.body;
+        
+        if((typeof id_gateway1 !== 'number') || (typeof id_gateway2 !== 'number')){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid segment ID value. Segment ID must be a number."));
+        }
+
+        //check if the two ID gateway passed are the same
+        if(id_gateway1 === id_gateway2){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"A segment can not have the same ID for gateway 1 and 2. Specificy two different ID."));
+        }
+
+        if(typeof distance !== 'number'){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid distance value. Distance must be a number."));
+        }
+
+        try{
+            
+            
+            const segment = await Segment.findOne({
+                where:{
+                    id_gateway1 : id_gateway1,
+                    id_gateway2 : id_gateway2
+                }
+            });
+
+            if(segment){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,`Record with this IDs already exist.`));
+            }
+            next();
+
+        }catch(err){
+            return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong!"));
+
+        }
     }
 
-    validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
-        next();
+    async validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
+        const {plate, vehicle_type, id_user} = req.body;
+
+        if(!isStringValid(plate)){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"Invalid plate. Must be a string."))
+        }
+
+        if(!isStringValid(vehicle_type)){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid vehicle type. Must be a string"));
+        }
+
+        if(typeof id_user !== 'number'){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid user ID. Must be a number."))
+        }
+
+        try{
+            const vehicle = await Vehicle.findByPk(plate);
+            if(vehicle){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "A vehicle with this plate already exist."));
+            }
+            next();
+
+        }catch(error){
+            return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong."))
+        }
     }
 
     validateVehicleDataUpdate(req:Request, res: Response, next:NextFunction){
