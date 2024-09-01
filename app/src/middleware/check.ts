@@ -36,19 +36,20 @@ class generalCheck{
                 const record = await model.findByPk(id);
 
                 if(!record){
-                    next(messageFactory.createMessage(HttpStatus.NOT_FOUND, `The record for the specified id: ${id} was not found or not existing. `))
+                    return next(messageFactory.createMessage(HttpStatus.NOT_FOUND, `The record for the specified id: ${id} was not found or not existing. `))
                 }
 
                 //If the record exist, go to the next middleware
                 next();
             }catch(err){
-                next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `An error occurs while checking ${model.name} existence.`))
+                return next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `An error occurs while checking ${model.name} existence.`))
 
             }
        
         };
     }
 
+    /** FORSE NON SERVE ?
     //Method that checks if the passed plate exists
     checkPlateExist(req:Request, res: Response, next:NextFunction){
        
@@ -56,6 +57,7 @@ class generalCheck{
 
         next();
     }
+        */
 
     //Check if an image is provided and try to identify the text (plate) present
      async checkImage(req:ICustomRequest, res: Response, next:NextFunction){
@@ -81,7 +83,7 @@ class generalCheck{
             
           
             }catch(error){
-                next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Qualcosa è andato storto. Analisi dell'immagine non è andata a buon fine."));
+                return next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Qualcosa è andato storto. Analisi dell'immagine non è andata a buon fine."));
 
             }
         }
