@@ -10,36 +10,7 @@ import CRUDController from "./CRUDController";
 //Define class TransitController class
 class TransitController {
 
-  /*
-  async processTransitImage(req: Request, res: Response): Promise<any> {
-    const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
-    try {
-      const imagePath = req.file?.path;
-      if (!imagePath) {
-        return res.status(400).json({ message: "No image uploaded" });
-      }
-
-      const recognizedText = await recognizeTextFromImage(imagePath);
-
-      // Esegui ulteriori operazioni, come la validazione della targa, la registrazione del transito ecc.
-      const licensePlate = plateRegex.test(recognizedText); // espressione regolare per validare la targa
-
-      if (licensePlate) {
-        // Logica per salvare il transito
-        res.status(200).json({ message: "Transit processed", licensePlate });
-      } else {
-        // Se non viene riconosciuta una targa valida
-        res.status(422).json({ message: "Unable to recognize a valid license plate" });
-      }
-
-
-    } catch (error) {
-      res.status(500).json({ message: "Error processing transit", error });
-    }
-  };
-*/
-
-  // AGGIORNARE LA FUNZIONE SOTTO POICHE SI USANO I MIDDLEWARE DI VALIDATION
+   // AGGIORNARE LA FUNZIONE SOTTO POICHE SI USANO I MIDDLEWARE DI VALIDATION
   // dopo che aggiorno un transit con la data di uscita dal segment controllo se c'è stata una violazione dei limiti
   async checkViolation(req: Request, res: Response): Promise<boolean | null> { //modificare in Promise Response
     var result: any;
