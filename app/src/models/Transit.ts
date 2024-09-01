@@ -34,6 +34,43 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     public img_route!: string;
     public img_readable!: boolean;
     public deleted_at?: Date;
+
+    // Metodo per ottenere l'ultimo record inserito per una specifica plate
+    static async getLastInsertedRecordByPlate(plate: string): Promise<Transit | null> {
+        try {
+            const lastRecord = await Transit.findOne({
+                where: { plate },
+                order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
+            });
+            return lastRecord;
+        } catch (error) {
+            console.error('Error fetching the last inserted record by plate:', error);
+            throw new Error('Error fetching the last inserted record by plate');
+        }
+    }
+
+    // Metodo per ottenere la distanza del segmento
+    async getSegmentDistance(): Promise<number | null> {
+        try {
+            // Trova il segmento corrispondente
+            const segment = await Segment.findOne({
+                where: {
+                    id_gateway1: this.id_gateway1,
+                    id_gateway2: this.id_gateway2
+                }
+            });
+
+            if (segment) {
+                return segment.distance; // Restituisci la distanza del segmento
+            } else {
+                console.log(`Segment not found for id_gateway1: ${this.id_gateway1} and id_gateway2: ${this.id_gateway2}`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching segment distance:', error);
+            throw new Error('Error fetching segment distance');
+        }
+    }
 }
 
 // Inizializzazione del modello
@@ -87,25 +124,25 @@ Transit.init({
     img_readable: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: true,
     },
     deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,
         field: 'deleted_at',
     }
-}, 
+},
     {
-    sequelize: sequelize,
-    tableName: 'transits',
-    paranoid: true, 
-    createdAt: false, 
-    updatedAt: false, 
-    deletedAt: 'deleted_at', 
-});
+        sequelize: sequelize,
+        tableName: 'transits',
+        paranoid: true,
+        createdAt: false,
+        updatedAt: false,
+        deletedAt: 'deleted_at',
+    });
 
 // Definizione delle associazioni
-Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE'});
+Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE' });
 Transit.belongsTo(Segment, { foreignKey: 'id_gateway1', targetKey: 'id_gateway1', onDelete: 'CASCADE' });
 Transit.belongsTo(Segment, { foreignKey: 'id_gateway2', targetKey: 'id_gateway2', onDelete: 'CASCADE' });
 

@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { Model, ModelStatic, WhereOptions } from 'sequelize';
 
 import { MessageFactory, HttpStatus } from '../factory/Messages';
+import TransitController from './TransitController';
+import Transit from '../models/Transit';
+import Violation from '../models/Violation';
 
 const MessageFact: MessageFactory = new MessageFactory();
 
@@ -13,7 +16,7 @@ class CRUDController {
         try {
             const record = await model.create(req.body);
             const message = MessageFact.createMessage(HttpStatus.CREATED)
-            result = res.json({ success: message, data: record});
+            result = res.json({ success: message, data: record });
         } catch (error) {
             const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante la creazione della risorsa ${model.name}`);
             return res.json({ error: message });
@@ -122,6 +125,60 @@ class CRUDController {
         } catch (error) {
             const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante la cancellazione della risorsa ${model.name}`);
             return res.json({ error: message });
+        }
+        return result;
+    }
+
+    // aggiorna l'ultimo Transit inserito per un veicolo data la sua targa (quello al quale manca exit_at)
+    async updateLastTransit(req: Request, res: Response): Promise<Response> {
+        var result: any;
+        try {
+            // Trova l'ultimo transito per la targa specificata e che non ha ancora `exit_at` impostato
+            const lastRecord = await Transit.findOne({
+                where: { plate: req.params.plate },
+                order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
+            });
+
+            // Verifica se è stato trovato un record
+            if (!lastRecord) {
+                const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Transito non trovato per il veicolo con targa ${req.params.plate}`);
+                return res.status(404).json({ error: message });
+            }
+
+            // Aggiorna il record trovato con i dati forniti nel corpo della richiesta
+            const updatedRecord = await lastRecord.update(req.body);
+
+            if (updatedRecord) {
+                const message = MessageFact.createMessage(HttpStatus.OK, `Transito aggiornato con successo per il veicolo con targa ${req.params.plate}`);
+                result = res.status(200).json({ success: message, data: updatedRecord });
+            } else {
+                const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento del transito per il veicolo con targa ${req.params.plate}`);
+                result = res.status(500).json({ error: message });
+            }
+        } catch (error) {
+            console.error('Errore durante l\'aggiornamento del transito:', error);
+            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento del transito per il veicolo con targa ${req.params.plate}`);
+            result = res.status(500).json({ error: message });
+        }
+        return result;
+    }
+
+    // crea violation
+    async createViolation(id_transit: number, average_speed: number, delta: number): Promise<Response> {
+        var result: any;
+        try {
+            // Crea una nuova violazione
+            const violation = await Violation.create({
+                id_transit,
+                average_speed,
+                delta,
+                fine: 0 //verrà calcolata automaticamente
+            });
+
+            result = violation;
+        } catch (error) {
+            console.log("errore durante la creazione della risorsa.", error);
+            result = null;
         }
         return result;
     }

@@ -12,6 +12,7 @@ import Limit from '../models/Limit';
 // Controllers
 import CRUDController from '../controllers/CRUDController';
 import loginController from '../controllers/loginController';
+import TransitController from "../controllers/TransitController";
 
 // Middlewares
 import authMiddleware from '../middleware/authMiddleware';
@@ -62,7 +63,13 @@ router.put("/api/segments/:id_gateway1/:id_gateway2", validateData.validateReque
 router.post("/api/transits", upload.single('plate_image'),generalCheck.checkImage, validateData.validatePlate,validateData.validateTransitDataCreation, async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
-router.put("/api/transits/:id", async (req: any, res: any) => CRUDController.updateRecord(Transit, req, res));
+router.put("/api/transits/:plate", async (req: any, res: any) => {
+    CRUDController.updateLastTransit(req, res)
+    if (await TransitController.checkViolation(req,res)){
+        //Controller CRUD per aggiunta Violation
+        console.log("TEST VIOLATION!"); //valutare se mettere tutto dentro checkViolation (aggiunta CRUD violazione; in Violation.ts mettere una funzione che calcola automaticamente la fine da pagare in base alla velocità e al delta)
+    }
+});
 //router.post("/api/transits/upload")
 
 // Violation (operatore e utente ma in modo particolare)
