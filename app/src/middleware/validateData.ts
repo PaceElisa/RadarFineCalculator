@@ -15,6 +15,7 @@ import { HttpStatus } from "../factory/Messages";
 
 //Import CustomRequest
 import { ICustomRequest } from "./check";
+import Gateway from "../models/Gateway";
 
 const messageFact: MessageFactory = new MessageFactory();
 
@@ -37,9 +38,38 @@ class validateData{
         next();
     }
 
-    validateGatewayDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
+    async validateGatewayDataCreation(req:Request, res: Response, next:NextFunction){
+        const {highway_name, kilometer} =req.body;
+
+        if(!isStringValid(highway_name)){
+            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid highway. Highway must be a string"));
+
+        } 
+
+        if(highway_name.trim().length > 32){
+            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, `The highway name specified is too long. Maximum 32 letters. `))
+        }
+        if(typeof kilometer !== 'number'){
+            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid kilometer. Kilometer must be a number"));
+        }
+
+        try{
+        const highway = await Gateway.findOne({
+            where: {
+            highway_name: highway_name,
+            kilometer: kilometer
+          }
+        });
+        if(!highway)
+            next(messageFact.createMessage(HttpStatus.BAD_REQUEST,  `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
+
         next();
+
+        } catch(err){
+            next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong!"));
+        }
+
+        
     }
 
     validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
@@ -103,9 +133,13 @@ class validateData{
             }
         }
         next();
+
     }
-
-
 }
+
+    // Helper function to check if a value is a valid string
+    export function isStringValid(value: any): boolean {
+    return typeof value === 'string' && value.trim().length > 0;
+    }
 //Export an instance of validateDAta
 export default new validateData();
