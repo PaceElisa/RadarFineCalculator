@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS gateways (
 
 -- Creazione della tabella "segments"
 CREATE TABLE IF NOT EXISTS segments (
+  id SERIAL PRIMARY KEY,
   id_gateway1 INTEGER NOT NULL,
   id_gateway2 INTEGER NOT NULL,
   distance INTEGER NOT NULL,
   deleted_at TIMESTAMP WITH TIME ZONE,
-  PRIMARY KEY (id_gateway1, id_gateway2),
   FOREIGN KEY (id_gateway1) REFERENCES gateways(id) ON DELETE CASCADE,
   FOREIGN KEY (id_gateway2) REFERENCES gateways(id) ON DELETE CASCADE
 );
@@ -51,14 +51,13 @@ CREATE TABLE IF NOT EXISTS transits (
   enter_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   exit_at TIMESTAMP NULL,
   plate VARCHAR(10) NOT NULL,
-  id_gateway1 INTEGER NOT NULL,
-  id_gateway2 INTEGER NOT NULL,
+  id_segment INTEGER NOT NULL,
   weather_conditions weather_conditions_enum NOT NULL,
   img_route VARCHAR(255) NOT NULL,
   img_readable BOOLEAN NOT NULL DEFAULT FALSE,
   deleted_at TIMESTAMP NULL,
   FOREIGN KEY (plate) REFERENCES vehicles(plate) ON DELETE CASCADE,
-  FOREIGN KEY (id_gateway1, id_gateway2) REFERENCES segments(id_gateway1, id_gateway2) ON DELETE CASCADE
+  FOREIGN KEY (id_segment) REFERENCES segments(id) ON DELETE CASCADE
 );
 
 -- Creazione della tabella "violations"
@@ -108,10 +107,10 @@ VALUES
     (1, 2, 50, NULL);
 
 -- Inserimento di un record nella tabella "transits"
-INSERT INTO transits (enter_at, exit_at, plate, id_gateway1, id_gateway2, weather_conditions, img_route, img_readable, deleted_at) 
+INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
-    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 2, 'good', 'path/to/image.jpg', FALSE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 09:00:00', 'ABC1234', 1, 2, 'good', 'path/to/image.jpg', FALSE, NULL);
+    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 'good', 'path/to/image.jpg', FALSE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 09:00:00', 'ABC1234', 1, 'good', 'path/to/image.jpg', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
 INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)

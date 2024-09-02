@@ -54,8 +54,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
                     {
                         model: Transit,
                         attributes: [
-                            'id_gateway1',
-                            'id_gateway2',
+                            'id_segment',
                             'weather_conditions'
                         ],
                         where: {
@@ -64,7 +63,6 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
                         include: [
                             {
                                 model: Segment,
-                                as: 'Gateway1', //AGGIUNGERE ID su SEGMENT in modo da non usare due foreign key
                                 include: [
                                     {
                                         model: Gateway,

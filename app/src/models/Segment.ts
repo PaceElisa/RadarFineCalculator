@@ -6,16 +6,18 @@ const sequelize: Sequelize = Database.getSequelize();
 
 // Interfaccia per gli attributi del modello
 interface SegmentAttributes {
+    id: number;
     id_gateway1: number; 
     id_gateway2: number; 
     distance: number;
     deleted_at?: Date; 
 }
 
-interface SegmentCreationAttributes extends Optional<SegmentAttributes, 'id_gateway1' | 'id_gateway2'> {}
+interface SegmentCreationAttributes extends Optional<SegmentAttributes, 'id'> {}
 
 // Definizione del modello Segment
 class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implements SegmentAttributes {
+    public id!: number;
     public id_gateway1!: number;
     public id_gateway2!: number;
     public distance!: number;
@@ -37,9 +39,13 @@ class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implem
 
 // Inizializzazione del modello
 Segment.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     id_gateway1: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
         references: {
             model: Gateway,
@@ -48,7 +54,6 @@ Segment.init({
     },
     id_gateway2: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
         references: {
             model: Gateway,

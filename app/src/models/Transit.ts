@@ -11,8 +11,7 @@ interface TransitAttributes {
     enter_at: Date;
     exit_at: Date;
     plate: string;
-    id_gateway1: number;
-    id_gateway2: number;
+    id_segment: number;
     weather_conditions: 'good' | 'bad' | 'fog';
     img_route: string;
     img_readable: boolean;
@@ -28,8 +27,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     public enter_at!: Date;
     public exit_at!: Date;
     public plate!: string;
-    public id_gateway1!: number;
-    public id_gateway2!: number;
+    public id_segment! : number;
     public weather_conditions!: 'good' | 'bad' | 'fog';
     public img_route!: string;
     public img_readable!: boolean;
@@ -55,15 +53,14 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             // Trova il segmento corrispondente
             const segment = await Segment.findOne({
                 where: {
-                    id_gateway1: this.id_gateway1,
-                    id_gateway2: this.id_gateway2
+                    id: this.id_segment,
                 }
             });
 
             if (segment) {
                 return segment.distance; // Restituisci la distanza del segmento
             } else {
-                console.log(`Segment not found for id_gateway1: ${this.id_gateway1} and id_gateway2: ${this.id_gateway2}`);
+                console.log(`Segment not found for id_segment: ${this.id_segment}`);
                 return null;
             }
         } catch (error) {
@@ -97,20 +94,12 @@ Transit.init({
             key: 'plate',
         }
     },
-    id_gateway1: {
+    id_segment: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Segment,
-            key: 'id_gateway1',
-        }
-    },
-    id_gateway2: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Segment,
-            key: 'id_gateway2',
+            key: 'id',
         }
     },
     weather_conditions: {
@@ -143,7 +132,6 @@ Transit.init({
 
 // Definizione delle associazioni
 Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway1', as: 'Gateway1', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway2', as: 'Gateway2', onDelete: 'CASCADE' });
+Transit.belongsTo(Segment, { foreignKey: 'id_segment', onDelete: 'CASCADE' });
 
 export default Transit;
