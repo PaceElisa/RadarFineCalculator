@@ -102,17 +102,31 @@ class TransitController {
         return result;
     }
 
-    // ottieni unreadable transits 
-    // TODO AGGIUNGI MODO PER VISUALIZZARE URL IMMAGINE)
-    // TODO ID deve essere opzionale!
+    // ottieni unreadable transits
     async getUnreadableTransits(req: Request, res: Response): Promise<Response> {
         var result: any;
         const { id } = req.query;
         const gatewayId: number = Number(id);
         try {
-            const unreadableTransits = await Transit.findUnreadableTransitsByGateway(gatewayId);
-            const message = MessageFact.createMessage(HttpStatus.OK)
-            result = res.json({ success: message, data: unreadableTransits });
+            // Se l'ID non è presente, procedi senza filtrare per gateway specifico
+            let unreadableTransits;
+            if (id) {
+                const gatewayId: number = Number(id);
+                unreadableTransits = await Transit.findUnreadableTransitsByGateway(gatewayId);
+            } else {
+                unreadableTransits = await Transit.findAll({
+                    where: { img_readable: false }
+                });
+            }
+
+            // Mappare il risultato per includere l'URL dell'immagine
+            const formattedTransits = unreadableTransits?.map(transit => ({
+                ...transit.toJSON(),
+                img_url: `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
+            }));
+
+            const message = MessageFact.createMessage(HttpStatus.OK);
+            result = res.json({ success: message, data: formattedTransits });
         } catch (error) {
             const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'operazione di filtraggio`);
             return res.json({ error: message });

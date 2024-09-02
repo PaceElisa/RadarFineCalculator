@@ -116,6 +116,7 @@ class InternalServerErrorMessage implements IMessage {
 }
 
 // Factory per creare i messaggi
+// TO DO: separare tra success 
 export class MessageFactory {
     createMessage(httpStatus: HttpStatus, description?: string): IMessage {
         switch (httpStatus) {
