@@ -3,6 +3,8 @@ FROM node:latest
 COPY package*.json /usr/
 WORKDIR /usr
 
+RUN apt-get install tesseract-ocr 
+
 #COPY tsconfig.json .
 
 RUN npm install
