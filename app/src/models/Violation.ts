@@ -46,6 +46,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     static async findViolationsByPlates(plates: string[], startDate: Date, endDate: Date): Promise<Violation[] | null> {
         try {
             const violations = await Violation.findAll({
+                attributes: ['average_speed', ['delta', 'delta_over_speed_limit']],
                 where: {
                     created_at: {
                         [Op.between]: [startDate, endDate]  // Filter by date range
@@ -53,26 +54,24 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
                 include: [
                     {
                         model: Transit,
-                        attributes: [
-                            'id_segment',
-                            'weather_conditions'
-                        ],
+                        attributes: ['weather_conditions'],
                         where: {
                             plate: plates
                         },
                         include: [
                             {
                                 model: Segment,
+                                attributes: ['id', ['distance','segment_length']],
                                 include: [
                                     {
                                         model: Gateway,
                                         as: 'Gateway1',
-                                        attributes: ['highway_name' as 'highway_name_gateway1', 'kilometer' as 'kilometer_gateway1']
+                                        attributes: ['highway_name', 'kilometer']
                                     },
                                     {
                                         model: Gateway,
                                         as: 'Gateway2',
-                                        attributes: ['highway_name' as 'highway_name_gateway2', 'kilometer' as 'kilometer_gateway2']
+                                        attributes: ['highway_name', 'kilometer']
                                     }
                                 ]
                             }
