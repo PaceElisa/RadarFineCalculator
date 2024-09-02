@@ -171,8 +171,7 @@ class CRUDController {
             const violation = await Violation.create({
                 id_transit,
                 average_speed,
-                delta,
-                fine: 0 //verrà calcolata automaticamente
+                delta
             });
 
             result = violation;

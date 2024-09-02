@@ -13,6 +13,7 @@ import Limit from '../models/Limit';
 import CRUDController from '../controllers/CRUDController';
 import loginController from '../controllers/loginController';
 import TransitController from "../controllers/TransitController";
+import ViolationController from "../controllers/ViolationController";
 
 // Middlewares
 import authMiddleware from '../middleware/authMiddleware';
@@ -74,6 +75,8 @@ router.post("/api/violations", async (req: any, res: any) => CRUDController.crea
 router.get("/api/violations/:id", async (req: any, res: any) => CRUDController.readOneRecord(Violation, req, res));
 router.delete("/api/violations/:id", async (req: any, res: any) => CRUDController.deleteRecord(Violation, req, res));
 router.put("/api/violations/:id", async (req: any, res: any) => CRUDController.updateRecord(Violation, req, res));
+
+router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res)); //TEST
 
 // Limit (solo TEST, NON CRUD)
 router.post("/api/limits", async (req: any, res: any) => CRUDController.createRecord(Limit, req, res));

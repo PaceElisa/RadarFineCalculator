@@ -13,7 +13,7 @@ interface TransitAttributes {
     plate: string;
     id_gateway1: number;
     id_gateway2: number;
-    weather_conditions: string;
+    weather_conditions: 'good' | 'bad' | 'fog';
     img_route: string;
     img_readable: boolean;
     deleted_at?: Date;
@@ -30,7 +30,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     public plate!: string;
     public id_gateway1!: number;
     public id_gateway2!: number;
-    public weather_conditions!: string;
+    public weather_conditions!: 'good' | 'bad' | 'fog';
     public img_route!: string;
     public img_readable!: boolean;
     public deleted_at?: Date;
@@ -114,7 +114,7 @@ Transit.init({
         }
     },
     weather_conditions: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.ENUM('good', 'bad', 'fog'),
         allowNull: false,
     },
     img_route: {
@@ -143,7 +143,7 @@ Transit.init({
 
 // Definizione delle associazioni
 Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway1', targetKey: 'id_gateway1', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway2', targetKey: 'id_gateway2', onDelete: 'CASCADE' });
+Transit.belongsTo(Segment, { foreignKey: 'id_gateway1', as: 'Gateway1', onDelete: 'CASCADE' });
+Transit.belongsTo(Segment, { foreignKey: 'id_gateway2', as: 'Gateway2', onDelete: 'CASCADE' });
 
 export default Transit;
