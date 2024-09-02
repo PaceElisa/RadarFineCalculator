@@ -54,7 +54,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
                 include: [
                     {
                         model: Transit,
-                        attributes: ['weather_conditions'],
+                        attributes: [['id', 'transit_id'],'weather_conditions'],
                         where: {
                             plate: plates
                         },

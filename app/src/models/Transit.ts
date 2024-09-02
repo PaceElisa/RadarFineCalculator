@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize, Op } from 'sequelize';
 import { Database } from '../config/database';
 import Vehicle from './Vehicle';
 import Segment from './Segment';
@@ -66,6 +66,32 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
         } catch (error) {
             console.error('Error fetching segment distance:', error);
             throw new Error('Error fetching segment distance');
+        }
+    }
+
+    static async findUnreadableTransitsByGateway(gatewayId: number): Promise<Transit[] | null> {
+        try {
+            const unreadableTransits = await Transit.findAll({
+                where: {
+                    img_readable: false,
+                },
+                include: [
+                    {
+                        model: Segment,
+                        attributes: ['id'],
+                        where: {
+                            [Op.or]: [
+                                { id_gateway1: gatewayId },
+                                { id_gateway2: gatewayId }
+                            ]
+                        }
+                    }
+                ]
+            });
+            return unreadableTransits;
+        } catch (error) {
+            console.error('Error fetching unreadable transits by gateway:', error);
+            throw new Error('Error fetching unreadable transits by gateway');
         }
     }
 }

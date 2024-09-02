@@ -34,7 +34,7 @@ router.post('/loginGateway', loginController.loginGateway);
 router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
     res.status(200).json({ message: 'This is a protected route'});
 });
-
+// api con export const
 // CRUD
 // User (utente operatore???)
 router.post("/api/users", async (req: any, res: any) => CRUDController.createRecord(User, req, res));
@@ -80,6 +80,7 @@ router.delete("/api/violations/:id", async (req: any, res: any) => CRUDControlle
 router.put("/api/violations/:id", async (req: any, res: any) => CRUDController.updateRecord(Violation, req, res));
 
 router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res)); //TEST
+router.get("/api/transitsfilter", async (req: any, res: any) => TransitController.getUnreadableTransits(req, res)); //TEST
 
 // Limit (solo TEST, NON CRUD)
 router.post("/api/limits", async (req: any, res: any) => CRUDController.createRecord(Limit, req, res));
