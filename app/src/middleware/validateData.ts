@@ -35,7 +35,10 @@ class validateData{
     }
 
     validateTransitDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
+       const {id, enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable} = req.body;
+
+
+
         next();
     }
 
@@ -62,7 +65,7 @@ class validateData{
 
         } 
 
-        if(highway_name.trim().length > 32){
+        if(highway_name.length > 32){
             return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, `The highway name specified is too long. Maximum 32 letters. `))
         }
         if(typeof kilometer !== 'number'){
@@ -92,7 +95,7 @@ class validateData{
         const {id_gateway1, id_gateway2, distance} = req.body;
         
         if((typeof id_gateway1 !== 'number') || (typeof id_gateway2 !== 'number')){
-            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid segment ID value. Segment ID must be a number."));
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid gateway ID value. Gateway ID must be a number."));
         }
 
         //check if the two ID gateway passed are the same
@@ -128,7 +131,7 @@ class validateData{
     async validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
         const {plate, vehicle_type, id_user} = req.body;
 
-        if(!isStringValid(plate)){
+        if(!isStringValid(plate) || plate.length >10){
             return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"Invalid plate. Must be a string."))
         }
 
@@ -152,13 +155,40 @@ class validateData{
         }
     }
 
-    validateVehicleDataUpdate(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
+    async validateVehicleDataUpdate(req:Request, res: Response, next:NextFunction){
+        const {plate, vehicle_type, id_user} = req.body;
+        try{
+
+            const vehicle = await Vehicle.findByPk(plate);
+
+            if((vehicle && !isStringValid(plate)) || plate.length > 7){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid plate. Must be a string of 7 characters"));
+            }
+
+            if((vehicle_type && !isStringValid(vehicle_type)) || vehicle_type.length >32){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid type of vehicle. Must be a string of maximum 32 characters."));
+            }
+
+            if(id_user &&(typeof id_user !== 'number')){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid user ID. Must me a number."));
+            }
+            
+
+
+        }catch(err){
+        return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong."));
+
+        }
         next();
     }
 
-    validateSegmentDataUpdate(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
+    async validateSegmentDataUpdate(req:Request, res: Response, next:NextFunction){
+        const {id_gateway1, id_gateway2, distance} = req.body;
+        
+        
+        //To DO: se la distanza viene specificata, controllare che sia un numero e che sia corretta
+
+
         next();
     }
 
@@ -225,6 +255,11 @@ class validateData{
             }
         }
         next();
+
+    }
+
+    validateCredentials(req: Request, res: Response, next: NextFunction){
+        //TO DO ...
 
     }
 }
