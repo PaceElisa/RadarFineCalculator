@@ -32,19 +32,6 @@ class driverLoginError extends IMessage{
     }
 }
 
-class gatewayLoginError extends IMessage{
-    httpStatus: number;
-    content: string;
-    description?: string;
-
-    constructor(description?: string) {
-        super()
-        this.httpStatus = HttpStatus.UNAUTHORIZED;
-        this.content = "Unauthorized - Gateway login failed.";
-        this.description = description;
-    }
-}
-
 class createRecordError extends IMessage{
     httpStatus: number;
     content: string;
@@ -184,9 +171,6 @@ export class errorFactory implements MessageFactory{
 
             case ErrorMessage.driverLoginError:
                 return new driverLoginError(description);
-
-            case ErrorMessage.gatewayLoginError:
-                return new gatewayLoginError(description);
                     
             case ErrorMessage.createRecordError:
                 return new createRecordError(description);
