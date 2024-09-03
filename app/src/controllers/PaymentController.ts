@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { MessageFactory, HttpStatus } from '../factory/Messages';
 import QRCode from 'qrcode';
 import PDFDocument from 'pdfkit';
-import { pipeline } from 'stream';
 import Payment from "../models/Payment";
 import Violation from "../models/Violation";
 import Transit from "../models/Transit";

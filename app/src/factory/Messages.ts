@@ -11,7 +11,7 @@ export enum HttpStatus {
 }
 
 // Interfaccia per la Factory di messaggi
- export interface IMessage {
+export interface IMessage {
     httpStatus: number;
     content: string;
     description?: string; // Campo opzionale

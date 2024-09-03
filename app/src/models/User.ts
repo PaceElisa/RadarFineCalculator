@@ -22,6 +22,20 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public username!: string;
     public password!: string;
     public deleted_at?: Date;
+
+    static async findUserByUsername(username: string): Promise<User | null> {
+        try {
+            const user = await User.findOne({
+                where: {
+                    username: username
+                }
+            });
+            return user;
+        } catch (error) {
+            console.error('Error fetching user by username:', error);
+            throw new Error('Error fetching user by username');
+        }
+    }
 }
 
 // Inizializzazione del modello

@@ -29,16 +29,17 @@ const router = Router();
 router.get("/", (req: any, res: any) => res.send("TEST"));
 
 // Route per i login
-router.post('/login', loginController.login);
-router.post('/loginGateway', loginController.loginGateway);
+router.post('/login', authMiddleware.validateUserCredentials, loginController.login);
+router.post('/loginGateway', authMiddleware.validateGateway, loginController.loginGateway);
 
 // Esempio di una route protetta
 router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
     res.status(200).json({ message: 'This is a protected route'});
 });
+
 // api con export const
 // CRUD
-// User (utente operatore???)
+// User (utente operatore)
 router.post("/api/users", async (req: any, res: any) => CRUDController.createRecord(User, req, res));
 router.get("/api/users/:id", async (req: any, res: any) => CRUDController.readOneRecord(User, req, res));
 router.delete("/api/users/:id", async (req: any, res: any) => CRUDController.deleteRecord(User, req, res));

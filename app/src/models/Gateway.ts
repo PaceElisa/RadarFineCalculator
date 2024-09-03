@@ -20,6 +20,21 @@ class Gateway extends Model<GatewayAttributes, GatewayCreationAttributes> implem
     public highway_name!: string;
     public kilometer!: number;
     public deleted_at?: Date;
+
+    static async findGatewayByHighwayAndKilometer(highway_name: string, kilometer: number): Promise<Gateway | null> {
+        try {
+            const user = await Gateway.findOne({
+                where: {
+                    highway_name: highway_name,
+                    kilometer: kilometer
+                }
+            });
+            return user;
+        } catch (error) {
+            console.error('Error fetching gateway by highway_name and kilometer:', error);
+            throw new Error('Error fetching gateway by highway_name and kilometer');
+        }
+    }
 }
 
 // Inizializzazione del modello
