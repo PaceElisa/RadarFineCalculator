@@ -14,7 +14,7 @@ class adminLoginSuccess extends IMessage{
     constructor(description?: string) {
         super()
         this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.content = "OK - Admin login succeeded";
         this.description = description;
     }
 }
@@ -27,20 +27,7 @@ class driverLoginSuccess extends IMessage{
     constructor(description?: string) {
         super()
         this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
-        this.description = description;
-    }
-}
-
-class gatewayLoginSuccess extends IMessage{
-    httpStatus: number;
-    content: string;
-    description?: string;
-
-    constructor(description?: string) {
-        super()
-        this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.content = "OK - Driver login succeeded";
         this.description = description;
     }
 }
@@ -52,8 +39,8 @@ class createRecordSuccess extends IMessage{
 
     constructor(description?: string) {
         super()
-        this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.httpStatus = HttpStatus.CREATED;
+        this.content = "Created - Record creation succeeded";
         this.description = description;
     }
 }
@@ -65,8 +52,8 @@ class updateRecordSuccess extends IMessage{
 
     constructor(description?: string) {
         super()
-        this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.httpStatus = HttpStatus.CREATED;
+        this.content = "Created - Record update succeeded";
         this.description = description;
     }
 }
@@ -79,7 +66,7 @@ class readRecordSuccess extends IMessage{
     constructor(description?: string) {
         super()
         this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.content = "OK - Record reading succeeded.";
         this.description = description;
     }
 }
@@ -91,8 +78,8 @@ class deleteRecordSuccess extends IMessage{
 
     constructor(description?: string) {
         super()
-        this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.httpStatus = HttpStatus.NO_CONTENT;
+        this.content = "No Content - Record deletion succeeded";
         this.description = description;
     }
 }
@@ -105,12 +92,12 @@ class generalSuccess extends IMessage{
     constructor(description?: string) {
         super()
         this.httpStatus = HttpStatus.OK;
-        this.content = "Operazione completata con successo.";
+        this.content = "OK - Operation succeeded";
         this.description = description;
     }
 }
 
-export class errorFactory implements MessageFactory{
+export class successFactory implements MessageFactory{
     createMessage(typeMessage: SuccesMessage, description?: string): IMessage {
         switch (typeMessage) {
             case SuccesMessage.adminLoginSuccess:
@@ -118,9 +105,6 @@ export class errorFactory implements MessageFactory{
 
             case SuccesMessage.driverLoginSuccess:
                 return new driverLoginSuccess(description);
-
-            case SuccesMessage.gatewayLoginSuccess:
-                return new gatewayLoginSuccess(description);
 
             case SuccesMessage.createRecordSuccess:
                 return new createRecordSuccess(description);
