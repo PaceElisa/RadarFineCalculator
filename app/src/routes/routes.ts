@@ -8,12 +8,14 @@ import Segment from '../models/Segment';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
 import Limit from '../models/Limit';
+import Payment from "../models/Payment";
 
 // Controllers
 import CRUDController from '../controllers/CRUDController';
 import loginController from '../controllers/loginController';
 import TransitController from "../controllers/TransitController";
 import ViolationController from "../controllers/ViolationController";
+import PaymentController from "../controllers/PaymentController";
 
 // Middlewares
 import authMiddleware from '../middleware/authMiddleware';
@@ -67,6 +69,7 @@ router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.
 router.put("/api/transits/:plate", async (req: any, res: any) => {
     CRUDController.updateLastTransit(req, res)
     if (await TransitController.checkViolation(req,res)){
+        //CANCELLARE L'IF
         //Controller CRUD per aggiunta Violation
         console.log("TEST VIOLATION!"); //valutare se mettere tutto dentro checkViolation (aggiunta CRUD violazione; in Violation.ts mettere una funzione che calcola automaticamente la fine da pagare in base alla velocità e al delta)
     }
@@ -87,5 +90,12 @@ router.post("/api/limits", async (req: any, res: any) => CRUDController.createRe
 router.get("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.readOneRecord(Limit, req, res));
 router.delete("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.deleteRecord(Limit, req, res));
 router.put("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.updateRecord(Limit, req, res));
+
+// payments TEST
+router.post("/api/payments", async (req: any, res: any) => CRUDController.createRecord(Payment, req, res));
+router.get("/api/payments/:id", async (req: any, res: any) => CRUDController.readOneRecord(Payment, req, res));
+
+// bollettino TEST
+router.get("/api/receipt/:id_violation", async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

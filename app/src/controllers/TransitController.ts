@@ -1,5 +1,5 @@
 //Import neccesary modules
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import Transit from "../models/Transit";
 import Vehicle from "../models/Vehicle";
 import Limit from "../models/Limit";
@@ -86,8 +86,8 @@ class TransitController {
             console.log("delta: ", delta);
             // Verifica se la velocità media supera il limite
             if (averageSpeed > applicableLimit) {
-                // Crea una violazione
-                CRUDController.createViolation(lastTransit.id, averageSpeed, delta);
+                // Crea una violazione e il pagamento associato
+                CRUDController.createViolationAndPayment(lastTransit.id, averageSpeed, delta); //aggiungere una response per ritornare il json di violation e payment
                 console.log(`Violation detected for vehicle with plate ${plate}. Average Speed: ${averageSpeed.toFixed(2)} km/h, Limit: ${applicableLimit} km/h.`);
                 result = true;
             } else {

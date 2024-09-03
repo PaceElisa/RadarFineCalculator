@@ -5,6 +5,7 @@ import { MessageFactory, HttpStatus } from '../factory/Messages';
 import TransitController from './TransitController';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
+import Payment from '../models/Payment';
 
 const MessageFact: MessageFactory = new MessageFactory();
 
@@ -163,8 +164,8 @@ class CRUDController {
         return result;
     }
 
-    // crea violation
-    async createViolation(id_transit: number, average_speed: number, delta: number): Promise<Response> {
+    // crea violation e il pagamento associato
+    async createViolationAndPayment(id_transit: number, average_speed: number, delta: number): Promise<Response> {
         var result: any;
         try {
             // Crea una nuova violazione
@@ -173,8 +174,11 @@ class CRUDController {
                 average_speed,
                 delta
             });
+            const payment = await Payment.create({
+                id_violation: violation.id
+            })
 
-            result = violation;
+            result = {violation: violation, payment: payment};
         } catch (error) {
             console.log("errore durante la creazione della risorsa.", error);
             result = null;

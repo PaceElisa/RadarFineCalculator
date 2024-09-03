@@ -1,8 +1,7 @@
 //Import neccesary modules
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { MessageFactory, HttpStatus } from '../factory/Messages';
 import Violation from "../models/Violation";
-import { start } from "repl";
 
 const MessageFact: MessageFactory = new MessageFactory();
 
@@ -15,7 +14,7 @@ class ViolationController {
         const plateArray = Array.isArray(plates) ? plates : [plates];
         const startDate = new Date(start_date as string);
         const endDate = new Date(end_date as string);
-        console.log(start_date, " ", end_date);
+        
         try {
             const violations = await Violation.findViolationsByPlates(plateArray as string[], startDate, endDate);
             const message = MessageFact.createMessage(HttpStatus.OK)

@@ -72,6 +72,16 @@ CREATE TABLE IF NOT EXISTS violations (
   FOREIGN KEY (id_transit) REFERENCES transits(id) ON DELETE CASCADE
 );
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Creazione della tabella "payments"
+CREATE TABLE payments (
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id_violation INTEGER NOT NULL UNIQUE,
+    is_payed BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (id_violation) REFERENCES violations(id) ON DELETE CASCADE
+);
+
 -- PROVA
 -- Inserimento di un record nella tabella "users"
 INSERT INTO users (role, username, password, deleted_at)
