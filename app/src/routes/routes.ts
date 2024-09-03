@@ -44,9 +44,9 @@ router.put("/api/users/:id", async (req: any, res: any) => CRUDController.update
 
 // Vehicle (utente operatore)
 router.post("/api/vehicles", validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
-router.get("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkPlateExist, async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
-router.delete("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkPlateExist, async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
-router.put("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkPlateExist, validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
+router.get("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist, async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
+router.delete("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist, async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
+router.put("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist, validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
 
 // Gateway (utente operatore)
 router.post("/api/gateways", validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));

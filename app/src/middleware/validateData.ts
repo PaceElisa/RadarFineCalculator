@@ -8,6 +8,7 @@ import Segment from "../models/Segment";
 import Transit from "../models/Transit";
 import User from "../models/User";
 import Violation from "../models/Violation";
+import Gateway from "../models/Gateway";
 
 //Import factory
 import { MessageFactory } from "../factory/Messages";
@@ -15,7 +16,7 @@ import { HttpStatus } from "../factory/Messages";
 
 //Import CustomRequest
 import { ICustomRequest } from "./check";
-import Gateway from "../models/Gateway";
+
 
 const messageFact: MessageFactory = new MessageFactory();
 
@@ -25,7 +26,7 @@ class validateData{
     validateRequestId(req:Request, res: Response, next:NextFunction){
         const {id} = req.params;
 
-        //Check if the id is specified and a valid number
+        //Check if the ID is specified and a valid number
         if(!id || isNaN(Number(id))){
             return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "ID Not Valid"));
         }
@@ -39,31 +40,46 @@ class validateData{
     }
 
     async validateGatewayDataCreation(req:Request, res: Response, next:NextFunction){
-        const {highway_name, kilometer} =req.body;
+        const {id,highway_name, kilometer} =req.body;
+
+        if(typeof id !== 'number'){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid ID. ID must be a number."))
+        }
+
+        try{
+            //Check if the id provided in the body is already used
+            const existingID = await Gateway.findByPk(id);
+            if(existingID){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, `The specified ID: ${id} is already used.`));
+            }
+        }catch(err){
+             return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR,`Ops... Something went wrong: ${err}`));
+        }
+
 
         if(!isStringValid(highway_name)){
-            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid highway. Highway must be a string"));
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid highway. Highway must be a string."));
 
         } 
 
         if(highway_name.trim().length > 32){
-            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, `The highway name specified is too long. Maximum 32 letters. `))
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, `The highway name specified is too long. Maximum 32 letters. `))
         }
         if(typeof kilometer !== 'number'){
-            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid kilometer. Kilometer must be a number"));
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid kilometer. Kilometer must be a number"));
         }
 
         try{
-        const highway = await Gateway.findOne({
-            where: {
-            highway_name: highway_name,
-            kilometer: kilometer
-          }
-        });
-        if(!highway)
-            next(messageFact.createMessage(HttpStatus.BAD_REQUEST,  `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
+            const highway = await Gateway.findOne({
+                where: {
+                highway_name: highway_name,
+                kilometer: kilometer
+                }
+            });
+            if(highway)
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,  `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
 
-        next();
+            next();
 
         } catch(err){
             next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong!"));
@@ -72,14 +88,68 @@ class validateData{
         
     }
 
-    validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
-        next();
+    async validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
+        const {id_gateway1, id_gateway2, distance} = req.body;
+        
+        if((typeof id_gateway1 !== 'number') || (typeof id_gateway2 !== 'number')){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid segment ID value. Segment ID must be a number."));
+        }
+
+        //check if the two ID gateway passed are the same
+        if(id_gateway1 === id_gateway2){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"A segment can not have the same ID for gateway 1 and 2. Specificy two different ID."));
+        }
+
+        if(typeof distance !== 'number'){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid distance value. Distance must be a number."));
+        }
+
+        try{
+            
+            
+            const segment = await Segment.findOne({
+                where:{
+                    id_gateway1 : id_gateway1,
+                    id_gateway2 : id_gateway2
+                }
+            });
+
+            if(segment){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,`Record with this IDs already exist.`));
+            }
+            next();
+
+        }catch(err){
+            return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong!"));
+
+        }
     }
 
-    validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
-        next();
+    async validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
+        const {plate, vehicle_type, id_user} = req.body;
+
+        if(!isStringValid(plate)){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"Invalid plate. Must be a string."))
+        }
+
+        if(!isStringValid(vehicle_type)){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid vehicle type. Must be a string"));
+        }
+
+        if(typeof id_user !== 'number'){
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid user ID. Must be a number."))
+        }
+
+        try{
+            const vehicle = await Vehicle.findByPk(plate);
+            if(vehicle){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "A vehicle with this plate already exist."));
+            }
+            next();
+
+        }catch(error){
+            return next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Ops... Something went wrong."))
+        }
     }
 
     validateVehicleDataUpdate(req:Request, res: Response, next:NextFunction){
@@ -92,9 +162,31 @@ class validateData{
         next();
     }
 
-    validateGatewayDataUpdate(req:Request, res: Response, next:NextFunction){
-        //TO DO ... 
-        next();
+    async validateGatewayDataUpdate(req:Request, res: Response, next:NextFunction){
+         const {id, highway_name, kilometer} = req.body;
+         try{
+
+            const gateway = await Gateway.findByPk(id);
+
+            //If the gateway ID specified already exist or if ID is not a number
+            if(gateway && (typeof gateway !== 'number')){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,`Gateway ID must be a number. Please first check if the specified ID: ${id} already exist.`))
+            }
+
+            if(highway_name && (!isStringValid(highway_name) || highway_name.length > 32)){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST,"Invalid highway name. Must be a string with maximum 32 characters."));
+            }
+
+            if(kilometer && (typeof kilometer !== 'number')){
+                return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid kilometer value. Kilometer must be a number."))
+            }
+            next();
+
+         }catch(error){
+            next(messageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Ops... Something went wrong: ${error} `));
+
+         }
+        
     }
 
     validateTransitDataUpdate(req:Request, res: Response, next:NextFunction){
@@ -129,7 +221,7 @@ class validateData{
             
         }else{
             if(!plate || !islicenseplateValid ){
-            next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid License Plate"));
+            return next(messageFact.createMessage(HttpStatus.BAD_REQUEST, "Invalid License Plate"));
             }
         }
         next();
