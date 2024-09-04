@@ -2,7 +2,6 @@
 import { Request, Response } from "express";
 import Transit from "../models/Transit";
 import Vehicle from "../models/Vehicle";
-import Limit from "../models/Limit";
 import { recognizeTextFromImage } from "../services/ocrService";
 import { upload } from "../middleware/uploadMIddleware";
 import CRUDController from "./CRUDController";
@@ -128,11 +127,11 @@ class TransitController {
                 ...transit.toJSON(),
                 img_url: `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
             }));
-
-            const message = MessageFact.createMessage(HttpStatus.OK);
+            
+            const message = successMessageFactory.createMessage(SuccesMessage.generalSuccess, `Unreadable Transits filtered successfully`);
             result = res.json({ success: message, data: formattedTransits });
         } catch (error) {
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'operazione di filtraggio`);
+            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while filtering unreadable Transits`);
             return res.json({ error: message });
         }
         return result;

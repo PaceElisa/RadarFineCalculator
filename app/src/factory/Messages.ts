@@ -29,6 +29,7 @@ export enum SuccesMessage{
 export enum ErrorMessage{
     userLoginError,
     driverLoginError,
+    gatewayLoginError,
     createRecordError,
     updateRecordError,
     readRecordError,
@@ -36,6 +37,7 @@ export enum ErrorMessage{
     notAuthorized,
     recordNotFound,
     recordAlreadyExist,
+    invalidToken,
     invalidFormat,
     invalidPlateFormat,
     noManualRecordIDChange,

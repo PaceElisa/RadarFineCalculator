@@ -7,7 +7,7 @@ dotenv.config();
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
-import { HttpStatus, SuccesMessage, ErrorMessage, MessageFactory } from "../factory/Messages";
+import { SuccesMessage, ErrorMessage } from "../factory/Messages";
 
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
