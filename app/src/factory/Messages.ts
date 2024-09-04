@@ -1,4 +1,7 @@
-// Enum per i codici HttpStatus
+/**Interface for Factory Pattern applied to response messages */
+
+
+// Enum for HttpStatus codes
 export enum HttpStatus {
     OK = 200, 
     CREATED = 201,
@@ -10,13 +13,56 @@ export enum HttpStatus {
     INTERNAL_SERVER_ERROR = 500 
 }
 
-// Interfaccia per la Factory di messaggi
-export interface IMessage {
-    httpStatus: number;
-    content: string;
-    description?: string; // Campo opzionale
+//Enum for success messages
+export enum SuccesMessage{
+    adminLoginSuccess,
+    driverLoginSuccess,
+    createRecordSuccess,
+    updateRecordSuccess,
+    readRecordSuccess,
+    deleteRecordSuccess,
+    generalSuccess
 }
 
+//Enum for error messages
+export enum ErrorMessage{
+    userLoginError,
+    driverLoginError,
+    createRecordError,
+    updateRecordError,
+    readRecordError,
+    deleteRecordError,
+    notAuthorized,
+    recordNotFound,
+    recordAlreadyExist,
+    invalidFormat,
+    invalidPlateFormat,
+    noManualRecordIDChange,
+    generalError
+    
+
+}
+
+/*Pattern Factory Method Components*/
+
+// Product - Abstract Class
+ export abstract class IMessage {
+    protected abstract httpStatus: number;
+    protected abstract content: string;
+    protected abstract description?: string; // Campo opzionale
+    protected type: string;
+
+    constructor(type:string ="application/json"){
+        this.type =type;
+
+    }
+}
+
+//Creator - Interface  
+export interface MessageFactory{
+    createMessage(typeMessage: number, description?:string) : IMessage
+}
+/**
 // SUCCESSO
 class OKMessage implements IMessage {
     httpStatus: number;
@@ -115,6 +161,7 @@ class InternalServerErrorMessage implements IMessage {
     }
 }
 
+
 // Factory per creare i messaggi
 // TO DO: separare tra success 
 export class MessageFactory {
@@ -141,6 +188,7 @@ export class MessageFactory {
         }
     }
 }
+     */
 
 
 
