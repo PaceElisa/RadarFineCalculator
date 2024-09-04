@@ -43,7 +43,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             return lastRecord;
         } catch (error) {
             console.error('Error fetching the last inserted record by plate:', error);
-            throw new Error('Error fetching the last inserted record by plate');
+            return null;
         }
     }
 
@@ -65,7 +65,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             }
         } catch (error) {
             console.error('Error fetching segment distance:', error);
-            throw new Error('Error fetching segment distance');
+            return null;
         }
     }
 
@@ -91,7 +91,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             return unreadableTransits;
         } catch (error) {
             console.error('Error fetching unreadable transits by gateway:', error);
-            throw new Error('Error fetching unreadable transits by gateway');
+            return null;
         }
     }
 }
