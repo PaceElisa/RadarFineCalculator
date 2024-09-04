@@ -11,13 +11,16 @@ import User from "../models/User";
 import Violation from "../models/Violation";
 
 //Import factory
-import { MessageFactory, IMessage, HttpStatus  } from "../factory/Messages";
+import { successFactory } from "../factory/SuccessMessage";
+import { errorFactory } from "../factory/FailMessage";
+import { HttpStatus, SuccesMessage, ErrorMessage, MessageFactory, IMessage } from "../factory/Messages";
 import { Model, ModelStatic } from "sequelize";
 
 //Import services OCR
 import { recognizeTextFromImage } from "../services/ocrService";
 
-const messageFactory: MessageFactory = new MessageFactory();
+const errorMessageFactory: errorFactory = new errorFactory();
+const successMessageFactory: successFactory = new successFactory();
 
  export interface ICustomRequest extends Request{
     messages?: IMessage[];
@@ -36,13 +39,13 @@ class generalCheck{
                 const record = await model.findByPk(id);
 
                 if(!record){
-                    return next(messageFactory.createMessage(HttpStatus.NOT_FOUND, `The record for the specified id: ${id} was not found or not existing. `))
+                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The record for the specified id: ${id} was not found or not existing. `))
                 }
 
                 //If the record exist, go to the next middleware
                 next();
             }catch(err){
-                return next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `An error occurs while checking ${model.name} existence.`))
+                return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `An error occurs while checking ${model.name} existence.`))
 
             }
        
@@ -79,15 +82,15 @@ class generalCheck{
             req.imageUpload = true;
             
             
-            req.messages.push(messageFactory.createMessage(HttpStatus.OK, "Analisi dell'immagine è andata a buon fine."));
+            req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Image analysis has been successful."));
             
           
             }catch(error){
-                return next(messageFactory.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Qualcosa è andato storto. Analisi dell'immagine non è andata a buon fine."));
+                return next(errorMessageFactory.createMessage(ErrorMessage.generalError, "Image analysis failed."));
 
             }
         }
-        req.messages.push(messageFactory.createMessage(HttpStatus.OK, "Immagine opzionale non inserita"));
+        req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Optional image not inserted"));
 
 
         next();
