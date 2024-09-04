@@ -32,6 +32,19 @@ class driverLoginSuccess extends IMessage{
     }
 }
 
+class gatewayLoginSuccess extends IMessage{
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.OK;
+        this.content = "OK - Gateway login succeeded";
+        this.description = description;
+    }
+}
+
 class createRecordSuccess extends IMessage{
     httpStatus: number;
     content: string;
@@ -126,7 +139,3 @@ export class successFactory implements MessageFactory{
         }
     }
 }
-    
-    
-    
-    

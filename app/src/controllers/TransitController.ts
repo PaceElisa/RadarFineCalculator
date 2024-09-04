@@ -6,9 +6,14 @@ import Limit from "../models/Limit";
 import { recognizeTextFromImage } from "../services/ocrService";
 import { upload } from "../middleware/uploadMIddleware";
 import CRUDController from "./CRUDController";
-import { MessageFactory, HttpStatus } from '../factory/Messages';
 
-const MessageFact: MessageFactory = new MessageFactory();
+//Import factory
+import { successFactory } from "../factory/SuccessMessage";
+import { errorFactory } from "../factory/FailMessage";
+import { SuccesMessage, ErrorMessage } from "../factory/Messages";
+
+const errorMessageFactory: errorFactory = new errorFactory();
+const successMessageFactory: successFactory = new successFactory();
 
 //Define class TransitController class
 class TransitController {
@@ -106,7 +111,6 @@ class TransitController {
     async getUnreadableTransits(req: Request, res: Response): Promise<Response> {
         var result: any;
         const { id } = req.query;
-        const gatewayId: number = Number(id);
         try {
             // Se l'ID non è presente, procedi senza filtrare per gateway specifico
             let unreadableTransits;

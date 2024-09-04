@@ -6,9 +6,13 @@ import Gateway from '../models/Gateway';
 
 dotenv.config();
 
-import { MessageFactory, HttpStatus } from '../factory/Messages';
+//Import factory
+import { successFactory } from "../factory/SuccessMessage";
+import { errorFactory } from "../factory/FailMessage";
+import { HttpStatus, SuccesMessage, ErrorMessage, MessageFactory } from "../factory/Messages";
 
-const MessageFact: MessageFactory = new MessageFactory();
+const errorMessageFactory: errorFactory = new errorFactory();
+const successMessageFactory: successFactory = new successFactory();
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -18,7 +22,7 @@ class authMiddleware {
         const token = req.header('Authorization')?.split(' ')[1];
 
         if (token == null) {
-            return next(MessageFact.createMessage(HttpStatus.UNAUTHORIZED, 'Token mancante')); // return usato per correggere errore con variabile token
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidToken, 'JWT not found'));
         }
 
         try {
@@ -30,11 +34,11 @@ class authMiddleware {
             } else if (verified && (verified as any).highway_name && (verified as any).kilometer) {
                 req.body.gateway = verified;
             } else {
-                next(MessageFact.createMessage(HttpStatus.FORBIDDEN, 'Accesso vietato'));
+                next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'Not authorized'));
             }
             next();
         } catch (err) {
-            next(MessageFact.createMessage(HttpStatus.FORBIDDEN, 'Token non valido'));
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Invalid JWT'));
         }
     }
 
@@ -43,28 +47,15 @@ class authMiddleware {
         const user = req.body.user;
 
         try {
-            // Verifica che l'username sia presente nel corpo della richiesta
-            if (!user) {
-                return next(); //errore con factory
-            }
-
-            // Trova l'utente nel database
-            const userData = await User.findUserByUsername(user.username);
-
-            // Verifica se l'utente esiste
-            if (!userData) {
-                return next(); //errore con factory
-            }
-
             // Verifica il ruolo dell'utente
-            if (userData.role === 'admin') {
+            if (user.role === 'admin') {
                 next(); // L'utente ha il ruolo richiesto, passa al middleware successivo
             } else {
-                return next(); //errore con factory
+                next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
             }
         } catch (err) {
             // Gestisci gli errori generali
-            return next(); //errore con factory
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged user'));
         }
     }
 
@@ -73,28 +64,15 @@ class authMiddleware {
         const user = req.body.user;
 
         try {
-            // Verifica che user esista nel body
-            if (!user) {
-                return next(); //errore con factory
-            }
-
-            // Trova l'utente nel database
-            const userData = await User.findUserByUsername(user.username);
-
-            // Verifica se l'utente esiste
-            if (!userData) {
-                return next(); //errore con factory
-            }
-
             // Verifica il ruolo dell'utente
-            if (userData.role === 'admin' || userData.role === 'driver') {
+            if (user.role === 'admin' || user.role === 'driver') {
                 next(); // L'utente ha il ruolo richiesto, passa al middleware successivo
             } else {
-                return next(); //errore con factory
+                next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
             }
         } catch (err) {
             // Gestisci gli errori generali
-            return next(); //errore con factory
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged user'));
         }
     }
 
@@ -106,37 +84,21 @@ class authMiddleware {
         try {
             // Se l'utente è presente nel corpo della richiesta, verifica se è un admin
             if (user) {
-                const userData = await User.findUserByUsername(user.username);
-
-                // Verifica se l'utente esiste
-                if (!userData) {
-                    return next(); //errore con factory
-                }
-
                 // Verifica se l'utente ha il ruolo di 'admin'
-                if (userData.role === 'admin') {
+                if (user.role === 'admin') {
                     next(); // Passa al middleware successivo se l'utente è un admin
                 }
             }
-
             // Se il gateway è presente nel corpo della richiesta, verifica se esiste
             if (gateway) {
-                const gatewayData = await Gateway.findByPk(gateway.id);
-
-                // Verifica se il gateway esiste
-                if (gatewayData) {
-                    next(); // Passa al middleware successivo se il gateway esiste
-                } else {
-                    return next(); //errore con factory
-                }
+                next();
             }
-
             // Se nessuna delle condizioni è soddisfatta, restituisci un errore
-            return next(); //errore con factory
+            return next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User/Gateway not authorized'));
 
         } catch (err) {
             // Gestisci gli errori generali
-            return next(); //errore con factory
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged user/gateway'));
         }
     }
 
@@ -146,24 +108,25 @@ class authMiddleware {
 
         // Verifica se sono stati forniti username e password
         if (!username || !password) {
-            return next(); //errore con factory
+            return next(errorMessageFactory.createMessage(ErrorMessage.userLoginError, 'Invalid User Credentials'));
         }
 
         try {
             const user = await User.findUserByUsername(username);
 
             if (!user) {
-                return next(); //errore con factory
+                return next(errorMessageFactory.createMessage(ErrorMessage.userLoginError, 'User not found'));
             }
 
-            if (user.password !== password) {
-                return next(); //errore con factory
+            // Verifica la password
+            if (password !== user.password) {
+                return next(errorMessageFactory.createMessage(ErrorMessage.userLoginError, 'Invalid User Credentials'));
             }
 
             req.body.user = user; // Aggiungi l'utente alla richiesta per il prossimo middleware
             next();
         } catch (err) {
-            return next(); //errore con factory
+            return next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while logging in'));
         }
     }
 
@@ -173,20 +136,20 @@ class authMiddleware {
 
         // Verifica se sono stati forniti highway_name e kilometer
         if (!highway_name || !kilometer) {
-            return next(); //errore con factory
+            return next(errorMessageFactory.createMessage(ErrorMessage.gatewayLoginError, 'Invalid Gateway Credentials'));
         }
 
         try {
             const gateway = await Gateway.findGatewayByHighwayAndKilometer(highway_name, kilometer);
 
             if (!gateway) {
-                return next(); //errore con factory
+                return next(errorMessageFactory.createMessage(ErrorMessage.gatewayLoginError, 'Gateway not found'));
             }
-            
+
             req.body.gateway = gateway; // Aggiungi gateway alla richiesta per il prossimo middleware
             next();
         } catch (err) {
-            return next(); //errore con factory
+            return next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while logging in'));
         }
     }
 }
