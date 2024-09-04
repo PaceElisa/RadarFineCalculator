@@ -68,10 +68,10 @@ class LoginController {
     // metodo per login Gateway 
     async loginGateway(req: Request, res: Response): Promise<Response> {
         var result: any;
-        const { highway_name, kilometer }: LoginGatewayRequestBody = req.body; //levare password perche serve solo username (qui è usato per il controllo)
+        const { highway_name, kilometer }: LoginGatewayRequestBody = req.body;
 
         try {
-            // Trova l'utente per username e ne ottiene gli attributi
+            // Trova l'utente gateway e ne ottiene gli attributi
             const gateway = await Gateway.findOne({ where: { highway_name: highway_name, kilometer: kilometer } });
 
             if (!gateway) {

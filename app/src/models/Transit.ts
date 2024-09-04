@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+import { DataTypes, Model, Optional, Sequelize, Op } from 'sequelize';
 import { Database } from '../config/database';
 import Vehicle from './Vehicle';
 import Segment from './Segment';
@@ -11,9 +11,8 @@ interface TransitAttributes {
     enter_at: Date;
     exit_at: Date;
     plate: string;
-    id_gateway1: number;
-    id_gateway2: number;
-    weather_conditions: string;
+    id_segment: number;
+    weather_conditions: 'good' | 'bad' | 'fog';
     img_route: string;
     img_readable: boolean;
     deleted_at?: Date;
@@ -28,9 +27,8 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     public enter_at!: Date;
     public exit_at!: Date;
     public plate!: string;
-    public id_gateway1!: number;
-    public id_gateway2!: number;
-    public weather_conditions!: string;
+    public id_segment! : number;
+    public weather_conditions!: 'good' | 'bad' | 'fog';
     public img_route!: string;
     public img_readable!: boolean;
     public deleted_at?: Date;
@@ -55,20 +53,45 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             // Trova il segmento corrispondente
             const segment = await Segment.findOne({
                 where: {
-                    id_gateway1: this.id_gateway1,
-                    id_gateway2: this.id_gateway2
+                    id: this.id_segment,
                 }
             });
 
             if (segment) {
                 return segment.distance; // Restituisci la distanza del segmento
             } else {
-                console.log(`Segment not found for id_gateway1: ${this.id_gateway1} and id_gateway2: ${this.id_gateway2}`);
+                console.log(`Segment not found for id_segment: ${this.id_segment}`);
                 return null;
             }
         } catch (error) {
             console.error('Error fetching segment distance:', error);
             throw new Error('Error fetching segment distance');
+        }
+    }
+
+    static async findUnreadableTransitsByGateway(gatewayId: number): Promise<Transit[] | null> {
+        try {
+            const unreadableTransits = await Transit.findAll({
+                where: {
+                    img_readable: false,
+                },
+                include: [
+                    {
+                        model: Segment,
+                        attributes: ['id'],
+                        where: {
+                            [Op.or]: [
+                                { id_gateway1: gatewayId },
+                                { id_gateway2: gatewayId }
+                            ]
+                        }
+                    }
+                ]
+            });
+            return unreadableTransits;
+        } catch (error) {
+            console.error('Error fetching unreadable transits by gateway:', error);
+            throw new Error('Error fetching unreadable transits by gateway');
         }
     }
 }
@@ -97,24 +120,16 @@ Transit.init({
             key: 'plate',
         }
     },
-    id_gateway1: {
+    id_segment: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Segment,
-            key: 'id_gateway1',
-        }
-    },
-    id_gateway2: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Segment,
-            key: 'id_gateway2',
+            key: 'id',
         }
     },
     weather_conditions: {
-        type: DataTypes.STRING(32),
+        type: DataTypes.ENUM('good', 'bad', 'fog'),
         allowNull: false,
     },
     img_route: {
@@ -143,7 +158,6 @@ Transit.init({
 
 // Definizione delle associazioni
 Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway1', targetKey: 'id_gateway1', onDelete: 'CASCADE' });
-Transit.belongsTo(Segment, { foreignKey: 'id_gateway2', targetKey: 'id_gateway2', onDelete: 'CASCADE' });
+Transit.belongsTo(Segment, { foreignKey: 'id_segment', onDelete: 'CASCADE' });
 
 export default Transit;

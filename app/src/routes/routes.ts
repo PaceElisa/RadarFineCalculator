@@ -8,11 +8,14 @@ import Segment from '../models/Segment';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
 import Limit from '../models/Limit';
+import Payment from "../models/Payment";
 
 // Controllers
 import CRUDController from '../controllers/CRUDController';
 import loginController from '../controllers/loginController';
 import TransitController from "../controllers/TransitController";
+import ViolationController from "../controllers/ViolationController";
+import PaymentController from "../controllers/PaymentController";
 
 // Middlewares
 import authMiddleware from '../middleware/authMiddleware';
@@ -26,16 +29,17 @@ const router = Router();
 router.get("/", (req: any, res: any) => res.send("TEST"));
 
 // Route per i login
-router.post('/login', loginController.login);
-router.post('/loginGateway', loginController.loginGateway);
+router.post('/login', authMiddleware.validateUserCredentials, loginController.login);
+router.post('/loginGateway', authMiddleware.validateGateway, loginController.loginGateway);
 
 // Esempio di una route protetta
 router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
     res.status(200).json({ message: 'This is a protected route'});
 });
 
+// api con export const
 // CRUD
-// User (utente operatore???)
+// User (utente operatore)
 router.post("/api/users", async (req: any, res: any) => CRUDController.createRecord(User, req, res));
 router.get("/api/users/:id", async (req: any, res: any) => CRUDController.readOneRecord(User, req, res));
 router.delete("/api/users/:id", async (req: any, res: any) => CRUDController.deleteRecord(User, req, res));
@@ -55,9 +59,9 @@ router.put("/api/gateways/:id", validateData.validateRequestId, generalCheck.che
 
 // Segment (utente operatore)
 router.post("/api/segments", validateData.validateSegmentDataCreation, async (req: any, res: any) => CRUDController.createRecord(Segment, req, res));
-router.get("/api/segments/:id_gateway1/:id_gateway2",validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
-router.delete("/api/segments/:id_gateway1/:id_gateway2", validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
-router.put("/api/segments/:id_gateway1/:id_gateway2", validateData.validateRequestId, generalCheck.checkIDExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+router.get("/api/segments/:id",validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
+router.delete("/api/segments/:id", validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
+router.put("/api/segments/:id", validateData.validateRequestId, generalCheck.checkIDExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
 
 // Transit (utente operatore o varco a seconda della funzione)
 router.post("/api/transits", upload.single('plate_image'),generalCheck.checkImage, validateData.validatePlate,validateData.validateTransitDataCreation, async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
@@ -66,6 +70,7 @@ router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.
 router.put("/api/transits/:plate", async (req: any, res: any) => {
     CRUDController.updateLastTransit(req, res)
     if (await TransitController.checkViolation(req,res)){
+        //CANCELLARE L'IF
         //Controller CRUD per aggiunta Violation
         console.log("TEST VIOLATION!"); //valutare se mettere tutto dentro checkViolation (aggiunta CRUD violazione; in Violation.ts mettere una funzione che calcola automaticamente la fine da pagare in base alla velocità e al delta)
     }
@@ -78,10 +83,20 @@ router.get("/api/violations/:id", async (req: any, res: any) => CRUDController.r
 router.delete("/api/violations/:id", async (req: any, res: any) => CRUDController.deleteRecord(Violation, req, res));
 router.put("/api/violations/:id", async (req: any, res: any) => CRUDController.updateRecord(Violation, req, res));
 
+router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res)); //TEST
+router.get("/api/transitsfilter", async (req: any, res: any) => TransitController.getUnreadableTransits(req, res)); //TEST
+
 // Limit (solo TEST, NON CRUD)
 router.post("/api/limits", async (req: any, res: any) => CRUDController.createRecord(Limit, req, res));
 router.get("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.readOneRecord(Limit, req, res));
 router.delete("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.deleteRecord(Limit, req, res));
 router.put("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.updateRecord(Limit, req, res));
+
+// payments TEST
+router.post("/api/payments", async (req: any, res: any) => CRUDController.createRecord(Payment, req, res));
+router.get("/api/payments/:id", async (req: any, res: any) => CRUDController.readOneRecord(Payment, req, res));
+
+// bollettino TEST
+router.get("/api/receipt/:id_violation", async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

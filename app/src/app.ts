@@ -1,4 +1,5 @@
 import express from "express";
+import path from 'path';
 import { Database } from "./config/database";
 import { Sequelize } from "sequelize";
 import dotenv from 'dotenv';
@@ -27,6 +28,9 @@ connectDB();
 // Middleware per analizzare JSON e URL-encoded request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Configurazione per servire file statici dalla cartella 'images'
+app.use('/images', express.static(path.join(__dirname, '../images')));
 
 // Uso rotte definite in routes
 app.use(router);
