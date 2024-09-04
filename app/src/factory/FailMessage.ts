@@ -201,6 +201,19 @@ class generalError extends IMessage {
     }
 }
 
+class missingParameters extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.content = "Bad Request - Missing some parameters.";
+        this.description = description;
+    }
+}
+
 export class errorFactory implements MessageFactory {
     createMessage(typeMessage: ErrorMessage, description?: string): IMessage {
         switch (typeMessage) {
@@ -249,6 +262,9 @@ export class errorFactory implements MessageFactory {
 
             case ErrorMessage.generalError:
                 return new generalError(description);
+
+            case ErrorMessage.missingParameters:
+                return new missingParameters(description);
 
             default:
                 throw new Error("HTTP status non supportato.");

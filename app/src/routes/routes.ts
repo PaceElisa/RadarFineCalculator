@@ -23,6 +23,12 @@ import validateData from "../middleware/validateData";
 import generalCheck from "../middleware/check";
 import { upload } from "../middleware/uploadMIddleware";
 
+//Import factory
+import { errorFactory } from "../factory/FailMessage";
+import { ErrorMessage } from "../factory/Messages";
+
+const errorMessageFactory: errorFactory = new errorFactory();
+
 const router = Router();
 
 // index prova
@@ -68,11 +74,22 @@ router.post("/api/transits", upload.single('plate_image'),generalCheck.checkImag
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 router.put("/api/transits/:plate", async (req: any, res: any) => {
-    CRUDController.updateLastTransit(req, res)
-    if (await TransitController.checkViolation(req,res)){
-        //CANCELLARE L'IF
-        //Controller CRUD per aggiunta Violation
-        console.log("TEST VIOLATION!"); //valutare se mettere tutto dentro checkViolation (aggiunta CRUD violazione; in Violation.ts mettere una funzione che calcola automaticamente la fine da pagare in base alla velocità e al delta)
+    // unisce i risultati delle due funzioni di update e check violation in un unico json
+    try {
+        const updateResult = await CRUDController.updateLastTransit(req, res);
+        if (updateResult.error) return res.json(updateResult);
+
+        const checkResult = await TransitController.checkViolation(req, res);
+        if (checkResult.error) return res.json(checkResult);
+
+        return res.json({
+            update: updateResult,
+            checkViolation: checkResult
+        });
+    } catch (error) {
+        return res.json({
+            error: errorMessageFactory.createMessage(ErrorMessage.generalError, `Unexpected error occurred`)
+        });
     }
 });
 //router.post("/api/transits/upload")

@@ -41,7 +41,8 @@ export enum ErrorMessage{
     invalidFormat,
     invalidPlateFormat,
     noManualRecordIDChange,
-    generalError
+    generalError,
+    missingParameters
     
 
 }

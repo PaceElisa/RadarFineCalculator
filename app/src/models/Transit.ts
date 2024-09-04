@@ -37,7 +37,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     static async getLastInsertedRecordByPlate(plate: string): Promise<Transit | null> {
         try {
             const lastRecord = await Transit.findOne({
-                where: { plate },
+                where: { plate: plate, exit_at: null },
                 order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
             });
             return lastRecord;

@@ -134,19 +134,17 @@ class CRUDController {
     }
 
     // aggiorna l'ultimo Transit inserito per un veicolo data la sua targa (quello al quale manca exit_at)
-    async updateLastTransit(req: Request, res: Response): Promise<Response> {
+    async updateLastTransit(req: Request, res: Response): Promise<any> {
         var result: any;
+
         try {
             // Trova l'ultimo transito per la targa specificata e che non ha ancora `exit_at` impostato
-            const lastRecord = await Transit.findOne({
-                where: { plate: req.params.plate, exit_at: null},
-                order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
-            });
+            const lastRecord = await Transit.getLastInsertedRecordByPlate(req.params.plate)
 
             // Verifica se è stato trovato un record
             if (!lastRecord) {
-                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit for vehicle ${req.params.plate} not found`);
-                return res.status(404).json({ error: message });
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit with null exit_at parameter for vehicle ${req.params.plate} not found`);
+                return { error: message };
             }
 
             // Aggiorna il record trovato con i dati forniti nel corpo della richiesta
@@ -154,14 +152,14 @@ class CRUDController {
 
             if (updatedRecord) {
                 const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `Transit for vehicle ${req.params.plate} updated successfully`);
-                result = res.status(200).json({ success: message, data: updatedRecord });
+                result = { success: message, data: updatedRecord};
             } else {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Record not found after updating`);
-                result = res.status(500).json({ error: message });
+                result = { error: message };
             }
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while updating Transit for vehicle ${req.params.plate}`);
-            result = res.json({ error: message });
+            result = { error: message };
         }
         return result;
     }
