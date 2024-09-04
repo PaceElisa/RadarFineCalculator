@@ -121,7 +121,7 @@ INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, 
 VALUES 
     ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 'good', 'plate1.png', TRUE, NULL),
     ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'ABC1234', 1, 'good', 'plate1.png', TRUE, NULL),
-    ('2024-08-29 08:20:00', '2024-08-29 09:20:00', 'ABC1234', 1, 'good', 'plate1.png', FALSE, NULL);
+    ('2024-08-29 08:20:00', NULL, 'ABC1234', 1, 'good', 'plate1.png', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
 INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)

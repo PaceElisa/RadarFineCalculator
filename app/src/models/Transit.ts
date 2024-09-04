@@ -9,7 +9,7 @@ const sequelize: Sequelize = Database.getSequelize();
 interface TransitAttributes {
     id: number;
     enter_at: Date;
-    exit_at: Date;
+    exit_at: Date | null;
     plate: string;
     id_segment: number;
     weather_conditions: 'good' | 'bad' | 'fog';
@@ -25,7 +25,7 @@ interface TransitCreationAttributes extends Optional<TransitAttributes, 'id'> {}
 class Transit extends Model<TransitAttributes, TransitCreationAttributes> implements TransitAttributes {
     public id!: number;
     public enter_at!: Date;
-    public exit_at!: Date;
+    public exit_at!: Date | null;
     public plate!: string;
     public id_segment! : number;
     public weather_conditions!: 'good' | 'bad' | 'fog';
