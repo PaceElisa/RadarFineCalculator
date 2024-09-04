@@ -149,6 +149,19 @@ class invalidPlateFormat extends IMessage{
     }
 }
 
+class noManualRecordIDChange extends IMessage{
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.content = "Bad Request - The ID of the record is autoincremental. It can not be input manually";
+        this.description = description;
+    }
+}
+
 class generalError extends IMessage{
     httpStatus: number;
     content: string;
@@ -198,6 +211,9 @@ export class errorFactory implements MessageFactory{
                     
             case ErrorMessage.invalidPlateFormat:
                 return new invalidPlateFormat(description);
+
+            case ErrorMessage.noManualRecordIDChange:
+                return new noManualRecordIDChange(description);
 
             case ErrorMessage.generalError:
                 return new generalError(description);

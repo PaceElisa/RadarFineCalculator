@@ -37,6 +37,7 @@ export enum ErrorMessage{
     recordAlreadyExist,
     invalidFormat,
     invalidPlateFormat,
+    noManualRecordIDChange,
     generalError
     
 
