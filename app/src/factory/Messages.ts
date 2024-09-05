@@ -15,8 +15,7 @@ export enum HttpStatus {
 
 //Enum for success messages
 export enum SuccesMessage{
-    adminLoginSuccess,
-    driverLoginSuccess,
+    userLoginSuccess,
     gatewayLoginSuccess,
     createRecordSuccess,
     updateRecordSuccess,
