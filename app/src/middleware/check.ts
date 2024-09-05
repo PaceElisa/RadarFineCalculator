@@ -29,9 +29,9 @@ const successMessageFactory: successFactory = new successFactory();
 
 class generalCheck{
 
-    /**
+    
     //Method that check if the passed ID as params exists as a record
-    checkIDExist<T extends Model>(model:ModelStatic<T>){
+    checkIDParamsExist<T extends Model>(model:ModelStatic<T>){
         return async (req:Request, res: Response, next: NextFunction) => {
             try{
                 //This type of trasformation consent to avoid error when casting type
@@ -51,21 +51,21 @@ class generalCheck{
             }
        
         };
-    } */
+    } 
 
     /*Method that:
     if id_body is not specified: check if the ID passed as params exists as a record, otherwise check
     if the id_body (foreign key) corresponds to an existing record after validating the attributes of the body of the request.*/
-    checkIDExist<T extends Model>(model:ModelStatic<T>, id_body?: (number | string)){
+      checkIDBodyExist<T extends Model>(model:ModelStatic<T>, id_body: (number | string)){
         return async (req:Request, res: Response, next: NextFunction) => {
             try{
                 ////This type of trasformation (as unkown as number | string) consent to avoid error when casting type
-                const idToCheck = id_body !== undefined ? id_body : (req.params.id as unknown as number | string);               
+                //const idToCheck = id_body !== undefined ? id_body : (req.params.id as unknown as number | string);               
 
-                const record = await model.findByPk(idToCheck);
+                const record = await model.findByPk(id_body);
 
                 if(!record){
-                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The ${model.name} record for the specified id  provided: ${idToCheck} was not found or does not exist. `))
+                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The ${model.name} record for the specified id  provided: ${id_body} was not found or does not exist. `))
                 }
 
                 //If the record exist, go to the next middleware

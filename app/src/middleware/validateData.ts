@@ -17,6 +17,7 @@ import { HttpStatus, SuccesMessage, ErrorMessage, MessageFactory } from "../fact
 
 //Import CustomRequest
 import { ICustomRequest } from "./check";
+import generalCheck from "./check"
 
 //initialize error and success message factory
 const errorMessageFactory: errorFactory = new errorFactory();
@@ -28,6 +29,9 @@ enum Weather{
     Bad = 'bad',
     Fog = 'fog'
 }
+
+//Initialize a generalCheck object for checking if a record, with specified ID in the body of the request, exist
+
 
 //create class validateData
 class validateData{
@@ -69,7 +73,10 @@ class validateData{
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of${Object.values(Weather).join(',')}`));
         }
 
-        try{
+        //Invoce a generalCheck method that checks if a record of segment, with the id passed as argument, exist
+        generalCheck.checkIDBodyExist(Segment,id_segment);
+
+        /**try{
             const segment = await Segment.findByPk(id_segment);
 
             //Check if id_segment correspond to an existing segment
@@ -77,12 +84,13 @@ class validateData{
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The record of the segment with this id: ${id_segment} was not found or does not exist.`))
             }
 
-            next();
+            
 
         }catch(error){
             return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}.`));
 
-        }         
+        } */
+        next();        
         
     }
 
@@ -91,18 +99,16 @@ class validateData{
         const {id,highway_name, kilometer} =req.body;
 
         //Check if the record Id was input manually
-        if( id){
+        if(id){
             return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange))
         }
 
-        if(!isStringValid(highway_name)){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid highway. Highway must be a string."));
-
+        //Verify if highway_name is a string of maximum 32 characters
+        if((!isStringValid(highway_name)) || highway_name.length > 32){
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid highway. Highway must be a string of maximum 32 characters."));
         } 
 
-        if(highway_name.length > 32){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `The highway name specified is too long. Maximum 32 letters. `))
-        }
+        //Verify if kilometer is a number
         if(typeof kilometer !== 'number'){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid kilometer. Kilometer must be a number"));
         }
@@ -114,6 +120,7 @@ class validateData{
                 kilometer: kilometer
                 }
             });
+            //Check if a record, with the same attributes, exists
             if(highway)
             return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist,  `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
 
@@ -130,19 +137,21 @@ class validateData{
     async validateSegmentDataCreation(req:Request, res: Response, next:NextFunction){
         const {id_segment, id_gateway1, id_gateway2, distance} = req.body;
 
+        //Check if the record Id was input manually
         if( id_segment){
             return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange))
         }
-        
+        //Check if Gateway IDs are a number
         if((typeof id_gateway1 !== 'number') || (typeof id_gateway2 !== 'number')){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid gateway ID value. Gateway ID must be a number."));
         }
 
-        //check if the two ID gateway passed are the same
+        //Check if the two IDs gateway passed are equal
         if(id_gateway1 === id_gateway2){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat,"A segment can not have the same ID for gateway 1 and 2. Specificy two different ID."));
         }
 
+        //Check ,if provied, that distance is a number 
         if(distance && (typeof distance !== 'number')){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid distance value. Distance must be a number."));
         }
@@ -161,6 +170,9 @@ class validateData{
             const gateway2 = await Gateway.findByPk(id_gateway2);
 
             //Check if id_gateway provieded correspond to an existing gateway
+            generalCheck.checkIDBodyExist(Gateway, id_gateway1);
+            generalCheck.checkIDBodyExist(Gateway, id_gateway2);
+            //Check if id_gateway provieded correspond to an existing gateway
             if(!gateway1){
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway1} was not found or does not exist.` ))
             }
@@ -172,11 +184,7 @@ class validateData{
             if(segment){
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist,`Record with this IDs already exist.`));
             }
-            //Calculate the effiteve distance between the two gateways
-            const calculateDistance = Math.abs(gateway1.kilometer - gateway2.kilometer)
-            if(calculateDistance !== distance){
-                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat," Distance specified is not correct. The effective distance will be automatically calculate."))
-            }
+            
             next();
 
         }catch(error){

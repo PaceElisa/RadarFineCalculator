@@ -53,26 +53,26 @@ router.put("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAd
 
 // Vehicle OK
 router.post("/api/vehicles", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
-router.get("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
-router.delete("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
-router.put("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
+router.get("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
+router.delete("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
+router.put("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
 
 // Gateway OK
 router.post("/api/gateways", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));
-router.get("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.readOneRecord(Gateway, req, res));
-router.delete("/api/gateways/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.deleteRecord(Gateway, req, res));
-router.put("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway),validateData.validateGatewayDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Gateway, req, res));
+router.get("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Gateway), async (req: any, res: any) => CRUDController.readOneRecord(Gateway, req, res));
+router.delete("/api/gateways/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Gateway), async (req: any, res: any) => CRUDController.deleteRecord(Gateway, req, res));
+router.put("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Gateway),validateData.validateGatewayDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Gateway, req, res));
 
 // Segment OK
 router.post("/api/segments", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateSegmentDataCreation, async (req: any, res: any) => CRUDController.createRecord(Segment, req, res));
-router.get("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
-router.delete("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
-router.put("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+router.get("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
+router.delete("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
+router.put("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
 
 
 
 // Transit (utente operatore o varco a seconda della funzione) ritornarci
-router.post("/api/transits", upload.single('plate_image'),generalCheck.checkImage, validateData.validatePlate,validateData.validateTransitDataCreation, async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
+router.post("/api/transitsimage", upload.single('plate_image'),generalCheck.checkImage, validateData.validatePlate,validateData.validateTransitDataCreation, async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
 // router.post("/api/transitss", async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
