@@ -10,7 +10,19 @@ export function routeNotFound(req: any, res: any, next: any) {
 
 // Error Handler
 export function ErrorHandler(err: any, req: any, res: any, next: any) {
-    var response = (err).getMessage();
+    var message = (err).getMessage();
+    // Prepara la risposta completa
     
-    res.setHeader('Content-Type', response.type).status(response.status).send(JSON.stringify({"response" : response.message}))
+    const responseBody = {
+        status: message.status,
+        message: message.message,
+        description: message.description, // Aggiungi description se presente
+        type: message.type
+    };
+
+    // Invia la risposta
+    res.setHeader('Content-Type', message.type)
+        .status(message.status)
+        .send(JSON.stringify(responseBody));
+
 }
