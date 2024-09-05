@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS transits (
   plate VARCHAR(10) NOT NULL,
   id_segment INTEGER NOT NULL,
   weather_conditions weather_conditions_enum NOT NULL,
-  img_route VARCHAR(255) NOT NULL,
+  img_route VARCHAR(255) NULL,
   img_readable BOOLEAN NOT NULL DEFAULT FALSE,
   deleted_at TIMESTAMP NULL,
   FOREIGN KEY (plate) REFERENCES vehicles(plate) ON DELETE CASCADE,
@@ -120,7 +120,7 @@ VALUES
 INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
     ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 'good', 'plate1.png', TRUE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'ABC1234', 1, 'good', 'plate1.png', TRUE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'ABC1234', 1, 'good', NULL, TRUE, NULL),
     ('2024-08-29 08:20:00', NULL, 'ABC1234', 1, 'good', 'plate1.png', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"

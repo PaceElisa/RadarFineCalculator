@@ -13,7 +13,7 @@ interface TransitAttributes {
     plate: string;
     id_segment: number;
     weather_conditions: 'good' | 'bad' | 'fog';
-    img_route: string;
+    img_route: string | null;
     img_readable: boolean;
     deleted_at?: Date;
 }
@@ -29,7 +29,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     public plate!: string;
     public id_segment! : number;
     public weather_conditions!: 'good' | 'bad' | 'fog';
-    public img_route!: string;
+    public img_route!: string | null;
     public img_readable!: boolean;
     public deleted_at?: Date;
 
@@ -134,7 +134,7 @@ Transit.init({
     },
     img_route: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
     },
     img_readable: {
         type: DataTypes.BOOLEAN,
