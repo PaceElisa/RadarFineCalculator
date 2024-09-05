@@ -68,6 +68,7 @@ class authMiddleware {
             const userData = await User.findUserByUsername(user.username);
             // Verifica il ruolo dell'utente
             if (userData && (userData.role === 'admin' || userData.role === 'driver')) {
+                req.body.user.role = userData.role;
                 next(); // L'utente ha il ruolo richiesto, passa al middleware successivo
             } else {
                 next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));

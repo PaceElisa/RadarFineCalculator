@@ -97,11 +97,23 @@ router.put("/api/transits/:plate", async (req: any, res: any) => {
 });
 //router.post("/api/transits/upload")
 
-// Filter Unreadable Transits: optional query for filtering by id_gateway
+// Filter Unreadable Transits: optional query for filtering by id_gateway (es query ?id=)
 router.get("/api/unreadableTransits", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => TransitController.getUnreadableTransits(req, res));
 
-// Filter Violations for plate and date; driver can only see his plates
-router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res));
+// Filter Violations for plate and date; driver can only see his plates (es query ?plates=ZZ999ZZ&start_date=2024-01-01T00:00:00Z&end_date=2024-12-01T00:00:00Z)
+router.get("/api/violationsfilter", authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, async (req: any, res: any) => {
+    const user = req.body.user;
+
+    // Se l'utente è un admin, chiama il metodo generico di filtraggio
+    if (user.role === 'admin') {
+        return ViolationController.getFilteredViolations(req, res);
+    }
+
+    // Se l'utente è un driver, chiama il metodo specifico per driver
+    if (user.role === 'driver') {
+        return ViolationController.getDriverFilteredViolations(req, res);
+    }
+});
 
 // Route for downloading pdf receipt of violation with specified id
 router.get("/api/receipt/:id_violation", async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));

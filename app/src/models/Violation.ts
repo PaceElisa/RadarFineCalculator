@@ -46,7 +46,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     static async findViolationsByPlates(plates: string[], startDate: Date, endDate: Date): Promise<Violation[] | null> {
         try {
             const violations = await Violation.findAll({
-                attributes: ['average_speed', ['delta', 'delta_over_speed_limit']],
+                attributes: ['created_at', 'average_speed', ['delta', 'delta_over_speed_limit']],
                 where: {
                     created_at: {
                         [Op.between]: [startDate, endDate]  // Filter by date range
@@ -54,7 +54,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
                 include: [
                     {
                         model: Transit,
-                        attributes: [['id', 'transit_id'],'weather_conditions'],
+                        attributes: ['plate', ['id', 'transit_id'],'weather_conditions'],
                         where: {
                             plate: plates
                         },
