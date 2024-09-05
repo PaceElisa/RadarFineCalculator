@@ -27,7 +27,7 @@ class authMiddleware {
 
         try {
             const verified = jwt.verify(token, JWT_SECRET);
-
+            console.log(verified);
             // Controlla il login se per utente admin/automobilista o gateway
             if (verified && (verified as any).username) {
                 req.body.user = verified;
@@ -47,8 +47,9 @@ class authMiddleware {
         const user = req.body.user;
 
         try {
+            const userData = await User.findUserByUsername(user.username);
             // Verifica il ruolo dell'utente
-            if (user.role === 'admin') {
+            if (userData && userData.role === 'admin') {
                 next(); // L'utente ha il ruolo richiesto, passa al middleware successivo
             } else {
                 next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
@@ -64,8 +65,9 @@ class authMiddleware {
         const user = req.body.user;
 
         try {
+            const userData = await User.findUserByUsername(user.username);
             // Verifica il ruolo dell'utente
-            if (user.role === 'admin' || user.role === 'driver') {
+            if (userData && (userData.role === 'admin' || userData.role === 'driver')) {
                 next(); // L'utente ha il ruolo richiesto, passa al middleware successivo
             } else {
                 next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
@@ -84,14 +86,18 @@ class authMiddleware {
         try {
             // Se l'utente è presente nel corpo della richiesta, verifica se è un admin
             if (user) {
+                const userData = await User.findUserByUsername(user.username);
                 // Verifica se l'utente ha il ruolo di 'admin'
-                if (user.role === 'admin') {
+                if (userData && userData.role === 'admin') {
                     next(); // Passa al middleware successivo se l'utente è un admin
                 }
             }
             // Se il gateway è presente nel corpo della richiesta, verifica se esiste
             if (gateway) {
-                next();
+                const GatewayData = await Gateway.findGatewayByHighwayAndKilometer(gateway.highway_name, gateway.kilometer);
+                if (GatewayData) {
+                    next(); // Passa al middleware successivo se l'utente è gateway
+                }
             }
             // Se nessuna delle condizioni è soddisfatta, restituisci un errore
             return next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User/Gateway not authorized'));

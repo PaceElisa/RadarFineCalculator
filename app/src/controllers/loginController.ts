@@ -31,24 +31,17 @@ class LoginController {
     async login(req: Request, res: Response): Promise<Response> {
         var result: any;
         let message: any;
-        const { id, username, role }: LoginRequestBody = req.body;
+        const { username }: LoginRequestBody = req.body;
 
         try {
             const payload = {
-                id: id,
-                username: username,
-                role: role
+                username: username
             }
 
             // Crea un token JWT
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
             // Ritorna token
-            if (role === 'admin') {
-                message = successMessageFactory.createMessage(SuccesMessage.adminLoginSuccess, 'Login successfull');
-            }
-            else if (role === 'driver') {
-                message = successMessageFactory.createMessage(SuccesMessage.driverLoginSuccess, 'Login successfull');
-            }
+            message = successMessageFactory.createMessage(SuccesMessage.userLoginSuccess, 'Login successfull');
             result = res.json({ success: message, token: token });
         } catch (error) {
             // Gestisci l'errore con un messaggio generico per evitare di esporre dettagli sensibili

@@ -86,7 +86,9 @@ CREATE TABLE payments (
 -- Inserimento di un record nella tabella "users"
 INSERT INTO users (role, username, password, deleted_at)
 VALUES 
-    ('admin', 'john_doe', 'securepassword123', NULL);
+    ('admin', 'john_doe', 'securepassword123', NULL),
+    ('driver', 'driver1', 'securepassword156', NULL),
+    ('driver', 'driver2', 'securepassword145', NULL);
 
 -- Inserimento dei limiti di velocità per vari tipi di veicoli sulle autostrade italiane
 INSERT INTO limits (vehicle_type, good_weather_limits, bad_weather_limits)
@@ -103,25 +105,33 @@ VALUES
 -- Inserimento di un record nella tabella "vehicles"
 INSERT INTO vehicles (plate, vehicle_type, id_user, deleted_at)
 VALUES 
-    ('ABC1234', 'Auto', 1, NULL);
+    ('AB123AB', 'Auto', 2, NULL),
+    ('CC123CC', 'Autobus', 2, NULL),
+    ('AB345CS', 'Auto', 3, NULL);
 
 -- Inserimento di 2 record nella tabella "gateways"
 INSERT INTO gateways (highway_name, kilometer, deleted_at)
 VALUES 
     ('A1', 100, NULL),
-    ('A1', 200, NULL);
+    ('A1', 200, NULL),
+    ('A1', 300, NULL),
+    ('A1', 400, NULL),
+    ('A1', 450, NULL),
+    ('A1', 600, NULL);
 
 -- Inserimento di un record nella tabella "segments"
 INSERT INTO segments (id_gateway1, id_gateway2, distance, deleted_at)
 VALUES 
-    (1, 2, 50, NULL);
+    (1, 2, 100, NULL),
+    (3, 4, 100, NULL),
+    (5, 6, 150, NULL);
 
 -- Inserimento di un record nella tabella "transits"
 INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
-    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'ABC1234', 1, 'good', 'plate1.png', TRUE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'ABC1234', 1, 'good', NULL, TRUE, NULL),
-    ('2024-08-29 08:20:00', NULL, 'ABC1234', 1, 'good', 'plate1.png', FALSE, NULL);
+    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'AB123AB', 1, 'good', 'plate1.png', TRUE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'AB123AB', 1, 'good', NULL, TRUE, NULL),
+    ('2024-08-29 08:20:00', NULL, 'AB123AB', 1, 'good', 'plate1.png', FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
 INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)

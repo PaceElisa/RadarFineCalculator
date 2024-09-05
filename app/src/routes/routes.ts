@@ -34,43 +34,46 @@ const router = Router();
 // index prova
 router.get("/", (req: any, res: any) => res.send("TEST"));
 
-// Route per i login
+// Routes per i login
 router.post('/login', authMiddleware.validateUserCredentials, loginController.login);
 router.post('/loginGateway', authMiddleware.validateGateway, loginController.loginGateway);
 
-// Esempio di una route protetta
+// Esempio di una route protetta mettere dappertutto
 router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
     res.status(200).json({ message: 'This is a protected route'});
 });
 
 // api con export const
 // CRUD
-// User (utente operatore)
-router.post("/api/users", async (req: any, res: any) => CRUDController.createRecord(User, req, res));
-router.get("/api/users/:id", async (req: any, res: any) => CRUDController.readOneRecord(User, req, res));
-router.delete("/api/users/:id", async (req: any, res: any) => CRUDController.deleteRecord(User, req, res));
-router.put("/api/users/:id", async (req: any, res: any) => CRUDController.updateRecord(User, req, res));
+// User (utente operatore) mancano i validate
+router.post("/api/users", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.createRecord(User, req, res));
+router.get("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.readOneRecord(User, req, res));
+router.delete("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.deleteRecord(User, req, res));
+router.put("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.updateRecord(User, req, res));
 
-// Vehicle (utente operatore)
-router.post("/api/vehicles", validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
-router.get("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
-router.delete("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
-router.put("/api/vehicles/:plate",validateData.validatePlate, generalCheck.checkIDExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
+// Vehicle OK
+router.post("/api/vehicles", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
+router.get("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
+router.delete("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
+router.put("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
 
-// Gateway (utente operatore)
-router.post("/api/gateways", validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));
-router.get("/api/gateways/:id", validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.readOneRecord(Gateway, req, res));
-router.delete("/api/gateways/:id",validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.deleteRecord(Gateway, req, res));
-router.put("/api/gateways/:id", validateData.validateRequestId, generalCheck.checkIDExist(Gateway),validateData.validateGatewayDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Gateway, req, res));
+// Gateway OK
+router.post("/api/gateways", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));
+router.get("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.readOneRecord(Gateway, req, res));
+router.delete("/api/gateways/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway), async (req: any, res: any) => CRUDController.deleteRecord(Gateway, req, res));
+router.put("/api/gateways/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Gateway),validateData.validateGatewayDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Gateway, req, res));
 
-// Segment (utente operatore)
-router.post("/api/segments", validateData.validateSegmentDataCreation, async (req: any, res: any) => CRUDController.createRecord(Segment, req, res));
-router.get("/api/segments/:id",validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
-router.delete("/api/segments/:id", validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
-router.put("/api/segments/:id", validateData.validateRequestId, generalCheck.checkIDExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+// Segment OK
+router.post("/api/segments", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateSegmentDataCreation, async (req: any, res: any) => CRUDController.createRecord(Segment, req, res));
+router.get("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.readOneRecord(Segment, req, res));
+router.delete("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), async (req: any, res: any) => CRUDController.deleteRecord(Segment, req, res));
+router.put("/api/segments/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDExist(Segment), validateData.validateSegmentDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
 
-// Transit (utente operatore o varco a seconda della funzione)
+
+
+// Transit (utente operatore o varco a seconda della funzione) ritornarci
 router.post("/api/transits", upload.single('plate_image'),generalCheck.checkImage, validateData.validatePlate,validateData.validateTransitDataCreation, async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
+// router.post("/api/transitss", async (req: any, res: any) => CRUDController.createRecord(Transit, req, res));
 router.get("/api/transits/:id", async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
 router.delete("/api/transits/:id", async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 router.put("/api/transits/:plate", async (req: any, res: any) => {
@@ -94,26 +97,13 @@ router.put("/api/transits/:plate", async (req: any, res: any) => {
 });
 //router.post("/api/transits/upload")
 
-// Violation (operatore e utente ma in modo particolare)
-router.post("/api/violations", async (req: any, res: any) => CRUDController.createRecord(Violation, req, res));
-router.get("/api/violations/:id", async (req: any, res: any) => CRUDController.readOneRecord(Violation, req, res));
-router.delete("/api/violations/:id", async (req: any, res: any) => CRUDController.deleteRecord(Violation, req, res));
-router.put("/api/violations/:id", async (req: any, res: any) => CRUDController.updateRecord(Violation, req, res));
+// Filter Unreadable Transits: optional query for filtering by id_gateway
+router.get("/api/unreadableTransits", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => TransitController.getUnreadableTransits(req, res));
 
-router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res)); //TEST
-router.get("/api/transitsfilter", async (req: any, res: any) => TransitController.getUnreadableTransits(req, res)); //TEST
+// Filter Violations for plate and date; driver can only see his plates
+router.get("/api/violationsfilter", async (req: any, res: any) => ViolationController.getFilteredViolations(req, res));
 
-// Limit (solo TEST, NON CRUD)
-router.post("/api/limits", async (req: any, res: any) => CRUDController.createRecord(Limit, req, res));
-router.get("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.readOneRecord(Limit, req, res));
-router.delete("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.deleteRecord(Limit, req, res));
-router.put("/api/limits/:vehicle_type", async (req: any, res: any) => CRUDController.updateRecord(Limit, req, res));
-
-// payments TEST
-router.post("/api/payments", async (req: any, res: any) => CRUDController.createRecord(Payment, req, res));
-router.get("/api/payments/:id", async (req: any, res: any) => CRUDController.readOneRecord(Payment, req, res));
-
-// bollettino TEST
+// Route for downloading pdf receipt of violation with specified id
 router.get("/api/receipt/:id_violation", async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

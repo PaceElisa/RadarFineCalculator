@@ -4,6 +4,7 @@ import { Database } from "./config/database";
 import { Sequelize } from "sequelize";
 import dotenv from 'dotenv';
 import router from "./routes/routes";
+import * as errorMiddleware from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -34,6 +35,12 @@ app.use('/images', express.static(path.join(__dirname, '../images')));
 
 // Uso rotte definite in routes
 app.use(router);
+
+// Route not found error
+app.all('*', errorMiddleware.routeNotFound);
+
+// Middleware error handler
+app.use(errorMiddleware.ErrorHandler);
 
 // Avvia il server Express
 app.listen(PORT, () => {

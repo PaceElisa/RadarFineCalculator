@@ -214,6 +214,19 @@ class missingParameters extends IMessage {
     }
 }
 
+class missingRoute extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.NOT_FOUND;
+        this.content = "Not Found - Missing route.";
+        this.description = description;
+    }
+}
+
 export class errorFactory implements MessageFactory {
     createMessage(typeMessage: ErrorMessage, description?: string): IMessage {
         switch (typeMessage) {
@@ -265,6 +278,9 @@ export class errorFactory implements MessageFactory {
 
             case ErrorMessage.missingParameters:
                 return new missingParameters(description);
+
+            case ErrorMessage.missingRoute:
+                return new missingRoute(description);
 
             default:
                 throw new Error("HTTP status non supportato.");

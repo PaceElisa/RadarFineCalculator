@@ -42,8 +42,8 @@ export enum ErrorMessage{
     invalidPlateFormat,
     noManualRecordIDChange,
     generalError,
-    missingParameters
-    
+    missingParameters,
+    missingRoute 
 
 }
 
@@ -59,6 +59,16 @@ export enum ErrorMessage{
     constructor(type:string ="application/json"){
         this.type =type;
 
+    }
+
+    // getter for message
+    getMessage() {
+        return {
+            status: this.httpStatus,
+            message: this.content,
+            description: this.description,
+            type: this.type
+        };
     }
 }
 

@@ -6,7 +6,7 @@ import { IMessage, HttpStatus, SuccesMessage, MessageFactory } from "./Messages"
 
 /** Concrete Products - Classes */
 
-class adminLoginSuccess extends IMessage {
+class userLoginSuccess extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -14,20 +14,7 @@ class adminLoginSuccess extends IMessage {
     constructor(description?: string) {
         super()
         this.httpStatus = HttpStatus.OK;
-        this.content = "OK - Admin login succeeded";
-        this.description = description;
-    }
-}
-
-class driverLoginSuccess extends IMessage {
-    httpStatus: number;
-    content: string;
-    description?: string;
-
-    constructor(description?: string) {
-        super()
-        this.httpStatus = HttpStatus.OK;
-        this.content = "OK - Driver login succeeded";
+        this.content = "OK - User login succeeded";
         this.description = description;
     }
 }
@@ -113,11 +100,8 @@ class generalSuccess extends IMessage {
 export class successFactory implements MessageFactory {
     createMessage(typeMessage: SuccesMessage, description?: string): IMessage {
         switch (typeMessage) {
-            case SuccesMessage.adminLoginSuccess:
-                return new adminLoginSuccess(description);
-
-            case SuccesMessage.driverLoginSuccess:
-                return new driverLoginSuccess(description);
+            case SuccesMessage.userLoginSuccess:
+                return new userLoginSuccess(description);
 
             case SuccesMessage.gatewayLoginSuccess:
                 return new gatewayLoginSuccess(description);
