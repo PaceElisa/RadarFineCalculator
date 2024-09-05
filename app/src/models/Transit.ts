@@ -9,11 +9,11 @@ const sequelize: Sequelize = Database.getSequelize();
 interface TransitAttributes {
     id: number;
     enter_at: Date;
-    exit_at: Date;
+    exit_at: Date | null;
     plate: string;
     id_segment: number;
     weather_conditions: 'good' | 'bad' | 'fog';
-    img_route: string;
+    img_route: string | null;
     img_readable: boolean;
     deleted_at?: Date;
 }
@@ -25,11 +25,11 @@ interface TransitCreationAttributes extends Optional<TransitAttributes, 'id'> {}
 class Transit extends Model<TransitAttributes, TransitCreationAttributes> implements TransitAttributes {
     public id!: number;
     public enter_at!: Date;
-    public exit_at!: Date;
+    public exit_at!: Date | null;
     public plate!: string;
     public id_segment! : number;
     public weather_conditions!: 'good' | 'bad' | 'fog';
-    public img_route!: string;
+    public img_route!: string | null;
     public img_readable!: boolean;
     public deleted_at?: Date;
 
@@ -37,13 +37,13 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     static async getLastInsertedRecordByPlate(plate: string): Promise<Transit | null> {
         try {
             const lastRecord = await Transit.findOne({
-                where: { plate },
+                where: { plate: plate, exit_at: null },
                 order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
             });
             return lastRecord;
         } catch (error) {
             console.error('Error fetching the last inserted record by plate:', error);
-            throw new Error('Error fetching the last inserted record by plate');
+            return null;
         }
     }
 
@@ -65,7 +65,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             }
         } catch (error) {
             console.error('Error fetching segment distance:', error);
-            throw new Error('Error fetching segment distance');
+            return null;
         }
     }
 
@@ -91,7 +91,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             return unreadableTransits;
         } catch (error) {
             console.error('Error fetching unreadable transits by gateway:', error);
-            throw new Error('Error fetching unreadable transits by gateway');
+            return null;
         }
     }
 }
@@ -134,7 +134,7 @@ Transit.init({
     },
     img_route: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
     },
     img_readable: {
         type: DataTypes.BOOLEAN,

@@ -45,7 +45,7 @@ class Vehicle extends Model<VehicleAttributes, VehicleCreationAttributes> implem
             }
         } catch (error) {
             console.error(`Error fetching good weather limits for plate ${plate}:`, error);
-            throw new Error('Error fetching good weather limits'); // Handle errors properly
+            return null;
         }
     }
 
@@ -71,7 +71,7 @@ class Vehicle extends Model<VehicleAttributes, VehicleCreationAttributes> implem
             }
         } catch (error) {
             console.error(`Error fetching bad weather limits for plate ${plate}:`, error);
-            throw new Error('Error fetching bad weather limits'); // Handle errors properly
+            return null;
         }
     }
 }

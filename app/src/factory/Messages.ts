@@ -15,8 +15,8 @@ export enum HttpStatus {
 
 //Enum for success messages
 export enum SuccesMessage{
-    adminLoginSuccess,
-    driverLoginSuccess,
+    userLoginSuccess,
+    gatewayLoginSuccess,
     createRecordSuccess,
     updateRecordSuccess,
     readRecordSuccess,
@@ -28,6 +28,7 @@ export enum SuccesMessage{
 export enum ErrorMessage{
     userLoginError,
     driverLoginError,
+    gatewayLoginError,
     createRecordError,
     updateRecordError,
     readRecordError,
@@ -35,11 +36,13 @@ export enum ErrorMessage{
     notAuthorized,
     recordNotFound,
     recordAlreadyExist,
+    invalidToken,
     invalidFormat,
     invalidPlateFormat,
     noManualRecordIDChange,
-    generalError
-    
+    generalError,
+    missingParameters,
+    missingRoute 
 
 }
 
@@ -55,6 +58,16 @@ export enum ErrorMessage{
     constructor(type:string ="application/json"){
         this.type =type;
 
+    }
+
+    // getter for message
+    getMessage() {
+        return {
+            status: this.httpStatus,
+            message: this.content,
+            description: this.description,
+            type: this.type
+        };
     }
 }
 

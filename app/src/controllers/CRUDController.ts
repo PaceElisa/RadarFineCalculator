@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { Model, ModelStatic, WhereOptions } from 'sequelize';
-
-import { MessageFactory, HttpStatus } from '../factory/Messages';
-import TransitController from './TransitController';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
 import Payment from '../models/Payment';
 
-const MessageFact: MessageFactory = new MessageFactory();
+//Import factory
+import { successFactory } from "../factory/SuccessMessage";
+import { errorFactory } from "../factory/FailMessage";
+import { SuccesMessage, ErrorMessage } from "../factory/Messages";
+
+const errorMessageFactory: errorFactory = new errorFactory();
+const successMessageFactory: successFactory = new successFactory();
 
 class CRUDController {
 
@@ -16,10 +19,10 @@ class CRUDController {
         var result: any;
         try {
             const record = await model.create(req.body);
-            const message = MessageFact.createMessage(HttpStatus.CREATED)
+            const message = successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, `New ${model.name} record created`)
             result = res.json({ success: message, data: record });
         } catch (error) {
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante la creazione della risorsa ${model.name}`);
+            const message = errorMessageFactory.createMessage(ErrorMessage.createRecordError, `Error while creating new ${model.name} record`);
             return res.json({ error: message });
         }
         return result;
@@ -45,14 +48,14 @@ class CRUDController {
             });
 
             if (record) {
-                const message = MessageFact.createMessage(HttpStatus.OK, 'Risorsa individuata');
+                const message = successMessageFactory.createMessage(SuccesMessage.readRecordSuccess, `${model.name} record found`);
                 result = res.json({ success: message, data: record });
             } else {
-                const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Risorsa ${model.name} non trovata`);
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
                 result = res.json({ error: message });
             }
         } catch (error) {
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante il recupero della risorsa ${model.name}`);
+            const message = errorMessageFactory.createMessage(ErrorMessage.readRecordError, `Error while reading ${model.name} record`);
             result = res.json({ error: message });
         }
         return result;
@@ -83,18 +86,18 @@ class CRUDController {
                 });
 
                 if (updatedInstance) {
-                    const message = MessageFact.createMessage(HttpStatus.OK, `Risorsa ${model.name} aggiornata`);
+                    const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `${model.name} record updated successfully`);
                     result = res.json({ success: message, data: updatedInstance });
                 } else {
-                    const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Risorsa ${model.name} non trovata dopo l'aggiornamento`);
+                    const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found after updating`);
                     result = res.json({ error: message });
                 }
             } else {
-                const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Risorsa ${model.name} non trovata`);
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
                 result = res.json({ error: message });
             }
         } catch (error) {
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento della risorsa ${model.name}`);
+            const message = errorMessageFactory.createMessage(ErrorMessage.updateRecordError, `Error while updating ${model.name}`);
             result = res.json({ error: message });
         }
         return result;
@@ -117,49 +120,46 @@ class CRUDController {
                 where: whereClause as WhereOptions<T>
             });
             if (deleted) {
-                const message = MessageFact.createMessage(HttpStatus.NO_CONTENT, `Risorsa ${model.name} eliminata`);
+                const message = successMessageFactory.createMessage(SuccesMessage.deleteRecordSuccess, `${model.name} record deleted`);
                 result = res.json({ success: message });
             } else {
-                const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Risorsa ${model.name} non trovata`);
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
                 result = res.json({ error: message });
             }
         } catch (error) {
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante la cancellazione della risorsa ${model.name}`);
-            return res.json({ error: message });
+            const message = errorMessageFactory.createMessage(ErrorMessage.deleteRecordError, `Error while deleting ${model.name}`);
+            result = res.json({ error: message });
         }
         return result;
     }
 
     // aggiorna l'ultimo Transit inserito per un veicolo data la sua targa (quello al quale manca exit_at)
-    async updateLastTransit(req: Request, res: Response): Promise<Response> {
+    async updateLastTransit(req: Request, res: Response): Promise<any> {
         var result: any;
+
         try {
             // Trova l'ultimo transito per la targa specificata e che non ha ancora `exit_at` impostato
-            const lastRecord = await Transit.findOne({
-                where: { plate: req.params.plate },
-                order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
-            });
+            const lastRecord = await Transit.getLastInsertedRecordByPlate(req.params.plate)
 
             // Verifica se è stato trovato un record
             if (!lastRecord) {
-                const message = MessageFact.createMessage(HttpStatus.NOT_FOUND, `Transito non trovato per il veicolo con targa ${req.params.plate}`);
-                return res.status(404).json({ error: message });
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit with null exit_at parameter for vehicle ${req.params.plate} not found`);
+                return { error: message };
             }
 
             // Aggiorna il record trovato con i dati forniti nel corpo della richiesta
             const updatedRecord = await lastRecord.update(req.body);
 
             if (updatedRecord) {
-                const message = MessageFact.createMessage(HttpStatus.OK, `Transito aggiornato con successo per il veicolo con targa ${req.params.plate}`);
-                result = res.status(200).json({ success: message, data: updatedRecord });
+                const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `Transit for vehicle ${req.params.plate} updated successfully`);
+                result = { success: message, data: updatedRecord};
             } else {
-                const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento del transito per il veicolo con targa ${req.params.plate}`);
-                result = res.status(500).json({ error: message });
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Record not found after updating`);
+                result = { error: message };
             }
         } catch (error) {
-            console.error('Errore durante l\'aggiornamento del transito:', error);
-            const message = MessageFact.createMessage(HttpStatus.INTERNAL_SERVER_ERROR, `Errore durante l'aggiornamento del transito per il veicolo con targa ${req.params.plate}`);
-            result = res.status(500).json({ error: message });
+            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while updating Transit for vehicle ${req.params.plate}`);
+            result = { error: message };
         }
         return result;
     }
@@ -178,9 +178,9 @@ class CRUDController {
                 id_violation: violation.id
             })
 
-            result = {violation: violation, payment: payment};
+            result = { violation: violation, payment: payment };
         } catch (error) {
-            console.log("errore durante la creazione della risorsa.", error);
+            console.log("Error while creating Violation and Payment", error);
             result = null;
         }
         return result;

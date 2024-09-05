@@ -32,7 +32,7 @@ class Gateway extends Model<GatewayAttributes, GatewayCreationAttributes> implem
             return user;
         } catch (error) {
             console.error('Error fetching gateway by highway_name and kilometer:', error);
-            throw new Error('Error fetching gateway by highway_name and kilometer');
+            return null;
         }
     }
 }

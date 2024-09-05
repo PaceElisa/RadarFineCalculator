@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
-import { MessageFactory, HttpStatus } from '../factory/Messages';
 import QRCode from 'qrcode';
 import PDFDocument from 'pdfkit';
 import Payment from "../models/Payment";
 import Violation from "../models/Violation";
 import Transit from "../models/Transit";
 
-const MessageFact: MessageFactory = new MessageFactory();
+//Import factory
+import { successFactory } from "../factory/SuccessMessage";
+import { errorFactory } from "../factory/FailMessage";
+import { SuccesMessage, ErrorMessage } from "../factory/Messages";
+
+const errorMessageFactory: errorFactory = new errorFactory();
+const successMessageFactory: successFactory = new successFactory();
 
 class PaymentController {
 
@@ -24,17 +29,13 @@ class PaymentController {
             });
 
             if (!violation) {
-                return res.status(404).json({ message: 'Violation not found' });
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Violation not found`);
+                return res.json({ error: message });
             }
 
             // accedo ai dati inclusi
             const transit = violation.get('Transit') as Transit;
             const payment = violation.get('Payment') as Payment;
-
-            // Verifica che i dati inclusi esistano
-            if (!transit || !payment) {
-                return res.status(500).json({ message: 'Related data not found' });
-            }
 
             // Dati per il QR code
             const qrData = `${payment.uuid};${violation.id};${transit.plate};${violation.fine}`;
@@ -65,8 +66,8 @@ class PaymentController {
             doc.end();
 
         } catch (error) {
-            console.error('Error generating receipt:', error);
-            res.status(500).send('Internal Server Error');
+            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error generating the receipt`);
+            return res.json({ error: message });
         }
     }
 }

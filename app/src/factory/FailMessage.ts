@@ -6,7 +6,7 @@ import { IMessage, HttpStatus, ErrorMessage, MessageFactory } from "./Messages";
 
 /** Concrete Products - Classes */
 
-class userLoginError extends IMessage{
+class userLoginError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -19,7 +19,7 @@ class userLoginError extends IMessage{
     }
 }
 
-class driverLoginError extends IMessage{
+class driverLoginError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -32,7 +32,33 @@ class driverLoginError extends IMessage{
     }
 }
 
-class createRecordError extends IMessage{
+class gatewayLoginError extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.UNAUTHORIZED;
+        this.content = "Unauthorized - Gateway login failed.";
+        this.description = description;
+    }
+}
+
+class invalidTokenError extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.UNAUTHORIZED;
+        this.content = "Unauthorized - Invalid Token.";
+        this.description = description;
+    }
+}
+
+class createRecordError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -45,7 +71,7 @@ class createRecordError extends IMessage{
     }
 }
 
-class updateRecordError extends IMessage{
+class updateRecordError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -58,7 +84,7 @@ class updateRecordError extends IMessage{
     }
 }
 
-class readRecordError extends IMessage{
+class readRecordError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -71,7 +97,7 @@ class readRecordError extends IMessage{
     }
 }
 
-class deleteRecordError extends IMessage{
+class deleteRecordError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -84,7 +110,7 @@ class deleteRecordError extends IMessage{
     }
 }
 
-class notAuthorized extends IMessage{
+class notAuthorized extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -97,7 +123,7 @@ class notAuthorized extends IMessage{
     }
 }
 
-class recordNotFound extends IMessage{
+class recordNotFound extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -110,7 +136,7 @@ class recordNotFound extends IMessage{
     }
 }
 
-class recordAlreadyExist extends IMessage{
+class recordAlreadyExist extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -123,7 +149,7 @@ class recordAlreadyExist extends IMessage{
     }
 }
 
-class invalidFormat extends IMessage{
+class invalidFormat extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -136,7 +162,7 @@ class invalidFormat extends IMessage{
     }
 }
 
-class invalidPlateFormat extends IMessage{
+class invalidPlateFormat extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -149,7 +175,7 @@ class invalidPlateFormat extends IMessage{
     }
 }
 
-class noManualRecordIDChange extends IMessage{
+class noManualRecordIDChange extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -162,7 +188,7 @@ class noManualRecordIDChange extends IMessage{
     }
 }
 
-class generalError extends IMessage{
+class generalError extends IMessage {
     httpStatus: number;
     content: string;
     description?: string;
@@ -175,7 +201,33 @@ class generalError extends IMessage{
     }
 }
 
-export class errorFactory implements MessageFactory{
+class missingParameters extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.BAD_REQUEST;
+        this.content = "Bad Request - Missing some parameters.";
+        this.description = description;
+    }
+}
+
+class missingRoute extends IMessage {
+    httpStatus: number;
+    content: string;
+    description?: string;
+
+    constructor(description?: string) {
+        super()
+        this.httpStatus = HttpStatus.NOT_FOUND;
+        this.content = "Not Found - Missing route.";
+        this.description = description;
+    }
+}
+
+export class errorFactory implements MessageFactory {
     createMessage(typeMessage: ErrorMessage, description?: string): IMessage {
         switch (typeMessage) {
 
@@ -184,10 +236,16 @@ export class errorFactory implements MessageFactory{
 
             case ErrorMessage.driverLoginError:
                 return new driverLoginError(description);
-                    
+
+            case ErrorMessage.gatewayLoginError:
+                return new gatewayLoginError(description);
+
+            case ErrorMessage.invalidToken:
+                return new invalidTokenError(description);
+
             case ErrorMessage.createRecordError:
                 return new createRecordError(description);
-                
+
             case ErrorMessage.updateRecordError:
                 return new updateRecordError(description);
 
@@ -196,7 +254,7 @@ export class errorFactory implements MessageFactory{
 
             case ErrorMessage.deleteRecordError:
                 return new deleteRecordError(description);
-                    
+
             case ErrorMessage.notAuthorized:
                 return new notAuthorized(description);
 
@@ -208,7 +266,7 @@ export class errorFactory implements MessageFactory{
 
             case ErrorMessage.invalidFormat:
                 return new invalidFormat(description);
-                    
+
             case ErrorMessage.invalidPlateFormat:
                 return new invalidPlateFormat(description);
 
@@ -217,7 +275,13 @@ export class errorFactory implements MessageFactory{
 
             case ErrorMessage.generalError:
                 return new generalError(description);
-           
+
+            case ErrorMessage.missingParameters:
+                return new missingParameters(description);
+
+            case ErrorMessage.missingRoute:
+                return new missingRoute(description);
+
             default:
                 throw new Error("HTTP status non supportato.");
         }

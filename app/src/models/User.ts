@@ -33,7 +33,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
             return user;
         } catch (error) {
             console.error('Error fetching user by username:', error);
-            throw new Error('Error fetching user by username');
+            return null;
         }
     }
 }
