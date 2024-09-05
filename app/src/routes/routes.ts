@@ -53,9 +53,9 @@ router.put("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAd
 
 // Vehicle OK
 router.post("/api/vehicles", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
-router.get("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
-router.delete("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
-router.put("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
+router.get("/api/vehicles/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
+router.delete("/api/vehicles/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
+router.put("/api/vehicles/:id",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
 
 // Gateway OK
 router.post("/api/gateways", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));

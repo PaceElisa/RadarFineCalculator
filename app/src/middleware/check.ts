@@ -35,8 +35,9 @@ class generalCheck{
             try{
                 //This type of trasformation consent to avoid error when casting type
                 const id = req.params.id as unknown as number| string;
-
+                console.log(id)
                 const record = await model.findByPk(id);
+                console.log(record)
 
                 if(!record){
                     return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The record for the specified id: ${id} was not found or not existing. `))

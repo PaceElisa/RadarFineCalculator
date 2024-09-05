@@ -12,6 +12,9 @@ import { SuccesMessage, ErrorMessage } from "../factory/Messages";
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
 
+// Funzione generica per creare una clausola WHERE basata su una chiave primaria
+const wherePrimaryKey = <T>(key: string, value: string | number): WhereOptions<T> => ({ [key]: value } as unknown as WhereOptions<T>);
+
 class CRUDController {
 
     // Crea un record
@@ -32,28 +35,12 @@ class CRUDController {
     async readOneRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         var result: any;
         try {
-            // Retrieve primary key attributes from the model
-            const primaryKeys = model.primaryKeyAttributes;
-
-            // Construct the where clause for composite primary keys
-            const whereClause: { [key: string]: string | number } = {};
-            primaryKeys.forEach(key => {
-                // Ensure each primary key field is included in the where clause
-                whereClause[key] = req.params[key] as unknown as string | number;
-            });
-
-            // Retrieve the record by composite primary keys
-            const record = await model.findOne({
-                where: whereClause as WhereOptions<T>
-            });
-
-            if (record) {
-                const message = successMessageFactory.createMessage(SuccesMessage.readRecordSuccess, `${model.name} record found`);
-                result = res.json({ success: message, data: record });
-            } else {
-                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
-                result = res.json({ error: message });
-            }
+            // Get the primary key from the request parameters
+            const pk = req.params.id as unknown as number | string;
+            // Find the record by its primary key
+            const record = await model.findByPk(pk);
+            const message = successMessageFactory.createMessage(SuccesMessage.readRecordSuccess, `${model.name} record found`);
+            result = res.json({ success: message, data: record });
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.readRecordError, `Error while reading ${model.name} record`);
             result = res.json({ error: message });
@@ -67,35 +54,23 @@ class CRUDController {
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
-
-            // Construct the where clause for composite primary keys
-            const whereClause: { [key: string]: string | number } = {};
-            primaryKeys.forEach(key => {
-                whereClause[key] = req.params[key] as unknown as string | number;
-            });
+            // Costruisci la clausola WHERE per la chiave primaria
+            const primaryKeyValue = req.params.id as string | number;
+            const whereClause = wherePrimaryKey<T>(primaryKeys[0], primaryKeyValue);
 
             // Update the record
-            const [updated] = await model.update(req.body, {
+            await model.update(req.body, {
                 where: whereClause as WhereOptions<T>
             });
 
-            if (updated) {
-                // Find the updated record
-                const updatedInstance = await model.findOne({
-                    where: whereClause as WhereOptions<T>
-                });
+            // Find the updated record
+            const updatedInstance = await model.findOne({
+                where: whereClause as WhereOptions<T>
+            });
 
-                if (updatedInstance) {
-                    const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `${model.name} record updated successfully`);
-                    result = res.json({ success: message, data: updatedInstance });
-                } else {
-                    const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found after updating`);
-                    result = res.json({ error: message });
-                }
-            } else {
-                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
-                result = res.json({ error: message });
-            }
+            const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `${model.name} record updated successfully`);
+            result = res.json({ success: message, data: updatedInstance });
+
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.updateRecordError, `Error while updating ${model.name}`);
             result = res.json({ error: message });
@@ -109,23 +84,17 @@ class CRUDController {
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
-
-            // Construct the where clause for composite primary keys
-            const whereClause: { [key: string]: string | number } = {};
-            primaryKeys.forEach(key => {
-                whereClause[key] = req.params[key] as unknown as string | number;
-            });
+            // Costruisci la clausola WHERE per la chiave primaria
+            const primaryKeyValue = req.params.id as string | number;
+            const whereClause = wherePrimaryKey<T>(primaryKeys[0], primaryKeyValue);
 
             const deleted = await model.destroy({
                 where: whereClause as WhereOptions<T>
             });
-            if (deleted) {
-                const message = successMessageFactory.createMessage(SuccesMessage.deleteRecordSuccess, `${model.name} record deleted`);
-                result = res.json({ success: message });
-            } else {
-                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `${model.name} record not found`);
-                result = res.json({ error: message });
-            }
+
+            const message = successMessageFactory.createMessage(SuccesMessage.deleteRecordSuccess, `${model.name} record deleted`);
+            result = res.json({ success: message });
+            
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.deleteRecordError, `Error while deleting ${model.name}`);
             result = res.json({ error: message });
@@ -152,7 +121,7 @@ class CRUDController {
 
             if (updatedRecord) {
                 const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `Transit for vehicle ${req.params.plate} updated successfully`);
-                result = { success: message, data: updatedRecord};
+                result = { success: message, data: updatedRecord };
             } else {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Record not found after updating`);
                 result = { error: message };

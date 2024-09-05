@@ -220,8 +220,11 @@ class validateData{
 
     validatePlate(req:ICustomRequest, res: Response, next:NextFunction){
         const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
-        const plate:string = req.body.plate;
-        const islicenseplateValid: boolean = plateRegex.test(plate);
+        let plate: string | undefined = req.params.id; //prima controllo nei parametri poi nel body
+        if (!plate) {
+            plate = req.body.plate;
+        }
+        const islicenseplateValid: boolean = plateRegex.test(plate as string);
         
         //If an image has been uploaded I have to check that the license plate was recognized correctly without stopping the middleware
         if(req.imageUpload){
