@@ -86,6 +86,7 @@ CREATE TABLE payments (
 -- Inserimento di un record nella tabella "users"
 INSERT INTO users (role, username, password, deleted_at)
 VALUES 
+    ('test', 'unreadable', 'securepassword123', NULL),
     ('admin', 'john_doe', 'securepassword123', NULL),
     ('driver', 'driver1', 'securepassword156', NULL),
     ('driver', 'driver2', 'securepassword145', NULL);
@@ -105,6 +106,7 @@ VALUES
 -- Inserimento di un record nella tabella "vehicles"
 INSERT INTO vehicles (plate, vehicle_type, id_user, deleted_at)
 VALUES 
+    ('ZZ999ZZ', 'Auto', 1, NULL),
     ('AB123AB', 'Auto', 2, NULL),
     ('CC123CC', 'Autobus', 2, NULL),
     ('AB345CS', 'Auto', 3, NULL);

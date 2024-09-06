@@ -13,7 +13,7 @@ interface SegmentAttributes {
     deleted_at?: Date; 
 }
 
-interface SegmentCreationAttributes extends Optional<SegmentAttributes, 'id'> {}
+interface SegmentCreationAttributes extends Optional<SegmentAttributes, 'id' | 'distance'> {}
 
 // Definizione del modello Segment
 class Segment extends Model<SegmentAttributes, SegmentCreationAttributes> implements SegmentAttributes {
