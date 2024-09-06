@@ -19,7 +19,7 @@ interface TransitAttributes {
 }
 
 // Interfaccia per gli attributi necessari solo alla creazione
-interface TransitCreationAttributes extends Optional<TransitAttributes, 'id'> {}
+interface TransitCreationAttributes extends Optional<TransitAttributes, 'id' | 'enter_at' | 'img_readable'> {}
 
 // Definizione del modello Transit
 class Transit extends Model<TransitAttributes, TransitCreationAttributes> implements TransitAttributes {
