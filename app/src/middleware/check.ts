@@ -13,7 +13,7 @@ import Violation from "../models/Violation";
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
-import { HttpStatus, SuccesMessage, ErrorMessage, MessageFactory, IMessage } from "../factory/Messages";
+import { SuccesMessage, ErrorMessage, IMessage } from "../factory/Messages";
 import { Model, ModelStatic } from "sequelize";
 
 //Import services OCR
@@ -52,41 +52,6 @@ class generalCheck{
        
         };
     } 
-
-    /*Method that:
-    if id_body is not specified: check if the ID passed as params exists as a record, otherwise check
-    if the id_body (foreign key) corresponds to an existing record after validating the attributes of the body of the request.*/
-      checkIDBodyExist<T extends Model>(model:ModelStatic<T>, id_body: (number | string)){
-        return async (req:Request, res: Response, next: NextFunction) => {
-            try{
-                ////This type of trasformation (as unkown as number | string) consent to avoid error when casting type
-                //const idToCheck = id_body !== undefined ? id_body : (req.params.id as unknown as number | string);               
-
-                const record = await model.findByPk(id_body);
-
-                if(!record){
-                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `The ${model.name} record for the specified id  provided: ${id_body} was not found or does not exist. `))
-                }
-
-                //If the record exist, go to the next middleware
-                next();
-            }catch(err){
-                return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `An error occurs while checking ${model.name} existence.`))
-
-            }
-       
-        };
-    }
-
-    /** FORSE NON SERVE ?
-    //Method that checks if the passed plate exists
-    checkPlateExist(req:Request, res: Response, next:NextFunction){
-       
-        
-
-        next();
-    }
-        */
 
     //Check if an image is provided and try to identify the text (plate) present
      async checkImage(req:ICustomRequest, res: Response, next:NextFunction){
