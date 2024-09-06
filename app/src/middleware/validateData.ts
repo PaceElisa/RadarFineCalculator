@@ -238,7 +238,7 @@ class validateData {
         try {
 
             //Check if vehicle_type is present and a string
-            if ((vehicle_type && !isStringValid(vehicle_type)) || vehicle_type.length > 32) {
+            if (vehicle_type && (!isStringValid(vehicle_type) || vehicle_type.length > 32)) {
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid type of vehicle. Must be a string of maximum 32 characters."));
             }
 

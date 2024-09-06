@@ -1,7 +1,9 @@
 //Import neccesary modules
 import { Request, Response } from "express";
+import { Op } from "sequelize";
 import Transit from "../models/Transit";
 import Vehicle from "../models/Vehicle";
+import Segment from "../models/Segment";
 import { recognizeTextFromImage } from "../services/ocrService";
 import { upload } from "../middleware/uploadMIddleware";
 import CRUDController from "./CRUDController";
@@ -133,6 +135,41 @@ class TransitController {
         }
         return result;
     }
+
+    // ottieni transiti filtrati per varco (segmenti con quel varco)
+    async getTransitsFilteredByGateway(req: Request, res: Response): Promise<Response> {
+        try {
+            const { id } = req.params;
+
+            const gatewayId: number = Number(id);
+
+            // Find segments where id_gateway1 or id_gateway2 matches the gatewayId
+            const segments = await Segment.findAll({
+                where: {
+                    [Op.or]: [
+                        { id_gateway1: gatewayId },
+                        { id_gateway2: gatewayId }
+                    ]
+                },
+                attributes: ['id']
+            });
+            const segmentIds = segments.map(segment => segment.id);
+
+            // Find transits for the found segment IDs
+            const filteredTransits = await Transit.findAll({
+                where: {
+                    id_segment: segmentIds
+                }
+            });
+            const message = successMessageFactory.createMessage(SuccesMessage.generalSuccess, `Transits filtered by gateway id successfully`);
+            return res.json({ success: message, data: filteredTransits });
+
+        } catch (error) {
+            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while filtering Transits by gateway id`);
+            return res.status(500).json({ error: message });
+        }
+    }
+
 }
 
 export default new TransitController();
