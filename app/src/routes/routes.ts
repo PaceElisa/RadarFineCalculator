@@ -28,17 +28,9 @@ const errorMessageFactory: errorFactory = new errorFactory();
 
 const router = Router();
 
-// index prova
-router.get("/", (req: any, res: any) => res.send("TEST"));
-
 // Routes per i login
 router.post('/login', authMiddleware.validateUserCredentials, loginController.login);
 router.post('/loginGateway', authMiddleware.validateGateway, loginController.loginGateway);
-
-// Esempio di una route protetta mettere dappertutto
-router.get('/protected', authMiddleware.authenticateJWT, (req, res) => {
-    res.status(200).json({ message: 'This is a protected route'});
-});
 
 // api con export const
 // CRUD
@@ -84,7 +76,9 @@ router.post("/api/transits", authMiddleware.authenticateJWT, authMiddleware.isAd
     }
 });
 // get a Transit by its id
-router.get("/api/transits/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
+router.get("/api/transits/transitId/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.readOneRecord(Transit, req, res));
+// get a Transit by segments with a certain gateway id
+router.get("/api/transits/GatewayId/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Gateway), async (req: any, res: any) => TransitController.getTransitsFilteredByGateway(req, res));
 // delete a Transit by its id
 router.delete("/api/transits/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 // update Transit by its id (used to interpret a plate from an image)
