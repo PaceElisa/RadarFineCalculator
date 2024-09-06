@@ -338,7 +338,6 @@ class validateData{
             next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}. `));
 
          }
-        
     }
 
     //Middleware that validate data for updating a Transit record

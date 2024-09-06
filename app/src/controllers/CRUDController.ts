@@ -8,6 +8,8 @@ import Payment from '../models/Payment';
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
 import { SuccesMessage, ErrorMessage } from "../factory/Messages";
+import Gateway from '../models/Gateway';
+import Segment from '../models/Segment';
 
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
@@ -129,6 +131,38 @@ class CRUDController {
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while updating Transit for vehicle ${req.params.plate}`);
             result = { error: message };
+        }
+        return result;
+    }
+
+    // Crea un record Transit dal Gateway loggato
+    async createTransitWithGateway(req: Request, res: Response): Promise<Response> {
+        var result: any;
+        const { highway_name, kilometer } = req.body.gateway;
+        const { plate, weather_conditions } = req.body;
+        try {
+            const gatewayData = await Gateway.findGatewayByHighwayAndKilometer(highway_name, kilometer);
+            if (!gatewayData) {
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Gateway not found for highway ${highway_name} at kilometer ${kilometer}`);
+                return res.status(404).json({ error: message });
+            }
+            const segmentData = await Segment.findOne({ where: { id_gateway1: gatewayData.id } });
+            if (!segmentData) {
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Segment not found for gateway ID ${gatewayData.id}`);
+                return res.status(404).json({ error: message });
+            }
+
+            const transit = await Transit.create({
+                id_segment: segmentData.id,
+                plate: plate,
+                weather_conditions: weather_conditions
+            });
+
+            const message = successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, `New Transit record created`)
+            result = res.json({ success: message, data: transit });
+        } catch (error) {
+            const message = errorMessageFactory.createMessage(ErrorMessage.createRecordError, `Error while creating new Transit record`);
+            return res.json({ error: message });
         }
         return result;
     }

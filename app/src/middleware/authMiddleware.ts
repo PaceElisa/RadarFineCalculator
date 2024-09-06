@@ -60,6 +60,21 @@ class authMiddleware {
         }
     }
 
+    // controlla se è un operatore (admin)
+    async isGateway(req: Request, res: Response, next: NextFunction) {
+        const gateway = req.body.gateway;
+        try {
+            const GatewayData = await Gateway.findGatewayByHighwayAndKilometer(gateway.highway_name, gateway.kilometer);
+            // Verifica il ruolo del gateway
+            if (GatewayData) {
+                next(); // Passa al middleware successivo se l'utente è gateway
+            }
+        } catch (err) {
+            // Gestisci gli errori generali
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged Gateway'));
+        }
+    }
+
     // controlla se è un operatore (admin) o un automobilista -> filtra per targa
     async isAdminOrDriver(req: Request, res: Response, next: NextFunction) {
         const user = req.body.user;
@@ -90,6 +105,7 @@ class authMiddleware {
                 const userData = await User.findUserByUsername(user.username);
                 // Verifica se l'utente ha il ruolo di 'admin'
                 if (userData && userData.role === 'admin') {
+                    req.body.rolecheck = userData.role;
                     next(); // Passa al middleware successivo se l'utente è un admin
                 }
             }
@@ -97,6 +113,7 @@ class authMiddleware {
             if (gateway) {
                 const GatewayData = await Gateway.findGatewayByHighwayAndKilometer(gateway.highway_name, gateway.kilometer);
                 if (GatewayData) {
+                    req.body.rolecheck = 'gateway';
                     next(); // Passa al middleware successivo se l'utente è gateway
                 }
             }
