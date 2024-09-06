@@ -43,9 +43,9 @@ router.put(`${API_PREFIX}/users/:id`, authMiddleware.authenticateJWT, authMiddle
 
 // Vehicle
 router.post(`${API_PREFIX}/vehicles`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
-router.get(`${API_PREFIX}/vehicles/:plate`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
-router.delete(`${API_PREFIX}/vehicles/:plate`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
-router.put(`${API_PREFIX}/vehicles/:plate`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
+router.get(`${API_PREFIX}/vehicles/:id`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
+router.delete(`${API_PREFIX}/vehicles/:id`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
+router.put(`${API_PREFIX}/vehicles/:id`,authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));
 
 // Gateway 
 router.post(`${API_PREFIX}/gateways`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateGatewayDataCreation, async (req: any, res: any) => CRUDController.createRecord(Gateway, req, res));
@@ -81,9 +81,9 @@ router.get(`${API_PREFIX}/transits/GatewayId/:id`, authMiddleware.authenticateJW
 // delete a Transit by its id
 router.delete(`${API_PREFIX}/transits/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 // update Transit by its id (used to interpret a plate from an image)
-router.put(`${API_PREFIX}/segments/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
-// update `exit_at` of the last transit of a vehicle
-router.put(`${API_PREFIX}/transits/:plate`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, async (req: any, res: any) => {
+router.put(`${API_PREFIX}/transits/transitId/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+// update `exit_at` of the last transit of a vehicle (id = plate of the vehicle)
+router.put(`${API_PREFIX}/transits/plate/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, async (req: any, res: any) => {
     // unisce i risultati delle due funzioni di update e check violation in un unico json
     try {
         const updateResult = await CRUDController.updateLastTransit(req, res);
