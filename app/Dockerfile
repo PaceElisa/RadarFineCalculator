@@ -17,6 +17,5 @@ COPY . .
 #Prende build da packaga.json nella sezione script
 RUN npm run build
 #RUN tsc
-#TO DO wait for db
 
 CMD [ "node", "./dist/app.js" ]
