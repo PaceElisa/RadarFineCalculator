@@ -48,8 +48,8 @@ router.get("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAd
 router.delete("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.deleteRecord(User, req, res));
 router.put("/api/users/:id", authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => CRUDController.updateRecord(User, req, res));
 
-// Vehicle 
-router.post("/api/vehicles", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
+// Vehicle OK
+router.post("/api/vehicles", authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, validateData.validateVehicleDataCreation, async (req: any, res: any) => CRUDController.createRecord(Vehicle, req, res));
 router.get("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.readOneRecord(Vehicle, req, res));
 router.delete("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), async (req: any, res: any) => CRUDController.deleteRecord(Vehicle, req, res));
 router.put("/api/vehicles/:plate",authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, generalCheck.checkIDParamsExist(Vehicle), validateData.validateVehicleDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Vehicle, req, res));

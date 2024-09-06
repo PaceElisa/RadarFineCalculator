@@ -73,10 +73,9 @@ class validateData{
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of${Object.values(Weather).join(',')}`));
         }
 
-        //Invoce a generalCheck method that checks if a record of segment, with the id passed as argument, exist
-        generalCheck.checkIDBodyExist(Segment,id_segment);
+        
 
-        /**try{
+        try{
             const segment = await Segment.findByPk(id_segment);
 
             //Check if id_segment correspond to an existing segment
@@ -89,12 +88,12 @@ class validateData{
         }catch(error){
             return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}.`));
 
-        } */
+        } 
         next();        
         
     }
 
-    ////Middleware that validate data for creating a new gateway record
+    //Middleware that validate data for creating a new gateway record
     async validateGatewayDataCreation(req:Request, res: Response, next:NextFunction){
         const {id,highway_name, kilometer} =req.body;
 
@@ -158,7 +157,6 @@ class validateData{
 
         try{
             
-            
             const segment = await Segment.findOne({
                 where:{
                     id_gateway1 : id_gateway1,
@@ -169,9 +167,6 @@ class validateData{
             const gateway1 = await Gateway.findByPk(id_gateway1);
             const gateway2 = await Gateway.findByPk(id_gateway2);
 
-            //Check if id_gateway provieded correspond to an existing gateway
-            generalCheck.checkIDBodyExist(Gateway, id_gateway1);
-            generalCheck.checkIDBodyExist(Gateway, id_gateway2);
             //Check if id_gateway provieded correspond to an existing gateway
             if(!gateway1){
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway1} was not found or does not exist.` ))
@@ -197,45 +192,61 @@ class validateData{
     async validateVehicleDataCreation(req:Request, res: Response, next:NextFunction){
         const {plate, vehicle_type, id_user} = req.body;
 
+        //Check if plate is a string
         if(!isStringValid(plate) || plate.length >10){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidPlateFormat,"Invalid plate. Must be a string."))
         }
 
-        if(!isStringValid(vehicle_type)){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid vehicle type. Must be a string"));
+        //Check if vehicle_type is a string
+        if(!isStringValid(vehicle_type) || vehicle_type.length > 32){
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid vehicle type. Must be a string of maximum 32 characters"));
         }
 
+        //Check if id_user is a number
         if(typeof id_user !== 'number'){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid user ID. Must be a number."))
         }
 
         try{
+
             const vehicle = await Vehicle.findByPk(plate);
+
+            //Check if there is a vehicle with the same registration plate
             if(vehicle){
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist, "A vehicle with this plate already exist."));
+            }
+
+            const driver = await User.findByPk(id_user);
+
+            //Check if there is an existing user with that id
+            if(!driver){
+                return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the user with this id: ${id_user} was not found or does not exist.`));
             }
             next();
 
         }catch(error){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, ))
+            return next(errorMessageFactory.createMessage(ErrorMessage.generalError,`Error: ${error}` ));
         }
     }
 
     //Middleware that validate data for updating a Vehicle record
     async validateVehicleDataUpdate(req:Request, res: Response, next:NextFunction){
         const {plate, vehicle_type, id_user} = req.body;
+        const plate_params = req.params.id as unknown as string;
+
+
+        //check if the license plate inserted in the body of the request is equal to that specified in the route parameters
+        if(plate && (plate !== plate_params)){
+            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The plate specified in the body of the request, must be equal to the plate provied in the route parameters."))
+        }
         try{
 
-            const vehicle = await Vehicle.findByPk(plate);
-
-            if((vehicle && !isStringValid(plate)) || plate.length > 7){
-                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid plate. Must be a string of 7 characters"));
-            }
-
+            //Check if vehicle_type is present and a string
             if((vehicle_type && !isStringValid(vehicle_type)) || vehicle_type.length >32){
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid type of vehicle. Must be a string of maximum 32 characters."));
             }
 
+            //Check if id_user  is present and a number
             if(id_user &&(typeof id_user !== 'number')){
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid user ID. Must me a number."));
             }
@@ -252,23 +263,58 @@ class validateData{
 
     //Middleware that validate data for updating a Segment record
     async validateSegmentDataUpdate(req:Request, res: Response, next:NextFunction){
-        const {id_gateway1, id_gateway2, distance} = req.body;
+        const {id_segment,id_gateway1, id_gateway2, distance} = req.body;
+        const id_params = req.params.id as unknown as number;
 
+        if(id_segment && (typeof id_segment !== 'number')){
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid segment ID. Must me a number." ));
+        }
+
+        //check if the ID segment inserted in the body of the request is equal to that specified in the route parameters
+        //Prevent  PK ID modification
+        if(id_segment && (id_segment !== id_params)){
+            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The segment ID specified in the body of the request, must be equal to the ID provied in the route parameters."))
+        }
+
+        //Check if Gateway IDs are present and  numbers
         if((id_gateway1 && (typeof id_gateway1 !== 'number')) || ((typeof id_gateway2 !== 'number') && id_gateway2)){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid gateway ID value. Gateway ID must be a number."));
         }
 
-        //check if the two ID gateway passed are the same
-        if(id_gateway1 === id_gateway2){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat,"A segment can not have the same ID for gateway 1 and 2. Specificy two different ID."));
-        }
-
+        //Check if, provied, that distance is a number
         if(distance && (typeof distance !== 'number')){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid distance value. Distance must be a number."));
         }
 
-        if(id_gateway1 && id_gateway2){
-            try{
+        
+        try{
+
+                
+            //If id_gateway1 is specified check if it corresponds to an existing gateway
+            if(id_gateway1){
+                const gateway1 = await Gateway.findByPk(id_gateway1);
+
+                if(!gateway1){
+                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway1} was not found or does not exist.` ))
+                }
+            }
+
+            //If id_gateway2 is specified check if it corresponds to an existing gateway
+            if(id_gateway2){
+                const gateway2 = await Gateway.findByPk(id_gateway2);                
+                
+                if(!gateway2){
+                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway2} was not found or does not exist.` ))
+                }
+
+            }
+                
+            if(id_gateway1 && id_gateway2){
+
+                //If the two gateway IDs are present check if they are the same
+                if(id_gateway1 === id_gateway2){
+                    return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat,"A segment can not have the same ID for gateway 1 and 2. Specificy two different ID."));
+                }
             
             
                 const segment = await Segment.findOne({
@@ -278,63 +324,70 @@ class validateData{
                     }
                 });
     
-                const gateway1 = await Gateway.findByPk(id_gateway1);
-                const gateway2 = await Gateway.findByPk(id_gateway2);
-    
-                //Check if id_gateway provieded correspond to an existing gateway
-                if(!gateway1){
-                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway1} was not found or does not exist.` ))
-                }
-                if(!gateway2){
-                    return next(errorMessageFactory.createMessage(ErrorMessage.recordNotFound,`The record of the gateway with this id: ${id_gateway2} was not found or does not exist.` ))
-                }
+                
     
                 //Check if already exist a record with these two id_gateways
                 if(segment){
                     return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist,`Record with this IDs already exist.`));
                 }
-                //Calculate the effiteve distance between the two gateways
-                const calculateDistance = Math.abs(gateway1.kilometer - gateway2.kilometer)
-                if(calculateDistance !== distance){
-                    return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat," Distance specified is not correct. The effective distance will be automatically calculate."))
-                }
-                next();
-    
-            }catch(error){
-                return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}.`));
-    
             }
-            
+                
+            next();
+    
+        }catch(error){
+            return next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}.`));
+    
         }
-
-
+            
     }
 
     //Middleware that validate data for updating a Gateway record
     async validateGatewayDataUpdate(req:Request, res: Response, next:NextFunction){
          const {id, highway_name, kilometer} = req.body;
-         try{
+         const id_params = req.params.id as unknown as number;
+
+
+        //check if the ID gateway inserted in the body of the request is equal to that specified in the route parameters
+        //Prevent  PK ID modification
+        if(id && (id !== id_params)){
+            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The gateway ID specified in the body of the request, must be equal to the ID provied in the route parameters."))
+        }
+
+        try{
 
             const gateway = await Gateway.findByPk(id);
-            if(typeof id !== 'number'){
-                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid gateway ID. Gateway ID must be a number"))
-            }
-
+            
             //If the gateway ID specified already exist or if ID is not a number
             if(gateway && (typeof id !== 'number')){
                 return next(errorMessageFactory.createMessage(ErrorMessage.readRecordError,`Please first check if the specified ID: ${id} already exist.`))
             }
 
+            //Verify if highway_name is present and a string of maximum 32 characters
             if(highway_name && (!isStringValid(highway_name) || highway_name.length > 32)){
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat,"Invalid highway name. Must be a string with maximum 32 characters."));
             }
 
+            //Verify if kilometer is present and a number
             if(kilometer && (typeof kilometer !== 'number')){
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid kilometer value. Kilometer must be a number."))
             }
+            //Check if already exist a record with these two attributes, if both are present
+            if(highway_name && kilometer){
+
+                const highway = await Gateway.findOne({
+                    where: {
+                    highway_name: highway_name,
+                    kilometer: kilometer
+                    }
+                });
+                
+                if(highway)
+                return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist,  `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
+
+            }
             next();
 
-         }catch(error){
+        }catch(error){
             next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}. `));
 
          }
@@ -344,6 +397,14 @@ class validateData{
     validateTransitDataUpdate(req:Request, res: Response, next:NextFunction){
         const {id, enter_at, exit_at, id_segment, weather_conditions} = req.body;
        const iso8601DateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+       const id_params = req.params.id as unknown as number;
+
+
+        //check if the ID transit inserted in the body of the request is equal to that specified in the route parameters
+        //Prevent  PK ID modification
+        if(id && (id !== id_params)){
+            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The transit ID specified in the body of the request, must be equal to the ID provied in the route parameters."))
+        }
         
        // Check the format and the type of enter_at and exit_at, if provided
         if(enter_at && (!isStringValid(enter_at) || !iso8601DateRegex.test(enter_at))){
@@ -354,9 +415,9 @@ class validateData{
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid enter_at format. Expect AAAA-MM-GGTHH:MM:SSZ"))
         }
 
-        //Check if weather_condition is a string and one of those three (good, bad, fog)
+        //Check if weather_condition is present, a string and one of those three (good, bad, fog)
         //Returns an array containing all Weather enum values, then cast weather_condition as Weather type and finally check if weather condition is includeded in the enum weather values
-        if((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather) ){
+        if(((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather) && weather_conditions )){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of${Object.values(Weather).join(',')}`));
         } 
         next();
@@ -365,7 +426,7 @@ class validateData{
     //Middleware that validate plate and if an image was upload, checks if the analysed image produced a readable plate
     validatePlate(req:ICustomRequest, res: Response, next:NextFunction){
         const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
-        let plate: string | undefined = req.params.id; //prima controllo nei parametri poi nel body
+        let plate: string | undefined = req.params.id; //Check first in the parameters then in the body
         if (!plate) {
             plate = req.body.plate;
         }
@@ -393,7 +454,7 @@ class validateData{
             
         }else{
             if(!plate || !islicenseplateValid ){
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidPlateFormat, "Invalid License Plate"));
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidPlateFormat, "Invalid License Plate. Expected thid format [A-Z]{2}[0-9]{3}[A-Z]{2}"));
             }
         }
         next();
@@ -425,13 +486,13 @@ class validateData{
     }
 
     //Middleware that validate data for updating a User record
-    validateUpdateUserCredentials(req: Request, res: Response, next: NextFunction){
+    async validateUpdateUserCredentials(req: Request, res: Response, next: NextFunction){
         const {id, role, username, password} = req.body;
-        const id_params = req.params.id;
+        const id_params = req.params.id as unknown as number;
 
 
         if(id && (id !== id_params)){
-            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The ID specified in the body of the request, must be equal to the ID provied in the route."))
+            return next(errorMessageFactory.createMessage(ErrorMessage.noManualRecordIDChange, "The ID specified in the body of the request, must be equal to the ID provied in the route."));
         }
 
         if( username && (!isStringValid(username) || username.length > 255)){
@@ -446,6 +507,24 @@ class validateData{
         if((!isStringValid(role) || role.length > 32 || (role !== 'admin' && role !== 'driver' )) && role){
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid role. Must be a string with maximum 32 characters and can be either 'admin' or 'driver'")); 
         }
+
+        try{
+            const existing_user = await User.findOne({
+                where: {
+                    role: role,
+                    username: username,
+                    password: password
+                }
+            });
+
+            if(existing_user){
+                return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist, `This specific user: ${username} already exist.`))
+            }
+
+        }catch(error){
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, `Error: ${error}. `));
+        }
+
         
         next();
     }
