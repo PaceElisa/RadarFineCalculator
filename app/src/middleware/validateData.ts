@@ -45,9 +45,10 @@ class validateData {
     }
 
     //Middleware that validate data for creating a new transit record
-    async validateTransitDataCreation(req: Request, res: Response, next: NextFunction) {
+    async validateTransitDataCreation(req: ICustomRequest, res: Response, next: NextFunction) {
         const { id, enter_at, exit_at, id_segment, weather_conditions } = req.body;
         const iso8601DateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+
 
         //Check if the record Id was input manually
         if (id) {
@@ -66,7 +67,7 @@ class validateData {
         //Check if weather_condition is a string and one of those three (good, bad, fog)
         //Returns an array containing all Weather enum values, then cast weather_condition as Weather type and finally check if weather condition is includeded in the enum weather values
         if ((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather)) {
-            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of${Object.values(Weather).join(',')}`));
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of ${Object.values(Weather).join(',')}`));
         }
 
 

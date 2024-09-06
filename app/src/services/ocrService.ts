@@ -5,9 +5,10 @@ import * as tesseract_ocr from 'node-tesseract-ocr';
 
 //set the parameters to pass to Tesseract OCR Engine
 const config = {
-    lang: "eng",  //Language used in the OCR template.
+    lang: "ita",  //Language used in the OCR template.
     oem: 3,      // Automatically uses the most suitable engine (often LSTM, which is advanced and accurate)
     psm: 6,      // Assumes a single uniform block of text
+    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' // Whitelist of characters
   }
 
 export const recognizeTextFromImage = async(imagePath: string): Promise<string> => {
