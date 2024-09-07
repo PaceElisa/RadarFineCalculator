@@ -107,14 +107,14 @@ class CRUDController {
     // aggiorna l'ultimo Transit inserito per un veicolo data la sua targa (quello al quale manca exit_at)
     async updateLastTransit(req: Request, res: Response): Promise<any> {
         var result: any;
-
+        const plate = req.params.id;
         try {
             // Trova l'ultimo transito per la targa specificata e che non ha ancora `exit_at` impostato
-            const lastRecord = await Transit.getLastInsertedRecordByPlate(req.params.plate)
+            const lastRecord = await Transit.getLastInsertedRecordByPlate(plate)
 
             // Verifica se è stato trovato un record
             if (!lastRecord) {
-                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit with null exit_at parameter for vehicle ${req.params.plate} not found`);
+                const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit with null exit_at parameter for vehicle ${plate} not found`);
                 return { error: message };
             }
 
@@ -122,14 +122,14 @@ class CRUDController {
             const updatedRecord = await lastRecord.update(req.body);
 
             if (updatedRecord) {
-                const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `Transit for vehicle ${req.params.plate} updated successfully`);
+                const message = successMessageFactory.createMessage(SuccesMessage.updateRecordSuccess, `Transit for vehicle ${plate} updated successfully`);
                 result = { success: message, data: updatedRecord };
             } else {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Record not found after updating`);
                 result = { error: message };
             }
         } catch (error) {
-            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while updating Transit for vehicle ${req.params.plate}`);
+            const message = errorMessageFactory.createMessage(ErrorMessage.generalError, `Error while updating Transit for vehicle ${plate}`);
             result = { error: message };
         }
         return result;

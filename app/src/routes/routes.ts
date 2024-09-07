@@ -81,7 +81,7 @@ router.get(`${API_PREFIX}/transits/GatewayId/:id`, authMiddleware.authenticateJW
 // delete a Transit by its id
 router.delete(`${API_PREFIX}/transits/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 // update Transit by its id (used to interpret a plate from an image)
-router.put(`${API_PREFIX}/transits/transitId/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+router.put(`${API_PREFIX}/transits/transitId/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Transit, req, res));
 // update `exit_at` of the last transit of a vehicle (id = plate of the vehicle)
 router.put(`${API_PREFIX}/transits/plate/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, async (req: any, res: any) => {
     // unisce i risultati delle due funzioni di update e check violation in un unico json
@@ -122,6 +122,6 @@ router.get(`${API_PREFIX}/violationsfilter`, authMiddleware.authenticateJWT, aut
 });
 
 // Route for downloading pdf receipt of violation with specified id
-router.get(`${API_PREFIX}/receipt/:id_violation`, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
+router.get(`${API_PREFIX}/receipt/:id_violation`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

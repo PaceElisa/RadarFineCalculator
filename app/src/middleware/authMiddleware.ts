@@ -98,15 +98,15 @@ class authMiddleware {
     async isAdminOrGateway(req: Request, res: Response, next: NextFunction) {
         const user = req.body.user;
         const gateway = req.body.gateway;
-
         try {
             // Se l'utente è presente nel corpo della richiesta, verifica se è un admin
             if (user) {
                 const userData = await User.findUserByUsername(user.username);
                 // Verifica se l'utente ha il ruolo di 'admin'
                 if (userData && userData.role === 'admin') {
+                    console.log(userData?.role);
                     req.body.rolecheck = userData.role;
-                    next(); // Passa al middleware successivo se l'utente è un admin
+                    return next(); // Passa al middleware successivo se l'utente è un admin
                 }
             }
             // Se il gateway è presente nel corpo della richiesta, verifica se esiste
@@ -114,7 +114,7 @@ class authMiddleware {
                 const GatewayData = await Gateway.findGatewayByHighwayAndKilometer(gateway.highway_name, gateway.kilometer);
                 if (GatewayData) {
                     req.body.rolecheck = 'gateway';
-                    next(); // Passa al middleware successivo se l'utente è gateway
+                    return next(); // Passa al middleware successivo se l'utente è gateway
                 }
             }
             // Se nessuna delle condizioni è soddisfatta, restituisci un errore
