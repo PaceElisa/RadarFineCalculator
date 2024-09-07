@@ -121,7 +121,7 @@ router.get(`${API_PREFIX}/violationsfilter`, authMiddleware.authenticateJWT, aut
     }
 });
 
-// Route for downloading pdf receipt of violation with specified id
-router.get(`${API_PREFIX}/receipt/:id_violation`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
+// Route for downloading pdf receipt of violation with specified id (driver can only download his receipts)
+router.get(`${API_PREFIX}/receipt/:id_violation`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, authMiddleware.driverViolationCheck, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

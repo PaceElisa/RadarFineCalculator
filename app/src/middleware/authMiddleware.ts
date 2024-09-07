@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import User from '../models/User';
 import Gateway from '../models/Gateway';
+import Violation from '../models/Violation';
 
 dotenv.config();
 
@@ -174,6 +175,26 @@ class authMiddleware {
             next();
         } catch (err) {
             return next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while logging in'));
+        }
+    }
+
+    async driverViolationCheck(req: Request, res: Response, next: NextFunction) {
+        const user = req.body.user;
+        const id = req.params.id_violation;
+        const idViolation = Number(id);
+        try {
+            const userData = await User.findUserByUsername(user.username);
+            if (userData && userData.role === 'driver') {
+                const ViolationUserId = await Violation.findViolationUserId(idViolation);
+                if (userData.id === ViolationUserId) {
+                    return next()
+                }
+                return next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
+            }
+            next();
+        } catch (err) {
+            // Gestisci gli errori generali
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged user'));
         }
     }
 }

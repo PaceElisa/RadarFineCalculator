@@ -27,7 +27,6 @@ class PaymentController {
                     Payment
                 ]
             });
-
             if (!violation) {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Violation not found`);
                 return res.json({ error: message });

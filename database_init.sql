@@ -107,9 +107,9 @@ VALUES
 INSERT INTO vehicles (plate, vehicle_type, id_user, deleted_at)
 VALUES 
     ('ZZ999ZZ', 'Auto', 1, NULL),
-    ('AB123AB', 'Auto', 2, NULL),
-    ('CC123CC', 'Autobus', 2, NULL),
-    ('AB345CS', 'Auto', 3, NULL);
+    ('AB123AB', 'Auto', 3, NULL),
+    ('CC123CC', 'Autobus', 3, NULL),
+    ('AB345CS', 'Auto', 4, NULL);
 
 -- Inserimento di 2 record nella tabella "gateways"
 INSERT INTO gateways (highway_name, kilometer, deleted_at)
@@ -145,6 +145,10 @@ INSERT INTO violations (id_transit, fine, average_speed, delta, created_at, dele
 VALUES 
     (2, 150.00, 140.00, 10.00, '2024-12-01T00:00:00Z', NULL);
 
-
+INSERT INTO payments (id_violation)
+VALUES 
+    (1),
+    (2),
+    (3);
 
 
