@@ -73,7 +73,8 @@ class generalCheck{
             req.imageUpload = true;
             
             
-            req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Image analysis has been successful."));
+            //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Image analysis has been successful."));
+            console.log("Image analysis has been successful.")
             
           
             }catch(error){
@@ -81,7 +82,8 @@ class generalCheck{
 
             }
         }
-        req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Optional image not inserted"));
+        //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Optional image not inserted"));
+        console.log("Optional image not inserted")
 
 
         next();
