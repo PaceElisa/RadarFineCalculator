@@ -6,9 +6,10 @@ import Gateway from './Gateway';
 import Vehicle from './Vehicle';
 import User from './User';
 
+// Initialize Sequelize instance from the Database class
 const sequelize: Sequelize = Database.getSequelize();
 
-// Interfaccia per gli attributi del modello Violation
+// Interface for the attributes of the Violation model
 interface ViolationAttributes {
     id: number;
     id_transit: number;
@@ -19,10 +20,10 @@ interface ViolationAttributes {
     deleted_at?: Date;
 }
 
-// Interfaccia per gli attributi necessari solo alla creazione
+// Interface for attributes needed only during creation
 interface ViolationCreationAttributes extends Optional<ViolationAttributes, 'id' | 'fine' | 'created_at'> { }
 
-// Definizione del modello Violation
+// Definition of the Violation model
 class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> implements ViolationAttributes {
     public id!: number;
     public id_transit!: number;
@@ -32,19 +33,20 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     public created_at!: Date;
     public deleted_at?: Date;
 
+    // Method to calculate the fine based on the delta (speed over the limit)
     public async calculateFine(): Promise<void> {
         if (this.delta <= 10) {
-            this.fine = 50; // Multa per superamento fino a 10 km/h
+            this.fine = 50; // Fine for exceeding the limit by up to 10 km/h
         } else if (this.delta > 10 && this.delta <= 40) {
-            this.fine = 200; // Multa per superamento tra 10 e 40 km/h
+            this.fine = 200; // Fine for exceeding the limit by 10 to 40 km/h
         } else if (this.delta > 40 && this.delta <= 60) {
-            this.fine = 500; // Multa per superamento tra 40 e 60 km/h
+            this.fine = 500; // Fine for exceeding the limit by 40 to 60 km/h
         } else {
-            this.fine = 1000; // Multa per superamento oltre 60 km/h
+            this.fine = 1000; // Fine for exceeding the limit by more than 60 km/h
         }
     }
 
-    // Method to find Violations by plates and by a time period
+    // Static method to find violations based on vehicle plates and a time period
     static async findViolationsByPlates(plates: string[], startDate: Date, endDate: Date): Promise<Violation[] | null> {
         try {
             const violations = await Violation.findAll({
@@ -89,7 +91,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
         }
     }
 
-    // Method to find Violations by plates and by a time period
+    // Static method to find the user ID associated with a violation
     static async findViolationUserId(violation_id: number): Promise<number | null> {
         try {
             const violation = await Violation.findOne({
@@ -129,7 +131,7 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     }
 }
 
-// Inizializzazione del modello
+// Model initialization
 Violation.init({
     id: {
         type: DataTypes.INTEGER,
@@ -177,12 +179,12 @@ Violation.init({
     deletedAt: 'deleted_at',
 });
 
-// Hook per calcolare la multa basata su `delta`
+// Hook to calculate the fine before creating a violation record
 Violation.beforeCreate(async (violation: Violation) => {
-    await violation.calculateFine();  // Richiama il metodo di istanza per calcolare la multa
+    await violation.calculateFine();  // Call the method to calculate the fine
 });
 
-// Definizione delle associazioni
+// Define associations
 Violation.belongsTo(Transit, { foreignKey: 'id_transit', onDelete: 'CASCADE' });
 
 export default Violation;
