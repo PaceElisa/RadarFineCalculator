@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configurazione per servire file statici dalla cartella 'images'
-app.use('/images', express.static(path.join(__dirname, '../images')));
+app.use('/images' || `/${process.env.UPLOAD_DIR}`, express.static(path.join(__dirname, '../images' || `../${process.env.UPLOAD_DIR}`)));
 
 // Uso rotte definite in routes
 app.use(router);

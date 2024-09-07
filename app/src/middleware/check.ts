@@ -16,6 +16,10 @@ import { errorFactory } from "../factory/FailMessage";
 import { SuccesMessage, ErrorMessage, IMessage } from "../factory/Messages";
 import { Model, ModelStatic } from "sequelize";
 
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 //Import services OCR
 import { recognizeTextFromImage } from "../services/ocrService";
 
@@ -64,8 +68,16 @@ class generalCheck{
         if (req.file) {
             try {
             const imagePath = req.file.path;
+            console.log(req.file.path);
+
             //Update the path image in the body 
-            req.body.img_route = imagePath;
+            let split = "images/"
+            if(process.env.UPLOAD_DIR){
+                split = `${process.env.UPLOAD_DIR}/`
+            }
+            req.body.img_route = imagePath.split(split)[1];
+            console.log(req.body.img_route)
+
             const recognizedText = await recognizeTextFromImage(imagePath);
             
             //Update the license plate in the body
@@ -74,16 +86,18 @@ class generalCheck{
             
             
             //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Image analysis has been successful."));
-            console.log("Image analysis has been successful.")
+            console.log("Image analysis has been successful.\n")
             
           
             }catch(error){
                 return next(errorMessageFactory.createMessage(ErrorMessage.generalError, "Image analysis failed."));
 
             }
+        }else{
+            //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Optional image not inserted"));
+            console.log("Optional image not inserted \n")
         }
-        //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Optional image not inserted"));
-        console.log("Optional image not inserted")
+        
 
 
         next();

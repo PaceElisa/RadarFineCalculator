@@ -8,6 +8,9 @@ import { recognizeTextFromImage } from "../services/ocrService";
 import { upload } from "../middleware/uploadMIddleware";
 import CRUDController from "./CRUDController";
 
+import dotenv from 'dotenv';
+import path from "path";
+
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
@@ -15,6 +18,8 @@ import { SuccesMessage, ErrorMessage } from "../factory/Messages";
 
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
+
+dotenv.config();
 
 //Define class TransitController class
 class TransitController {
@@ -121,10 +126,16 @@ class TransitController {
                 });
             }
 
+            /*//Create image url
+            if(process.env.UPLOAD_DIR){
+                const img_url = `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
+            }*/
+
+
             // Mappare il risultato per includere l'URL dell'immagine
             const formattedTransits = unreadableTransits?.map(transit => ({
                 ...transit.toJSON(),
-                img_url: `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
+                img_url: path.join(req.protocol, '://', req.get('host') as string, '/images/' || process.env.UPLOAD_DIR, transit.img_route as string)
             }));
 
             const message = successMessageFactory.createMessage(SuccesMessage.generalSuccess, `Unreadable Transits filtered successfully`);

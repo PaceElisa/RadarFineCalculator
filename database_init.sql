@@ -89,7 +89,8 @@ VALUES
     ('test', 'unreadable', 'securepassword123', NULL),
     ('admin', 'john_doe', 'securepassword123', NULL),
     ('driver', 'driver1', 'securepassword156', NULL),
-    ('driver', 'driver2', 'securepassword145', NULL);
+    ('driver', 'driver2', 'securepassword145', NULL),
+    ('admin', 'mario_rossi', 'password', NULL);
 
 -- Inserimento dei limiti di velocità per vari tipi di veicoli sulle autostrade italiane
 INSERT INTO limits (vehicle_type, good_weather_limits, bad_weather_limits)
