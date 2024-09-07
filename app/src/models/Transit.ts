@@ -73,7 +73,8 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
         try {
             const unreadableTransits = await Transit.findAll({
                 where: {
-                    img_readable: false,
+                    img_readable: false, 
+                    img_route: {[Op.ne]: null}
                 },
                 include: [
                     {

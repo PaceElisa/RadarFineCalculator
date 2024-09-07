@@ -117,7 +117,7 @@ class TransitController {
                 unreadableTransits = await Transit.findUnreadableTransitsByGateway(gatewayId);
             } else {
                 unreadableTransits = await Transit.findAll({
-                    where: { img_readable: false }
+                    where: { img_readable: false, img_route: {[Op.ne]: null}}
                 });
             }
 

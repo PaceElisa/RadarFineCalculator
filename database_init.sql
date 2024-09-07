@@ -86,7 +86,7 @@ CREATE TABLE payments (
 -- Inserimento di un record nella tabella "users"
 INSERT INTO users (role, username, password, deleted_at)
 VALUES 
-    ('test', 'unreadable', 'password', NULL),
+    ('test', 'unreadable', 'password', NULL), -- used to store a "unreadable" plate
     ('admin', 'mario_rossi', 'password', NULL),
     ('admin', 'giuseppe_verdi', 'password', NULL),
     ('driver', 'francesco_bianchi', 'password', NULL),
@@ -114,7 +114,7 @@ INSERT INTO vehicles (plate, vehicle_type, id_user, deleted_at)
 VALUES 
     ('ZZ999ZZ', 'Auto', 1, NULL),
     ('AB123AB', 'Auto', 4, NULL),
-    ('AA111AA', 'Auto', 4, NULL),
+    ('AA123AA', 'Auto', 4, NULL),
     ('DL900DD', 'Moto', 5, NULL),
     ('DZ098FL', 'Autocarro', 5, NULL),
     ('FF604FF', 'Camion', 6, NULL),
@@ -169,18 +169,17 @@ VALUES
     (17, 18, 40, NULL),
     (19, 20, 100, NULL),
     (21, 22, 20, NULL),
-    (23, 24, 50, NULL),
-    (25, 26, 30, NULL);
+    (23, 24, 50, NULL);
 
 -- Inserimento di un record nella tabella "transits"
 INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
     ('2024-08-29 08:00:00', '2024-08-29 08:20:00', 'AB123AB', 5, 'good', NULL, FALSE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 08:40:00', 'AA111AA', 3, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 08:40:00', 'AA123AA', 3, 'good', NULL, FALSE, NULL),
     ('2024-08-29 08:20:00', '2024-08-29 08:50:00', 'DL900DD', 7, 'good', NULL, FALSE, NULL),
     ('2024-08-29 08:30:00', '2024-08-29 08:50:00', 'DZ098FL', 9, 'good', NULL, FALSE, NULL),
     ('2024-08-29 08:40:00', '2024-08-29 09:00:00', 'FF604FF', 10, 'good', NULL, FALSE, NULL),
-    ('2024-08-29 08:50:00', '2024-08-29 09:02:00', 'FZ988ZA', 1, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:50:00', '2024-08-29 09:02:00', 'FZ988ZA', 1, 'good', 'plate1.png', FALSE, NULL),
     ('2024-08-29 09:00:00', '2024-08-29 09:20:00', 'CG420GG', 2, 'good', NULL, FALSE, NULL),
     ('2024-08-29 08:10:00', '2024-08-29 08:23:00', 'CJ010GT', 4, 'good', NULL, FALSE, NULL),
     ('2024-08-29 08:20:00', NULL, 'PO000GG', 8, 'good', NULL, FALSE, NULL),
