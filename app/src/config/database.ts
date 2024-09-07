@@ -4,12 +4,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export class Database{
-    private static instance: Database; //pattern SINGLETON
+    // Private static instance of Database class for the Singleton pattern
+    private static instance: Database;
+    // Private Sequelize instance to handle the connection
     private sequelize: Sequelize; 
 
-    // Costruttore privato per il pattern Singleton
+    // Private constructor to enforce Singleton pattern
     private constructor() {
-         // Controlla se le variabili sono impostate
+         // Check if environment variables are set
          if (
             !process.env.POSTGRES_DB ||
             !process.env.POSTGRES_USER ||
@@ -20,7 +22,7 @@ export class Database{
             throw new Error("Environment variables are not set");
         }
 
-        // Configura sequelize utilizzando le variabili di ambiente
+        // Configure Sequelize using environment variables
         this.sequelize = new Sequelize(
             process.env.POSTGRES_DB,
             process.env.POSTGRES_USER,
@@ -33,7 +35,7 @@ export class Database{
         );
     }
     
-    // Metodo per ottenere sequelize
+    // Public static method to get the Sequelize instance
     public static getSequelize(): Sequelize {
         if (!Database.instance) {
             Database.instance = new Database();
