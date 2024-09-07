@@ -1,15 +1,6 @@
 //Import neccesary modules
 import { Request, Response, NextFunction } from "express";
 
-
-//Import Models
-import Vehicle from "../models/Vehicle";
-import Limit from "../models/Limit";
-import Segment from "../models/Segment";
-import Transit from "../models/Transit";
-import User from "../models/User";
-import Violation from "../models/Violation";
-
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
@@ -89,5 +80,5 @@ class generalCheck{
 
 }
 
-//Export an instance of generelCheck
+//Export an instance of generalCheck
 export default new generalCheck();
