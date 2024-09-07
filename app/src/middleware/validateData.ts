@@ -69,7 +69,10 @@ class validateData {
         if ((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather)) {
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of ${Object.values(Weather).join(',')}`));
         }
-
+        
+        if(!id_segment){
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, " Missing ID segment - need to be specified."))
+        }
 
 
         try {
