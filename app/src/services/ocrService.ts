@@ -14,7 +14,7 @@ const config = {
 export const recognizeTextFromImage = async(imagePath: string): Promise<string> => {
     try{
         const text = await tesseract_ocr.recognize(imagePath, config);
-        return text.trim(); //remove initial and final spaces 
+        return text.trim().slice(1,-1); //remove initial and final spaces and the first and last characters
         //console.log("Result:", text) //for initial testing
     }catch (error){
         console.error("Error recognitzing text:", error);
