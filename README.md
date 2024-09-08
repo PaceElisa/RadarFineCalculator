@@ -1,3 +1,4 @@
+# RadarFineCalculator
 <div align="center">
  
 [![Postgres](https://img.shields.io/badge/Made%20with-postgres-%23316192.svg?style=plastic&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -13,7 +14,7 @@
  
 </div>
 
-# RadarFineCalculator: Progetto-Programmazione_Avanzata-2024 - Creazione backend per la gestione e il calcolo del costo delle multe ottenuto in autostrade da sistemi tipo Tutor
+# Progetto-Programmazione_Avanzata-2024 - Creazione backend per la gestione e il calcolo del costo delle multe ottenuto in autostrade da sistemi tipo Tutor
 
 ## Tabella dei Contenuti
 
