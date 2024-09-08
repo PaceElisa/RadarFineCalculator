@@ -7,7 +7,6 @@ import Segment from "../models/Segment";
 import CRUDController from "./CRUDController";
 
 import dotenv from 'dotenv';
-import path from "path";
 
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
@@ -134,7 +133,7 @@ class TransitController {
             if(process.env.UPLOAD_DIR){
                 img_path = process.env.UPLOAD_DIR;
             }
-            
+
             // Map the result to include the image URL
             const formattedTransits = unreadableTransits?.map(transit => ({
                 ...transit.toJSON(),

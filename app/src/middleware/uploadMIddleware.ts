@@ -10,10 +10,11 @@ import fs from 'fs';
 
 dotenv.config();
 
+//Define path were images will be store
 const uploadPath = path.join(__dirname, '../../', process.env.UPLOAD_DIR || 'images');
 console.log(uploadPath);
 
-// Ensure the directory exists
+// Ensure the directory exists, otherwise create it
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
   console.log(`Created directory: ${uploadPath}`);
@@ -25,7 +26,7 @@ const storage = multer.diskStorage({
     cb(null, uploadPath); // specify the directory where uploaded files will be stored
   },
   filename: function (req, file, cb) {
-    cb(null, `${file.originalname}`);//Rename the file with a timestamp
+    cb(null, `${file.originalname}`);//Rename the file with original name file plus file extension
   }
 });
 

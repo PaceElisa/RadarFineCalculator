@@ -58,7 +58,7 @@ class generalCheck{
             console.log(req.file.path);
 
             //Update the path image in the body based on env variable 
-            let split = "images/"
+            let split = "images/" //default
             if(process.env.UPLOAD_DIR){
                 split = `${process.env.UPLOAD_DIR}/`
             }
