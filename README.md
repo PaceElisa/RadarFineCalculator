@@ -205,6 +205,27 @@ In questo file possono essere apportata delle modifiche in base alle configurazi
 
 ### Tesseract OCR
 
+
+Tesseract OCR (Optical Character Recognition) è un software open-source per il riconoscimento ottico dei caratteri, sviluppata originariamente da HP e attualmente mantenuta da Google. Tesseract è in grado di riconoscere caratteri stampati e scritti a mano in oltre 100 lingue, ed è particolarmente utile in applicazioni dove è necessario estrarre testo da immagini, come per esempio l'elaborazione automatica di documenti, la scansione di libri o l'identificazione di testo in immagini.
+
+Nel caso del nostro applicativo, è stato impiegato per automatizzare il processo di acquisizione delle informazioni sui veicoli attraverso la lettura delle targhe. Al  momento del passaggio di un veicolo attraverso un varco autostradale, la sua targa viene catturata sotto forma di immagine e grazie a Tesseract OCR viene analizzata e il testo corrispondente alla targa viene estratto.
+
+La configurazione adottata per utilizzare Tesseract OCR, specificato nel file ```ocrService.ts``` è così strutturata:
+
+```plaintext
+const config = {
+    lang: "ita",  
+    oem: 3,      
+    psm: 6,      
+    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' 
+```
+
+- lang: indica la lingua utilizzata (italiano) nel modello di riconoscimento OCR
+- oem: si riferisce al motore OCR che viene utilizzato. In questa configurazione di default(3) utilizza automaticamente il motore più adatto al tipo di testo, spesso il motore LSTM(Long Short-Term Memory), che è una rete neurale ricorrente.
+- psm: (Page Segmentation Mode) specifica il modello di segmentazione del testo che Tesseract utilizzerà, in questo caso(6) si assume che l'immagine contenga un unico blocco uniforme di testo, come nel caso di una targa.
+- tessedit_char_whitelist: definisce una whitelist di caratteri, cioè i caratteri che Tesseract può considerare durante il riconoscimento.
+
+
 ### File database_init.sql
 Nel file ```database_init.sql``` viene specificata la struttura del database da creare al primo avvio del container. Vengono anche inizializzati dei dati per consentire di provare l'applicazione.
 
