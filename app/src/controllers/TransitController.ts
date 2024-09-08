@@ -6,13 +6,18 @@ import Vehicle from "../models/Vehicle";
 import Segment from "../models/Segment";
 import CRUDController from "./CRUDController";
 
+import dotenv from 'dotenv';
+
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
 import { SuccesMessage, ErrorMessage } from "../factory/Messages";
+
 // Initialize factories for error and success messages
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
+
+dotenv.config();
 
 //Define class TransitController class
 class TransitController {
@@ -48,6 +53,7 @@ class TransitController {
             // Convert enter_at and exit_at to Date objects
             const enterAtDate = new Date(enter_at);
             const exitAtDate = new Date(exit_at);
+
             // Check for invalid date formats
             if (isNaN(enterAtDate.getTime()) || isNaN(exitAtDate.getTime())) {
                 const message = errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid Date Format. Try YYYY-MM-DDTHH:MM:SSZ`);
@@ -59,6 +65,7 @@ class TransitController {
 
             // Fetch the good weather limits for the vehicle
             const goodWeatherLimits = await Vehicle.getGoodWeatherLimits(plate);
+
             // Fetch the bad weather limits for the vehicle
             const badWeatherLimits = await Vehicle.getBadWeatherLimits(plate);
             const fogWeatherLimits: number = 50;
@@ -85,6 +92,7 @@ class TransitController {
 
             const delta = averageSpeed - applicableLimit;
             console.log("delta: ", delta);
+
             // Check if the average speed exceeds the applicable limit
             if (averageSpeed > applicableLimit) {
                 // Create a violation and the associated payment
@@ -120,10 +128,17 @@ class TransitController {
                 });
             }
 
+            //Create image path
+            let img_path = "images"; //defualt
+            if(process.env.UPLOAD_DIR){
+                img_path = process.env.UPLOAD_DIR;
+            }
+
             // Map the result to include the image URL
             const formattedTransits = unreadableTransits?.map(transit => ({
                 ...transit.toJSON(),
-                img_url: `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
+                img_url: `${req.protocol}://${req.get('host')}/${img_path}/${transit.img_route}`
+                
             }));
 
             const message = successMessageFactory.createMessage(SuccesMessage.generalSuccess, `Unreadable Transits filtered successfully`);

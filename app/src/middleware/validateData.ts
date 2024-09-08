@@ -69,7 +69,10 @@ class validateData {
         if ((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather)) {
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of ${Object.values(Weather).join(',')}`));
         }
-
+        
+        if(!id_segment){
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, " Missing ID segment - need to be specified."))
+        }
 
 
         try {
@@ -420,7 +423,7 @@ class validateData {
 
         //Check if weather_condition is present, a string and one of those three (good, bad, fog)
         //Returns an array containing all Weather enum values, then cast weather_condition as Weather type and finally check if weather condition is includeded in the enum weather values
-        if (((!isStringValid(weather_conditions)) || !Object.values(Weather).includes(weather_conditions as Weather) && weather_conditions)) {
+        if (((!isStringValid(weather_conditions) || !Object.values(Weather).includes(weather_conditions as Weather)) && weather_conditions)) {
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid weather_condition. Weather_condition must be a string and one of${Object.values(Weather).join(',')}`));
         }
         next();
@@ -435,23 +438,20 @@ class validateData {
         }
         const islicenseplateValid: boolean = plateRegex.test(plate as string);
 
+
         //If an image has been uploaded I have to check that the license plate was recognized correctly without stopping the middleware
         if (req.imageUpload) {
-
-            if (!req.messages) {
-                req.messages = [];
-            }
 
             if (!islicenseplateValid) {
                 req.body.img_readable = false;//Specificy that the plate is unreadable
 
                 //Set the license plate with a custom license plate assigned as unreadable
                 req.body.plate = "ZZ999ZZ";
-                req.messages.push(successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, "Transit memorized as Unreadable"));
+                console.log("Transit memorized as Unreadable, license plate set at 'ZZ999ZZ'");
             } else {
-                //Plate must be readable and valid, so if not, set img_readable at true
+                //Plate must be readable and valid, so set img_readable at true
                 req.body.img_readable = true;
-                req.messages.push(successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, "Transit memorized as Readable"));
+                console.log( "Transit memorized as Readable");
 
             }
 

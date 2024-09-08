@@ -31,8 +31,12 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configuration to serve static files from the 'images' directory
-app.use('/images', express.static(path.join(__dirname, '../images')));
+// Configuration to serve static files from the 'images' or env UPLOAD_DIR directory
+if(process.env.UPLOAD_DIR){
+    app.use(`/${process.env.UPLOAD_DIR}`, express.static(path.join(__dirname, `../${process.env.UPLOAD_DIR}`)));
+}else{
+    app.use('/images', express.static(path.join(__dirname, '../images')));
+}
 
 // Use the routes defined in the routes file
 app.use(router);
