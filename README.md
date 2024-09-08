@@ -16,6 +16,7 @@
 [![Sequelize](https://img.shields.io/badge/Made%20with-Sequelize-52B0E7?style=plastic&logo=Sequelize&logoColor=white)](https://sequelize.org/)
 [![Docker](https://img.shields.io/badge/Made%20with-docker-%230db7ed.svg?style=plastic&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Postman](https://img.shields.io/badge/Made%20with-Postman-FF6C37?style=plastic&logo=postman&logoColor=white)](https://www.postman.com/)
+[![Tesseract Ocr](https://img.shields.io/badge/Made_with-Tesseract_Ocr-FF5722?style=plastic&logo=tesseract-ocr&logoColor=white)](https://www.npmjs.com/package/node-tesseract-ocr?activeTab=readme)
  
 </div>
 
@@ -44,13 +45,64 @@ Il progetto RadarFineCalculator, sviluppato per l'esame del corso di Programmazi
 - Inseriti i transiti impostando data e ora del passaggio e targa del veicolo lungo una tratta che ha un varco di inizio, un varco di fine ed una distanza.
 - Riportate, nel caso di inserimento di transiti, le condizioni metereologiche del varco ovvero se era presente o meno pioggia in modo da ridurre il limite di velocità.
 - Generate delle infrazioni per superamento della velocità media tra due varchi limitrofi.
+
 Inoltre, va specificato che un veicolo in un giorno può attraversare diversi varchi / tratte. 
 
 ## Installazione
 
 ### Requisiti
+Per eseguire correttamente l'installazione del progetto è necessario aver installato una delle versioni recenti di Docker, Docker-compose e Git, per poter riuscire a clonare il codice.
+
+Per testare l'applicazione viene utilizzato il client API Postman ed è stata già preparata una collection, in cui viene testato il codice sia in caso di fallimento che di successo; che è possibile trovare [qui](RadarFine.postman_collection.json).
+
 ### Avvio Progetto
+
+1. Clona la repository sulla tua macchina locale usando Git con il seguente comando:
+
+```bash
+git clone https://github.com/PaceElisa/RadarFineCalculator.git
+cd RadarFineCalculator
+
+```
+2. Inserire il file .env desiderato all'interno della directory app. Il file .env contiene alcune variabili d'ambiente necessarie per il funzionamento del progetto. Di seguito viene mostrato un esempio di file .env di prova:
+
+```plaintext
+POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypassword
+POSTGRES_PORT=5432
+POSTGRES_DB=my_db
+POSTGRES_HOST=database
+
+PORT=3000
+
+UPLOAD_DIR=images
+
+JWT_SECRET=my-secret
+```
+
+3. Avviare il docker-compose contenente il container dell'applicazione e il container Postgres, all'interno della directory app. Eseguire poi il seguente comando per buildare il codice, mettere automaticamente in esecuzione il server e crare il network tra i container.
+
+```bash
+cd app
+docker-compose up --build
+```
+
+4. Aprire Postman e caricare la collection fornita [qui](RadarFine.postman_collection.json)
+
+
 ### Note
+
+- Nel caso di problemi con il caricamento del file .env eseguire il seguente comando di avvio del docker compose:
+
+```bash
+docker-compose --env-file ./app/.env up --build
+```
+- Se fosse necessario eliminare tutte le modifiche apportate al database (creato con Postgres e inizializzato tramite un file di seeding), andrebbe buttato giù i container e riavviare l'applicativo con il comando mostrato sopra.
+
+```bash
+docker-compose down
+```
+
 
 ## Configurazione
 
