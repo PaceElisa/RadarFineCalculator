@@ -143,11 +143,11 @@ Sono riportati i diagrammi delle sequenze delle rotte implementate.
 #### Diagramma di Sequenze per la rotta di inserimento transito con immagine in input
 ![Seq image](Images/readme_files/seq_transit-image.svg)
 #### Diagramma di Sequenze per la rotta di filtraggio transiti per immagine con targa illeggibile
-![Seq unreadable](Images/readme_files/seq_unreadable_transits.svg)
+![Seq unreadable](Images/readme_files/seq_unreadable-transits.svg)
 #### Diagramma di Sequenze per la rotta di filtraggio multe
 ![Seq violations](Images/readme_files/seq_violations-filter.svg)
 #### Diagramma di Sequenze per la rotta di download bollettino di pagamento
-![Seq receipts](Images/readme_files/seq_receipts.svg)
+![Seq receipts](Images/readme_files/seq_receipt.svg)
 
 ## Rotte
 
