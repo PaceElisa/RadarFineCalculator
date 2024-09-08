@@ -253,18 +253,18 @@ Sono riportati i diagrammi delle sequenze delle rotte implementate.
 
 ## Rotte
 
-### Login
+#### Login
 Per poter accedere alle altre rotte dell'applicazione, è necessario autenticarsi utilizzando una delle seguenti rotte:
 * ```/login```: Utilizzata per l'autenticazione degli utenti "operatore" (admin) e "automobilista" (driver). Nel corpo della richiesta dovranno essere forniti in formato JSON l'username e la password dell'utente.
 * ```/loginGateway``` Utilizzata per l'autenticazione degli utenti di tipo "gateway". Nel corpo della richiesta dovranno essere forniti il nome dell'autostrada e il chilometro del varco a cui si vuole accedere.
 Queste chiamate restituiscono un token JWT che deve essere inserito nell'header Authorization delle richieste successive. Questo token verrà verificato dal middleware authMiddleware per garantirne la validità e autorizzare l'accesso alle rotte protette.
 
-### CRUD Users, Vehicles, Gateways, Segments
+#### CRUD Users, Vehicles, Gateways, Segments
 Le operazioni CRUD di creazione, lettura, aggiornamento e rimozione di record delle tabelle Users, Vehicles, Gateways e Segments possono essere effettuate solo dall'utente "operatore" (admin).
 * ```/api/MODEL``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per la creazione di un nuovo record nella tabella corrispondente. Nel corpo della richiesta devono essere forniti gli attributi obbligatori per la creazione del record specificato.
 * ```/api/MODEL/:id``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per leggere, aggiornare o rimuovere il record con l'ID specificato come parametro della richiesta. Se si tratta di un aggiornamento, nel corpo della richiesta devono essere forniti gli attributi da modificare.
 
-### Rotte CRUD Transit
+#### Rotte CRUD Transit
 Le operazioni CRUD su Transit sono strutturate in modo diverso rispetto a quanto riportato in precedenza.
 * ```/api/transits/transitId/:id```: Permette di leggere o modificare gli attributi di un transito specifico utilizzando l'ID del transito. Utilizzabile dall'utente "admin". 
 * ```/api/transits/GatewayId/:id```: Recupera i transiti filtrati per tratta con il varco specificato. Utilizzabile dall'utente "admin".
@@ -273,21 +273,75 @@ Le operazioni CRUD su Transit sono strutturate in modo diverso rispetto a quanto
 * ```/api/transits/```: Crea un nuovo record di Transit. Questa rotta è utilizzata per registrare un transito con i dettagli forniti nel corpo della richiesta. Utilizzabile dall'utente "admin" e dal ruolo "gateway".
 * ```/api/transitsimage```: Crea un nuovo record di Transit utilizzando un'immagine. Questa rotta permette di registrare il transito caricando un'immagine contenente la targa del veicolo e specificando le condizioni meteorologiche e la tratta di interesse. Utilizzabile solo dal ruolo "gateway".
 
-### Rotte Filtro
+#### Rotte Filtro
 Le seguenti rotte sono utilizzate per effettuare operazioni di filtraggio.
 * ```/api/unreadableTransits```: Recupera i transiti per i quali le targhe non sono state interpretate correttamente da Tesseract. È possibile filtrare i risultati per ID del gateway, se specificato come parametro di query.
 * ```/api/violationfilter```: Filtra le violazioni in base alla targa (o alle targhe) e al periodo temporale forniti tramite query. Gli automobilisti (driver) possono visualizzare solo le violazioni relative alle proprie targhe, mentre gli operatori (admin) possono visualizzare tutte le violazioni.
 
-### Rotta Download bollettino di pagamento
+#### Rotta Download bollettino di pagamento
 La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di pagamento in formato PDF per una violazione specifica, identificata dall'ID fornito. Gli automobilisti (driver) possono scaricare solo i bollettini relativi alle proprie violazioni, mentre gli amministratori (admin) possono accedere a tutti i bollettini.
 
-## Design Pattern
+### Riepilogo
 
-### Middleware
+| Rotta                                | Metodo HTTP | Descrizione                                                                                                             | Chi può accedervi             |
+|--------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| `/api/login`                         | POST        | Autenticazione degli utenti (admin e driver). Fornisce un token JWT.                                                    | admin, driver              |
+| `/api/loginGateway`                  | POST        | Autenticazione per gli utenti di tipo "gateway". Fornisce un token JWT.                                                  | gateway                |
+| `/api/users`                         | POST        | Crea un nuovo record nella tabella degli utenti.                                                                         | admin                    |
+| `/api/users/:id`                     | GET         | Recupera un record utente specifico utilizzando l'ID passato come parametro.                                            |  admin                    |
+| `/api/users/:id`                     | DELETE      | Rimuove un record utente specifico utilizzando l'ID passato come parametro.                                             |  admin                    |
+| `/api/users/:id`                     | PUT         | Aggiorna un record utente specifico utilizzando l'ID passato come parametro.                                             |  admin                    |
+| `/api/vehicles`                      | POST        | Crea un nuovo record nella tabella dei veicoli.                                                                          |  admin                    |
+| `/api/vehicles/:id`                  | GET         | Recupera un record veicolo specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
+| `/api/vehicles/:id`                  | DELETE      | Rimuove un record veicolo specifico utilizzando l'ID passato come parametro.                                            |  admin                    |
+| `/api/vehicles/:id`                  | PUT         | Aggiorna un record veicolo specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
+| `/api/gateways`                      | POST        | Crea un nuovo record nella tabella dei varchi.                                                                         |  admin                    |
+| `/api/gateways/:id`                  | GET         | Recupera un record gateway specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
+| `/api/gateways/:id`                  | DELETE      | Rimuove un record gateway specifico utilizzando l'ID passato come parametro.                                            |  admin                    |
+| `/api/gateways/:id`                  | PUT         | Aggiorna un record gateway specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
+| `/api/segments`                      | POST        | Crea un nuovo record nella tabella dei segmenti.                                                                        |  admin                    |
+| `/api/segments/:id`                  | GET         | Recupera un record segmento specifico utilizzando l'ID passato come parametro.                                          |  admin                    |
+| `/api/segments/:id`                  | DELETE      | Rimuove un record segmento specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
+| `/api/segments/:id`                  | PUT         | Aggiorna un record segmento specifico utilizzando l'ID passato come parametro.                                          |  admin                    |
+| `/api/transitsimage`                 | POST        | Crea un nuovo transito basato su un'immagine. Richiede un'immagine della targa del veicolo.                              |  admin, gateway          |
+| `/api/transits`                      | POST        | Crea un nuovo transito senza immagine. Solo gli admin possono specificare qualsiasi ID segmento, i gateway solo quello corrispondente al proprio. | admin, gateway         |
+| `/api/transits/transitId/:id`        | GET         | Recupera un transito specifico utilizzando l'ID passato come parametro.                                                 |  admin                    |
+| `/api/transits/GatewayId/:id`         | GET         | Recupera i transiti filtrati per ID del gateway.                                                                         |  admin                    |
+| `/api/transits/:id`                  | DELETE      | Rimuove un transito specifico utilizzando l'ID passato come parametro.                                                  |  admin                    |
+| `/api/transits/transitId/:id`        | PUT         | Aggiorna un transito specifico utilizzando l'ID passato come parametro. (Utilizzato per interpretare una targa da un'immagine) | admin                    |
+| `/api/transits/plate/:id`            | PUT         | Aggiorna il campo `exit_at` dell'ultimo transito per un veicolo. L'ID corrisponde alla targa del veicolo.                  |  admin                    |
+| `/api/unreadableTransits`            | GET         | Recupera i transiti le cui targhe non sono state interpretate correttamente. Può essere filtrato per ID del gateway.     |  admin                    |
+| `/api/violationfilter`               | GET         | Filtra le violazioni per targa e periodo temporale. Gli automobilisti possono vedere solo le proprie violazioni, gli admin tutte. | admin, driver           |
+| `/api/receipt/:id_violation`         | GET         | Scarica un bollettino PDF per una violazione specifica. Gli automobilisti possono scaricare solo i loro bollettini.         | admin, driver           |
+
+## Design Pattern
+Durante lo sviluppo dell'applicazione sono stati utilizzati i seguenti pattern.
+
+### CoR e Middleware
+Il pattern Chain of Responsibility è un pattern comportamentale che consente a più oggetti di gestire una richiesta senza che l'oggetto richiedente conosca il gestore finale. Ogni oggetto della catena ha la possibilità di elaborare la richiesta o di passarla al prossimo oggetto della catena. Questo pattern presenta forti analogie con il concetto di Middleware.  
+
+Il middleware è un Design Pattern usato principalmente nello sviluppo di applicazioni web. Funziona come uno strato intermedio che gestisce le richieste e le risposte tra il client e il server. I middleware possono essere concatenati uno dopo l'altro prima che la richiesta del client raggiunga il controller dell'applicazione, e ciascuno di essi svolge una funzione specifica. Per passare la richiesta al middleware successivo, viene utilizzata una chiamata alla funzione next() alla fine del codice. Se i controlli effettuati lungo la catena hanno esito positivo, la richiesta viene elaborata correttamente; in caso contrario, viene restituita una risposta contenente l'errore.
+All'interno dell'applicazione sono presenti i seguenti middleware.
+* **authMiddleware**: contiene varie funzioni che verificano se l'utente è autenticato e autorizzato a visualizzare un determinato contenuto.
+* **check - checkIDParamsExist**: verifica se l'ID passato come parametro identifica correttamente un record nella tabella.
+* **check - checkImage**: verifica se l'immagine passata come input contiene una targa leggibile dall'OCR Tesseract.
+* **uploadMiddleware**: utilizzato per gestire il caricamento delle immagini provenienti da dati multipart/form-data.
+* **validateData**: verifica che i dati inseriti per la creazione o l'aggiornamento di nuovi record nei vari modelli siano formattati correttamente e rispettino i requisiti di validazione definiti.
+* **errorHandler**: collocato alla fine della catena dei middleware, ha il compito di gestire le risposte al client in caso di errore. Questo middleware intercetta eventuali errori che potrebbero essere stati generati durante l'elaborazione della richiesta e restituisce una risposta JSON contenente i dettagli dell'errore.
+
 ### Factory
+Il pattern Factory è un tipo di Creational Pattern che fornisce un'interfaccia per creare oggetti in una superclasse, ma consente alle sottoclassi di modificare il tipo di oggetto che verrà creato. Questo pattern è stato utilizzato per gestire la creazione di messaggi di errore/successo personalizzati.  
+
+Abbiamo sviluppato una classe astratta (che funge da modello per i messaggi) e un'interfaccia factory (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+
 ### Singleton
-### DAO
+Il pattern Singleton è un Creational Pattern che garantisce che una classe abbia solo un'istanza e fornisce un punto di accesso globale a quell'istanza. Questo è utile per risorse condivise o configurazioni di applicazione che devono essere uniche e accessibili da più punti del programma.  
+
+Abbiamo adottato questo pattern per gestire la connessione a un database PostgreSQL utilizzando Sequelize. In questo modo si evita la creazione di più connessioni concorrenti, si migliorano le prestazioni e si facilita l'accesso al database da più punti del programma.
+
 ### Model View Controller
+Il pattern MVC è un pattern architetturale che separa un'applicazione in tre componenti principali: Model, View e Controller. Il Model rappresenta i dati e la logica di business, la View gestisce la presentazione e l'interfaccia utente, e il Controller gestisce l'interazione dell'utente e aggiorna il Model e la View di conseguenza. In questo modo il codice risulta più organizzato e aiuta a facilitare la manutenzione e lo sviluppo dell'applicazione.
+Nel nostro caso le View possono essere viste come le risposte JSON o PDF alle chiamate che vengono fatte dall'utente.
 
 ## Test Postman
 ## Altri Strumenti
