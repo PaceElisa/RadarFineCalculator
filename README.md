@@ -342,8 +342,11 @@ Abbiamo adottato questo pattern per gestire la connessione a un database Postgre
 Il pattern MVC è un pattern architetturale che separa un'applicazione in tre componenti principali: Model, View e Controller. Il Model rappresenta i dati e la logica di business, la View gestisce la presentazione e l'interfaccia utente, e il Controller gestisce l'interazione dell'utente e aggiorna il Model e la View di conseguenza. In questo modo il codice risulta più organizzato e aiuta a facilitare la manutenzione e lo sviluppo dell'applicazione.
 Nel nostro caso le View possono essere viste come le risposte JSON o PDF alle chiamate che vengono fatte dall'utente.
 
-### Altri strumenti - Generics
+### Funzionalità di Typescript - Generics
+I generics in TypeScript sono una potente funzionalità che permette di creare componenti riutilizzabili e flessibili senza compromettere il tipo di sicurezza. Con i generics si possono scrivere funzioni, classi, e interfacce che funzionano con qualsiasi tipo di dato, consentendo al tempo stesso di mantenere un controllo rigoroso sui tipi.
+Un generico (generic) è un parametro placeholder che può rappresentare vari tipi di dati. Al momento dell'utilizzo della specifica classe o funzione, questo parametro viene sostituito con il tipo concreto che si desidera utilizzare.  
 
+Nel nostro caso questo tipo di funzionalità viene utilizzata nel `CRUDController.ts` per evitare di scrivere le stesse funzioni di lettura, creazione, aggiornamento e rimozione per modelli diversi.
 
 ## Test Postman
 
