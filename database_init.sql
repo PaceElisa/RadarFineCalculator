@@ -159,7 +159,7 @@ VALUES
 INSERT INTO segments (id_gateway1, id_gateway2, distance, deleted_at)
 VALUES 
     (1, 2, 30, NULL),
-    (3, 4, 30, NULL), 
+    (3, 4, 10, NULL), 
     (5, 6, 30, NULL),
     (7, 8, 30, NULL),
     (9, 10, 30, NULL),

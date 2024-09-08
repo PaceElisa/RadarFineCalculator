@@ -6,16 +6,17 @@ import dotenv from 'dotenv';
 import router from "./routes/routes";
 import * as errorMiddleware from "./middleware/errorHandler";
 
+// Load environment variables from a .env file
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT || 3000);
-const sequelize: Sequelize = Database.getSequelize();
+const PORT = Number(process.env.PORT || 3000); // Set server port, default to 3000 if not specified
+const sequelize: Sequelize = Database.getSequelize(); // Get Sequelize instance from the Database class
 
-// Funzione asincrona per inizializzare la connessione al database e avviare il server
+// Initialize the database connection and start the server
 const connectDB = async () => {
     try {
-        // Prova a connettersi al database
+        // Attempt to connect to the database
         await sequelize.authenticate();
         console.log('Database connection has been established successfully.');
     } catch (error) {
@@ -23,30 +24,30 @@ const connectDB = async () => {
     }
 };
 
-// chiama la funzione per connettersi al DB
+// Call the function to connect to the database
 connectDB();
 
-// Middleware per analizzare JSON e URL-encoded request bodies
+// Middleware to parse JSON and URL-encoded request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configurazione per servire file statici dalla cartella 'images'
+// Configuration to serve static files from the 'images' or env UPLOAD_DIR directory
 if(process.env.UPLOAD_DIR){
     app.use(`/${process.env.UPLOAD_DIR}`, express.static(path.join(__dirname, `../${process.env.UPLOAD_DIR}`)));
 }else{
     app.use('/images', express.static(path.join(__dirname, '../images')));
 }
 
-// Uso rotte definite in routes
+// Use the routes defined in the routes file
 app.use(router);
 
-// Route not found error
+// Middleware to handle route not found errors (404)
 app.all('*', errorMiddleware.routeNotFound);
 
-// Middleware error handler
+// Middleware for general error handling
 app.use(errorMiddleware.ErrorHandler);
 
-// Avvia il server Express
+// Start the Express server
 app.listen(PORT, () => {
     console.log(`Server listening at ${PORT}`);
 });

@@ -2,30 +2,31 @@ import { DataTypes, Model, Optional, Sequelize} from 'sequelize';
 import { Database } from '../config/database';
 import Violation from './Violation';
 
+// Get the Sequelize instance from the Database class
 const sequelize: Sequelize = Database.getSequelize();
 
-// Interfaccia per gli attributi del modello Payment
+// Interface for the attributes of the Payment model
 interface PaymentAttributes {
     uuid: string;
     id_violation: number;
     is_payed: boolean;
 }
 
-// Interfaccia per gli attributi necessari solo alla creazione
+// Interface for attributes required only for creation
 interface PaymentCreationAttributes extends Optional<PaymentAttributes, 'uuid' | 'is_payed'> { }
 
-// Definizione del modello Payment
+// Define the Payment model
 class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
     public uuid!: string;
     public id_violation!: number;
     public is_payed!: boolean;
 }
 
-// Inizializzazione del modello
+// Initialize the Payment model
 Payment.init({
     uuid: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4, // Genera un UUID v4 di default
+        defaultValue: DataTypes.UUIDV4, // Generate by default a UUID v4
         primaryKey: true,
     },
     id_violation: {
@@ -48,7 +49,7 @@ Payment.init({
     timestamps: false,
 });
 
-// Definizione delle associazioni
+// Define associations
 Violation.hasOne(Payment, { foreignKey: 'id_violation' });
 Payment.belongsTo(Violation, { foreignKey: 'id_violation', onDelete: 'CASCADE' });
 

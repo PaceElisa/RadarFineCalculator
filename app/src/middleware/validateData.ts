@@ -545,43 +545,41 @@ class validateData {
 
     }
 
-    //Middleware that validate data from query
+    // Middleware to validate query parameters for filtering
     validateFilterQuery(req: Request, res: Response, next: NextFunction) {
         const { plates, start_date, end_date } = req.query;
+        // Regular expressions to validate date and plate formats
         const iso8601DateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
         const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
 
-        // Verifica il formato di plates
+        // Validate 'plates' query parameter
         if (plates) {
-            // Se plates è una stringa, convertila in array
+            // Convert 'plates' to an array if it is a single string
             const plateArray = Array.isArray(plates) ? plates : [plates];
-
-            // Verifica che tutte le plates siano stringhe valide
+            // Check if all plates are valid strings matching the plate regex
             const invalidPlates = plateArray.filter((plate: any) => typeof plate !== 'string' || !plateRegex.test(plate));
             if (invalidPlates.length > 0) {
+                // Pass an error if any plate is invalid
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid plate format. The following plates are invalid: ${invalidPlates.join(', ')}`));
             }
         }
-
-        // Controllo del formato delle date
-        // Gestione di start_date e end_date
+        // Validate 'start_date' query parameter
         if (start_date) {
             if (typeof start_date !== 'string' || !iso8601DateRegex.test(start_date)) {
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid start_date format. Expect YYYY-MM-DDTHH:MM:SSZ"));
             }
         }
-
+        // Validate 'end_date' query parameter
         if (end_date) {
             if (typeof end_date !== 'string' || !iso8601DateRegex.test(end_date)) {
                 return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid end_date format. Expect YYYY-MM-DDTHH:MM:SSZ"));
             }
         }
-
-        // Verifica che end_date sia successiva a start_date se entrambi sono forniti
+        // Ensure 'end_date' is after 'start_date' if both are provided
         if (start_date && end_date && new Date(start_date) > new Date(end_date)) {
             return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "end_date must be after start_date."));
         }
-
+        // If all validations pass, proceed to the next middleware
         next();
     }
 }

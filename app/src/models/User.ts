@@ -1,9 +1,10 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { Database } from '../config/database';
 
+// Initialize Sequelize instance from the Database class
 const sequelize: Sequelize = Database.getSequelize();
 
-// Interfaccia per gli attributi del modello
+// Interface for the attributes of the User model
 interface UserAttributes {
     id: number;
     role: string;
@@ -12,10 +13,10 @@ interface UserAttributes {
     deleted_at?: Date;
 }
 
-// Interfaccia per gli attributi necessari solo alla creazione
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+// Interface for attributes needed only during creation
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
 
-// Definizione del modello User
+// Definition of the User model
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public id!: number;
     public role!: string;
@@ -23,6 +24,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public password!: string;
     public deleted_at?: Date;
 
+    // Static method to find a user by username
     static async findUserByUsername(username: string): Promise<User | null> {
         try {
             const user = await User.findOne({
@@ -38,7 +40,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     }
 }
 
-// Inizializzazione del modello
+// Model initialization
 User.init({
     id: {
         type: DataTypes.INTEGER,

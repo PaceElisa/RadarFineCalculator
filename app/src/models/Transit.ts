@@ -3,9 +3,10 @@ import { Database } from '../config/database';
 import Vehicle from './Vehicle';
 import Segment from './Segment';
 
+// Initialize Sequelize instance from the Database class
 const sequelize: Sequelize = Database.getSequelize();
 
-// Interfaccia per gli attributi del modello
+// Interface for the attributes of the Transit model
 interface TransitAttributes {
     id: number;
     enter_at: Date;
@@ -18,27 +19,27 @@ interface TransitAttributes {
     deleted_at?: Date;
 }
 
-// Interfaccia per gli attributi necessari solo alla creazione
-interface TransitCreationAttributes extends Optional<TransitAttributes, 'id' | 'enter_at' | 'img_readable'> {}
+// Interface for attributes needed only during creation
+interface TransitCreationAttributes extends Optional<TransitAttributes, 'id' | 'enter_at' | 'img_readable'> { }
 
-// Definizione del modello Transit
+// Definition of the Transit model
 class Transit extends Model<TransitAttributes, TransitCreationAttributes> implements TransitAttributes {
     public id!: number;
     public enter_at!: Date;
     public exit_at!: Date | null;
     public plate!: string;
-    public id_segment! : number;
+    public id_segment!: number;
     public weather_conditions!: 'good' | 'bad' | 'fog';
     public img_route!: string | null;
     public img_readable!: boolean;
     public deleted_at?: Date;
 
-    // Metodo per ottenere l'ultimo record inserito per una specifica plate
+    // Static method to get the last inserted record for a specific plate
     static async getLastInsertedRecordByPlate(plate: string): Promise<Transit | null> {
         try {
             const lastRecord = await Transit.findOne({
                 where: { plate: plate, exit_at: null },
-                order: [['enter_at', 'DESC']], // Ordina per `enter_at` in ordine decrescente
+                order: [['enter_at', 'DESC']],
             });
             return lastRecord;
         } catch (error) {
@@ -47,10 +48,10 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
         }
     }
 
-    // Metodo per ottenere la distanza del segmento
+    // Instance method to get the distance of the segment
     async getSegmentDistance(): Promise<number | null> {
         try {
-            // Trova il segmento corrispondente
+            // Find the corresponding segment
             const segment = await Segment.findOne({
                 where: {
                     id: this.id_segment,
@@ -58,7 +59,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
             });
 
             if (segment) {
-                return segment.distance; // Restituisci la distanza del segmento
+                return segment.distance; // Return the segment's distance
             } else {
                 console.log(`Segment not found for id_segment: ${this.id_segment}`);
                 return null;
@@ -69,12 +70,13 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
         }
     }
 
+    // Static method to find unreadable transits by gateway
     static async findUnreadableTransitsByGateway(gatewayId: number): Promise<Transit[] | null> {
         try {
             const unreadableTransits = await Transit.findAll({
                 where: {
-                    img_readable: false, 
-                    img_route: {[Op.ne]: null}
+                    img_readable: false,
+                    img_route: { [Op.ne]: null } // Only consider records where `img_route` is not null
                 },
                 include: [
                     {
@@ -97,7 +99,7 @@ class Transit extends Model<TransitAttributes, TransitCreationAttributes> implem
     }
 }
 
-// Inizializzazione del modello
+// Model initialization
 Transit.init({
     id: {
         type: DataTypes.INTEGER,
@@ -157,7 +159,7 @@ Transit.init({
         deletedAt: 'deleted_at',
     });
 
-// Definizione delle associazioni
+// Define associations
 Transit.belongsTo(Vehicle, { foreignKey: 'plate', onDelete: 'CASCADE' });
 Transit.belongsTo(Segment, { foreignKey: 'id_segment', onDelete: 'CASCADE' });
 

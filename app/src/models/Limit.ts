@@ -1,23 +1,24 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { Database } from '../config/database';
 
+// Get the Sequelize instance from the Database class
 const sequelize: Sequelize = Database.getSequelize();
 
-// Interfaccia per gli attributi del modello
+// Interface for the attributes of the model
 interface LimitAttributes {
     vehicle_type: string;
     good_weather_limits: number;
     bad_weather_limits: number;
 }
 
-// Definizione del modello User
+// Define the Limit model
 class Limit extends Model<LimitAttributes> implements LimitAttributes {
     public vehicle_type!: string;
     public good_weather_limits!: number;
     public bad_weather_limits!: number;
 }
 
-// Inizializzazione del modello
+// Initialize the Limit model
 Limit.init(
     {
         vehicle_type: {
@@ -40,5 +41,5 @@ Limit.init(
         timestamps: false, 
     }
 );
-
+// Export the Limit model
 export default Limit;

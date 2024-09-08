@@ -3,26 +3,27 @@ import { Model, ModelStatic, WhereOptions } from 'sequelize';
 import Transit from '../models/Transit';
 import Violation from '../models/Violation';
 import Payment from '../models/Payment';
+import Gateway from '../models/Gateway';
+import Segment from '../models/Segment';
 
 //Import factory
 import { successFactory } from "../factory/SuccessMessage";
 import { errorFactory } from "../factory/FailMessage";
 import { SuccesMessage, ErrorMessage } from "../factory/Messages";
-import Gateway from '../models/Gateway';
-import Segment from '../models/Segment';
-
+// Instantiate factory classes for success and error messages
 const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
 
-// Funzione generica per creare una clausola WHERE basata su una chiave primaria
+// Generic function to create a WHERE clause based on a primary key
 const wherePrimaryKey = <T>(key: string, value: string | number): WhereOptions<T> => ({ [key]: value } as unknown as WhereOptions<T>);
 
 class CRUDController {
 
-    // Crea un record
+    // Create a new record in the database
     async createRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         var result: any;
         try {
+            // Create a new record with the request body
             const record = await model.create(req.body);
             const message = successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, `New ${model.name} record created`)
             result = res.json({ success: message, data: record });
@@ -33,7 +34,7 @@ class CRUDController {
         return result;
     }
 
-    // Leggi un solo record data la sua chiave primaria (o piu di una)
+    // Read a single record given its primary key
     async readOneRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         var result: any;
         try {
@@ -50,13 +51,13 @@ class CRUDController {
         return result;
     }
 
-    // aggiorna un record data la sua chiave primaria (o piu di una)
+    // Update a record given its primary key
     async updateRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         var result: any;
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
-            // Costruisci la clausola WHERE per la chiave primaria
+            // Construct the WHERE clause for the primary key
             const primaryKeyValue = req.params.id as string | number;
             const whereClause = wherePrimaryKey<T>(primaryKeys[0], primaryKeyValue);
 
@@ -80,23 +81,23 @@ class CRUDController {
         return result;
     }
 
-    // cancella un record data la sua chiave primaria (o piu di una)
+    // Delete a record given its primary key
     async deleteRecord<T extends Model>(model: ModelStatic<T>, req: Request, res: Response): Promise<Response> {
         var result: any;
         try {
             // Retrieve primary key attributes from the model
             const primaryKeys = model.primaryKeyAttributes;
-            // Costruisci la clausola WHERE per la chiave primaria
+            // Construct the WHERE clause for the primary key
             const primaryKeyValue = req.params.id as string | number;
             const whereClause = wherePrimaryKey<T>(primaryKeys[0], primaryKeyValue);
-
+            // Delete the record
             const deleted = await model.destroy({
                 where: whereClause as WhereOptions<T>
             });
 
             const message = successMessageFactory.createMessage(SuccesMessage.deleteRecordSuccess, `${model.name} record deleted`);
             result = res.json({ success: message });
-            
+
         } catch (error) {
             const message = errorMessageFactory.createMessage(ErrorMessage.deleteRecordError, `Error while deleting ${model.name}`);
             result = res.json({ error: message });
@@ -104,21 +105,21 @@ class CRUDController {
         return result;
     }
 
-    // aggiorna l'ultimo Transit inserito per un veicolo data la sua targa (quello al quale manca exit_at)
+    // Update the last inserted Transit record for a vehicle given its plate (the one with missing exit_at)
     async updateLastTransit(req: Request, res: Response): Promise<any> {
         var result: any;
         const plate = req.params.id;
         try {
-            // Trova l'ultimo transito per la targa specificata e che non ha ancora `exit_at` impostato
+            // Find the last Transit record for the specified plate with a null `exit_at`
             const lastRecord = await Transit.getLastInsertedRecordByPlate(plate)
 
-            // Verifica se è stato trovato un record
+            // Check if a record was found
             if (!lastRecord) {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Transit with null exit_at parameter for vehicle ${plate} not found`);
                 return { error: message };
             }
 
-            // Aggiorna il record trovato con i dati forniti nel corpo della richiesta
+            // Update the found record with the request body data
             const updatedRecord = await lastRecord.update(req.body);
 
             if (updatedRecord) {
@@ -135,23 +136,25 @@ class CRUDController {
         return result;
     }
 
-    // Crea un record Transit dal Gateway loggato
+    // Create a Transit record from a logged Gateway
     async createTransitWithGateway(req: Request, res: Response): Promise<Response> {
         var result: any;
         const { highway_name, kilometer } = req.body.gateway;
         const { plate, weather_conditions } = req.body;
         try {
+            // Find Gateway data by highway name and kilometer
             const gatewayData = await Gateway.findGatewayByHighwayAndKilometer(highway_name, kilometer);
             if (!gatewayData) {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Gateway not found for highway ${highway_name} at kilometer ${kilometer}`);
                 return res.status(404).json({ error: message });
             }
+            // Find the Segment associated with the Gateway
             const segmentData = await Segment.findOne({ where: { id_gateway1: gatewayData.id } });
             if (!segmentData) {
                 const message = errorMessageFactory.createMessage(ErrorMessage.recordNotFound, `Segment not found for gateway ID ${gatewayData.id}`);
                 return res.status(404).json({ error: message });
             }
-
+            // Create a new Transit record
             const transit = await Transit.create({
                 id_segment: segmentData.id,
                 plate: plate,
@@ -167,16 +170,17 @@ class CRUDController {
         return result;
     }
 
-    // crea violation e il pagamento associato
+    // Create a Violation and the associated Payment
     async createViolationAndPayment(id_transit: number, average_speed: number, delta: number): Promise<Response> {
         var result: any;
         try {
-            // Crea una nuova violazione
+            // Create a new Violation
             const violation = await Violation.create({
                 id_transit,
                 average_speed,
                 delta
             });
+            // Create an associated Payment
             const payment = await Payment.create({
                 id_violation: violation.id
             })
@@ -189,5 +193,5 @@ class CRUDController {
         return result;
     }
 }
-
+// Export a new instance of the CRUDController
 export default new CRUDController();
