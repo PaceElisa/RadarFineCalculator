@@ -1,4 +1,7 @@
+
 # RadarFineCalculator
+
+
 <div align="center">
  
 [![Postgres](https://img.shields.io/badge/Made%20with-postgres-%23316192.svg?style=plastic&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
@@ -14,12 +17,31 @@
  
 </div>
 
-# Progetto-Programmazione_Avanzata-2024 - Creazione backend per la gestione e il calcolo del costo delle multe ottenuto in autostrade da sistemi tipo Tutor
+# Progetto-Programmazione_Avanzata-2024: Creazione backend per la gestione e il calcolo di multe ottenute in autostrada
+<p align="center">
+   <img src="./Images/readme_files/logo-univpm.png" height="80"/>
+</p>
 
 ## Tabella dei Contenuti
+- [Introduzione e Specifiche Progetto](#introduzione-e-specifiche-progetto)
+- [Installazione](#installazione)
+- [Configurazione](#configurazione)
+- [Diagrammi UML](#diagrammi-uml)
+- [Database](#database)
+- [Design Pattern](#design-pattern)
+- [Test Postman](#test-postman)
+- [Altri Strumenti](#altri-strumenti)
+- [Autori](#autori)
+- [License](#license)
 
 ## Introduzione e Specifiche Progetto
-Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di autoveicoli differenti tra differenti varchi autostradali
+Il progetto RadarFineCalculator, sviluppato per l'esame del corso di Programmazione Avanzata tenuto presso l'Università Politecnica delle Marche(UNIVPM), durante l'anno accademico 2023-2024, realizza un'API per la gestione dei dati. L'obiettivo del progetto consiste nel realizzare un sistema che consenta di gestire il calcolo di eventuali multe a seguito del passaggio di autoveicoli con classi differenti tra diversi varchi autostradali (es. sistema Tutor). Le specifiche prevedono che vengano:
+- modellati le tipologie di veicolo che hanno limiti differenti.
+- Modellati i varchi che hanno una posizione geografica nota.
+- Inseriti i transiti impostando data e ora del passaggio e targa del veicolo lungo una tratta che ha un varco di inizio, un varco di fine ed una distanza.
+- Riportate, nel caso di inserimento di transiti, le condizioni metereologiche del varco ovvero se era presente o meno pioggia in modo da ridurre il limite di velocità.
+- Generate delle infrazioni per superamento della velocità media tra due varchi limitrofi.
+Inoltre, va specificato che un veicolo in un giorno può attraversare diversi varchi / tratte. 
 
 ## Installazione
 
@@ -33,6 +55,10 @@ Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di au
 ### Postgres
 ### Tesseract OCR
 
+## Database
+
+### Database Schema
+
 ## Diagrammi UML
 
 ### Diagramma Casi D'Uso
@@ -40,9 +66,7 @@ Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di au
 ### Diagramma Sequenze
 ### Utilizzo
 
-## Database
 
-### Database Schema
 
 ## Design Pattern
 
@@ -52,11 +76,12 @@ Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di au
 ### DAO
 ### Model View Controller
 
+## Test Postman
 ## Altri Strumenti
 
 ### Generics
 
-## Test Postman
+
 
 ## Autori
 ## License
