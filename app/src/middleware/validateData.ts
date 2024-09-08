@@ -438,26 +438,20 @@ class validateData {
         }
         const islicenseplateValid: boolean = plateRegex.test(plate as string);
 
-        console.log(req.body); // test
-
 
         //If an image has been uploaded I have to check that the license plate was recognized correctly without stopping the middleware
         if (req.imageUpload) {
-
-            if (!req.messages) {
-                req.messages = [];
-            }
 
             if (!islicenseplateValid) {
                 req.body.img_readable = false;//Specificy that the plate is unreadable
 
                 //Set the license plate with a custom license plate assigned as unreadable
                 req.body.plate = "ZZ999ZZ";
-                req.messages.push(successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, "Transit memorized as Unreadable"));
+                console.log("Transit memorized as Unreadable, license plate set at 'ZZ999ZZ'");
             } else {
-                //Plate must be readable and valid, so if not, set img_readable at true
+                //Plate must be readable and valid, so set img_readable at true
                 req.body.img_readable = true;
-                req.messages.push(successMessageFactory.createMessage(SuccesMessage.createRecordSuccess, "Transit memorized as Readable"));
+                console.log( "Transit memorized as Readable");
 
             }
 

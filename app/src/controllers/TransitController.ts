@@ -126,16 +126,18 @@ class TransitController {
                 });
             }
 
-            /*//Create image url
+            //Create image path
+            let img_path = "images"; //defualt
             if(process.env.UPLOAD_DIR){
-                const img_url = `${req.protocol}://${req.get('host')}/images/${transit.img_route}`
-            }*/
+                img_path = process.env.UPLOAD_DIR;
+            }
 
 
             // Mappare il risultato per includere l'URL dell'immagine
             const formattedTransits = unreadableTransits?.map(transit => ({
                 ...transit.toJSON(),
-                img_url: path.join(req.protocol, '://', req.get('host') as string, '/images/' || process.env.UPLOAD_DIR, transit.img_route as string)
+                img_url: `${req.protocol}://${req.get('host')}/${img_path}/${transit.img_route}`
+                
             }));
 
             const message = successMessageFactory.createMessage(SuccesMessage.generalSuccess, `Unreadable Transits filtered successfully`);

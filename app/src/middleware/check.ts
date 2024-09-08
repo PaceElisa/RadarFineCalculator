@@ -27,7 +27,7 @@ const errorMessageFactory: errorFactory = new errorFactory();
 const successMessageFactory: successFactory = new successFactory();
 
  export interface ICustomRequest extends Request{
-    messages?: IMessage[];
+    
     imageUpload?: boolean;
 }
 
@@ -60,32 +60,25 @@ class generalCheck{
     //Check if an image is provided and try to identify the text (plate) present
      async checkImage(req:ICustomRequest, res: Response, next:NextFunction){
         req.imageUpload = false; // flag to pass in the middleware for checking if an image is provied
-        //Create an Info message if not already presente in the requeste    
-        if (!req.messages) {
-            req.messages = [];
-        }
 
         if (req.file) {
             try {
             const imagePath = req.file.path;
             console.log(req.file.path);
 
-            //Update the path image in the body 
+            //Update the path image in the body based on env variable 
             let split = "images/"
             if(process.env.UPLOAD_DIR){
                 split = `${process.env.UPLOAD_DIR}/`
             }
             req.body.img_route = imagePath.split(split)[1];
-            console.log(req.body.img_route)
-
-            const recognizedText = await recognizeTextFromImage(imagePath);
             
+            const recognizedText = await recognizeTextFromImage(imagePath);
+                        
             //Update the license plate in the body
             req.body.plate = recognizedText;
             req.imageUpload = true;
             
-            
-            //req.messages.push(successMessageFactory.createMessage(SuccesMessage.generalSuccess, "Image analysis has been successful."));
             console.log("Image analysis has been successful.\n")
             
           
