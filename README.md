@@ -24,11 +24,6 @@
    <img src="./Images/readme_files/logo-univpm.png" height="80" />
    <img src="./Images/readme_files/logo-univpm2.png" height="80" />
  </p>
- 
-    
-
-
-
 
 ## Tabella dei Contenuti
 - [Introduzione e Specifiche Progetto](#introduzione-e-specifiche-progetto)
@@ -63,15 +58,7 @@ Inoltre, va specificato che un veicolo in un giorno può attraversare diversi va
 ### Postgres
 ### Tesseract OCR
 
-<<<<<<< HEAD
 ## Database e Diagrammi UML
-=======
-## Database
-
-### Database Schema
-
-## Diagrammi UML
->>>>>>> e5b69b22a3fdd1499c8e3402ebff6d3bb3ce00d4
 
 ### Database Schema
 Il database è progettato per memorizzare i dati dei veicoli e dei relativi proprietari, i transiti, le infrazioni e le informazioni relative ai varchi. Di seguito è riportato lo schema del database:
@@ -89,11 +76,6 @@ Il database è progettato per memorizzare i dati dei veicoli e dei relativi prop
 ### Diagramma Sequenze
 ### Utilizzo
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> e5b69b22a3fdd1499c8e3402ebff6d3bb3ce00d4
 ## Design Pattern
 
 ### Middleware
