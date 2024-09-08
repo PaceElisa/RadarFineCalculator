@@ -68,17 +68,47 @@ Il database è progettato per memorizzare i dati dei veicoli e dei relativi prop
 * **Varchi** (gateways): Contiene i varchi autostradali identificati con il nome dell'autostrada e il chilometro in cui è situato il singolo varco.
 * **Tratta** (segments): Memorizza le tratte autostradali in cui è attivo il sistema di controllo della velocità. Ogni tratta è identificata dai varchi di inizio e fine e dalla distanza tra i due (calcolata automaticamente).
 * **Transiti** (transits): Registra i transiti di un veicolo attraverso una tratta. Il transito viene creato al momento in cui il veicolo attraversa il primo varco, registrando la data e l'ora di ingresso. Successivamente, quando il veicolo attraversa il varco di uscita, il transito viene aggiornato con la data e l'ora di uscita. In base alle condizioni meteorologiche inserite, viene verificato se il veicolo ha superato i limiti di velocità consentiti, al fine di determinare eventuali infrazioni. Nel caso di inserimento di un transito con un'immagine in input, viene valutata la leggibilità dell'immagine. Se l'immagine è considerata leggibile, vengono inseriti i relativi attributi nel sistema, inclusi il percorso dell'immagine e l'indicazione della sua leggibilità.
-* **Limits** (limiti di velocità): Definisce i limiti di velocità in base al tipo di veicolo e alle condizioni meteo.
-* **Violations** (multe): Registra le infrazioni dei limiti di velocità rilevate dal sistema. Contiene informazioni come la velocità media rilevata tra i due varchi, l'ammontare della multa, l'ID del transito a cui fa riferimento e la differenza rispetto al limite di velocità consentito. 
-* **Payments** (pagamenti): Contiene le informazioni relative ai pagamenti delle multe come l'uuid univoco del pagamento, l'ID della multa a cui fa riferimento e un indicatore sullo stato di pagamento della multa.
+* **Limiti di velocità** (limits): Definisce i limiti di velocità in base al tipo di veicolo e alle condizioni meteo.
+* **Multe** (violations): Registra le infrazioni dei limiti di velocità rilevate dal sistema. Contiene informazioni come la velocità media rilevata tra i due varchi, l'ammontare della multa, l'ID del transito a cui fa riferimento e la differenza rispetto al limite di velocità consentito. 
+* **Pagamenti** (payments): Contiene le informazioni relative ai pagamenti delle multe come l'uuid univoco del pagamento, l'ID della multa a cui fa riferimento e un indicatore sullo stato di pagamento della multa.
 
 ### Diagramma Casi D'Uso
-
+Il diagramma dei casi d'uso illustra le principali interazioni tra i vari attori del sistema e le operazioni che possono eseguire.
+![Usecase diagram](Images/readme_files/casi_d'uso.svg)
+* **Operatore** (admin): Si occupa della gestione dei veicoli, dei varchi, dei segmenti e dei transiti. Può effettuare operazioni di filtraggio come recuperare la lista dei transiti con immagini illeggibili per interpretare la targa del veicolo oppure visualizzare multe per targa e periodo temporale.
+* **Varco** (gateway): Può creare un transito impostando l'ID del segmento quello in cui si trova come varco d'ingresso. Inoltre, può aggiungere immagini del veicolo in transito, che verranno elaborate dal sistema tramite OCR (Tesseract) per estrarre automaticamente la targa, evitando l'inserimento manuale dei dati del veicolo.
+* **Automobilista** (driver): Può consultare l'elenco delle multe registrate per i veicoli di sua proprietà in un determinato intervallo di tempo e scaricare un bollettino di pagamento in formato PDF fornendo l'ID della multa.
 
 ### Diagramma Sequenze
-### Utilizzo
+Il diagramma delle sequenze illustra il flusso di eventi che avviene quando viene fatta una richiesta ad una rotta.  
+Sono riportati i diagrammi delle sequenze delle rotte implementate.
+#### Diagramma di Sequenze per la rotta di Login
+![Seq login](Images/readme_files/seq_login.svg)
+#### Diagramma di Sequenze per le rotte CRUD di creazione
+![Seq create](Images/readme_files/seq_create.svg)
+#### Diagramma di Sequenze per le rotte CRUD di lettura, aggiornamento e rimozione
+![Seq get upd rem](Images/readme_files/seq_update-get-remove.svg)
+#### Diagramma di Sequenze per la rotta di inserimento transito con immagine in input
+![Seq image](Images/readme_files/seq_transit-image.svg)
+#### Diagramma di Sequenze per la rotta di filtraggio transiti per immagine con targa illeggibile
+![Seq unreadable](Images/readme_files/seq_unreadable_transits.svg)
+#### Diagramma di Sequenze per la rotta di filtraggio multe
+![Seq violations](Images/readme_files/seq_violations-filter.svg)
+#### Diagramma di Sequenze per la rotta di download bollettino di pagamento
+![Seq receipts](Images/readme_files/seq_receipts.svg)
 
 ## Rotte
+
+### Login
+Per poter accedere alle altre rotte dell'applicazione, è necessario autenticarsi utilizzando una delle seguenti rotte:
+* ```/login```: Utilizzata per l'autenticazione degli utenti "operatore" (admin) e "automobilista" (driver). Nel corpo della richiesta dovranno essere forniti in formato JSON l'username e la password dell'utente.
+* ```/loginGateway``` Utilizzata per l'autenticazione degli utenti di tipo "gateway". Nel corpo della richiesta dovranno essere forniti il nome dell'autostrada e il chilometro del varco a cui si vuole accedere.
+Queste chiamate restituiscono un token JWT che deve essere inserito nell'header Authorization delle richieste successive. Questo token verrà verificato dal middleware authMiddleware per garantirne la validità e autorizzare l'accesso alle rotte protette.
+
+### CRUD Users, Vehicles, Gateways, Segments
+Le operazioni CRUD di creazione, lettura, aggiornamento e rimozione di record delle tabelle Users, Vehicles, Gateways e Segments possono essere effettuate solo dall'utente "operatore" (admin).
+* ```/api/MODEL``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per la creazione di un nuovo record nella tabella corrispondente. Nel corpo della richiesta devono essere forniti gli attributi obbligatori per la creazione del record specificato.
+* ```/api/MODEL/:id``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per leggere, aggiornare o rimuovere il record con l'ID specificato come parametro della richiesta. Se si tratta di un aggiornamento, nel corpo della richiesta devono essere forniti gli attributi da modificare.
 
 ## Design Pattern
 
