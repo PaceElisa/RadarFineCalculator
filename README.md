@@ -33,16 +33,23 @@ Sistema che gestisce il calcolo di eventuali multe a seguito del passaggio di au
 ### Postgres
 ### Tesseract OCR
 
-## Diagrammi UML
+## Database e Diagrammi UML
 
+### Database Schema
+Il database è progettato per memorizzare i dati dei veicoli e dei relativi proprietari, i transiti, le infrazioni e le informazioni relative ai varchi. Di seguito è riportato lo schema del database:
+![Database diagram](images/readme_files/modello_db.svg)  
+* **Utenti** (users): Contiene le informazioni necessarie al login dell'utente come username, password e ruolo.
+* **Veicoli** (vehicles): Contiene le informazioni relative ai veicoli come la targa, la tipologia di veicolo e l'utente al quale appartiene.
+* **Varchi** (gateways): Contiene i varchi autostradali identificati con il nome dell'autostrada e il chilometro in cui è situato il singolo varco.
+* **Tratta** (segments): Memorizza le tratte autostradali in cui è attivo il sistema di controllo della velocità. Ogni tratta è identificata dai varchi di inizio e fine e dalla distanza tra i due (calcolata automaticamente).
+* **Transiti** (transits): Registra i transiti di un veicolo attraverso una tratta. Il transito viene creato al momento in cui il veicolo attraversa il primo varco, registrando la data e l'ora di ingresso. Successivamente, quando il veicolo attraversa il varco di uscita, il transito viene aggiornato con la data e l'ora di uscita. In base alle condizioni meteorologiche inserite, viene verificato se il veicolo ha superato i limiti di velocità consentiti, al fine di determinare eventuali infrazioni. Nel caso di inserimento di un transito con un'immagine in input, viene valutata la leggibilità dell'immagine. Se l'immagine è considerata leggibile, vengono inseriti i relativi attributi nel sistema, inclusi il percorso dell'immagine e l'indicazione della sua leggibilità.
+* **Limits** (limiti di velocità): Definisce i limiti di velocità in base al tipo di veicolo e alle condizioni meteo.
+* **Violations** (multe): Registra le infrazioni dei limiti di velocità rilevate dal sistema. Contiene informazioni come la velocità media rilevata tra i due varchi, l'ammontare della multa, l'ID del transito a cui fa riferimento e la differenza rispetto al limite di velocità consentito. 
+* **Payments** (pagamenti): Contiene le informazioni relative ai pagamenti delle multe come l'uuid univoco del pagamento, l'ID della multa a cui fa riferimento e un indicatore sullo stato di pagamento della multa.
 ### Diagramma Casi D'Uso
 ### Rotte
 ### Diagramma Sequenze
 ### Utilizzo
-
-## Database
-
-### Database Schema
 
 ## Design Pattern
 
