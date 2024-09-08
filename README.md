@@ -29,7 +29,7 @@
 ## Tabella dei Contenuti
 - [Introduzione e Specifiche Progetto](#introduzione-e-specifiche-progetto)
 - [Installazione](#installazione)
-- [Configurazione](#configurazione)
+- [Infrastrutture e Configurazione](#infrastrutture-e-configurazione)
 - [Diagrammi UML](#database-e-diagrammi-uml)
 - [Rotte](#rotte)
 - [Design Pattern](#design-pattern)
@@ -104,11 +104,113 @@ docker-compose down
 ```
 
 
-## Configurazione
+## Infrastrutture e Configurazione
 
+### Docker
+
+Docker è una piattaforma di containerizzazione che permette di creare, eseguire e gestire applicazioni all'interno di container isolati. Ogni container include tutto ciò di cui un'applicazione ha bisogno per funzionare(codice.librerie e dipendenze), rendendola portabile, facile da distribuire su qualsiasi sistema che supporti Docker; semplificando il processo di deployment senza doversi preoccupare delle dipendenze o configurazioni specifiche dell'ambiente.
+
+Abbiamo usato un Docker File per installazione delle varie dipendenze , del motore di riconoscimento del testo Tesseract OCR e dei dati di addestramento per la lingua italiana, che abbiamo utilizzato per il riconoscimento delle targhe a partire da delle immagini.
+
+
+```
+FROM node:latest
+
+COPY package*.json /usr/
+WORKDIR /usr
+
+RUN  apt-get update && apt-get install tesseract-ocr -y && apt-get install tesseract-ocr-ita -y
+
+RUN npm install
+RUN npm install -g typescript 
+
+WORKDIR /usr/app
+
+COPY . .
+
+#Take build from packaga.json in the section script
+RUN npm run build
+#RUN tsc
+
+CMD [ "node", "./dist/app.js" ]
+
+```
 ### Docker  Compose
-### Postgres
+
+Docker Compose è uno strumento che permette di definire e gestire applicazioni multi-container usando un file YAML. Con Docker Compose è possibile configurare più container(come database, applicazioni e servizi esterni) e orchestrare la loro esecuzione in modo semplice e automatico.
+
+Docker Compose è stato utilizzato per gestire il container dell'applicazione e il container del database Postgres e grazie ad esso è stato possibile avviare e gestire tutti i servizi con un solo comando.
+
+Il file ```docker-compose.yaml``` è così composto:
+
+```plaintext
+
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: ./app
+      dockerfile: Dockerfile 
+    restart: always
+    depends_on:
+       database:
+        condition: service_healthy
+    env_file:
+      - ./app/.env
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+     - .:/app:/usr/app
+
+
+  database:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - ./app/.env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - ./database_init.sql:/docker-entrypoint-initdb.d/database_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      
+```
+In questo file possono essere apportata delle modifiche in base alle configurazioni preferite.
+#### Servizio 'app'
+
+- build: specifica il percorso del contesto di build(context) e il nome del file Dockerfile (dockerfile), può essere modificato nel cosa in cui il Dockerfile si trovasse in una posizione diversa.
+- depends_on: serve per definire le dipendenze tra i servizi Docker, indicando che un servizio(app) deve essere avviato solo dopo che un altro servizio(database), da cui dipende,  è stato avviato.L'opzione depends_on da sola non garantisce che il servizio dipendente sia effettivamente pronto e in salute, ma solo che Docker avvii i servizi nell'ordine specificato. Per questo, depends_on è stato combinato con la clausola condition: service_healthy, ad indicare che il servizio dipendente non solo deve essere avviato, ma deve essere "in salute" (basato su una condizione di salute definita, come una healthcheck) prima che l'altro servizio venga avviato.
+- env-file: indica il percorso del file delle variabili d'ambiente.
+- ports: serve per mappare una porta del container su una porta dell'host, consentendo di accedere a un servizio in esecuzione all'interno del container dall'esterno.
+- volumes: serve per collegare una parte del filesystem dell'host a una parte del filesystem all'interno del container.
+
+#### Servizio 'database'
+
+- image: specifica l'immagine Docker Postgres da utilizzare.
+- container_name:  assegna un nome specifico al container.
+- enviroment: passa le variabili d'ambiente direttamente al container. Le variabili come POSTGRES_DB, POSTGRES_USER e POSTGRES_PASSWORD sono caricate dal file .env e vengono utilizzate per configurare Postgres.
+- ports: specifica il mapping delle porte per esporre il servizio PostgreSQL.
+- volumes: specifica il volume montato per il file di seeding del database
+- healtcheck: definisce un test di integrità del container per verificare che il servizio Postgres sia attivo e funzionante.
+
+
+
 ### Tesseract OCR
+
+### File database_init.sql
+Nel file ```database_init.sql``` viene specificata la struttura del database da creare al primo avvio del container. Vengono anche inizializzati dei dati per consentire di provare l'applicazione.
+
+### File tsconfig.json
+Nel file ```tsconfig.json``` vengono specificate delle opzioni da fornire al compilatore Typescript.
 
 ## Database e Diagrammi UML
 
