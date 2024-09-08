@@ -1,6 +1,8 @@
 
 # RadarFineCalculator
-
+<p align="center">
+   <img src="./Images/readme_files/logo_.jpeg" height="450px" />
+ </p>
 
 <div align="center">
  
