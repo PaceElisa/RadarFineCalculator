@@ -162,6 +162,23 @@ Le operazioni CRUD di creazione, lettura, aggiornamento e rimozione di record de
 * ```/api/MODEL``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per la creazione di un nuovo record nella tabella corrispondente. Nel corpo della richiesta devono essere forniti gli attributi obbligatori per la creazione del record specificato.
 * ```/api/MODEL/:id``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per leggere, aggiornare o rimuovere il record con l'ID specificato come parametro della richiesta. Se si tratta di un aggiornamento, nel corpo della richiesta devono essere forniti gli attributi da modificare.
 
+### Rotte CRUD Transit
+Le operazioni CRUD su Transit sono strutturate in modo diverso rispetto a quanto riportato in precedenza.
+* ```/api/transits/transitId/:id```: Permette di leggere o modificare gli attributi di un transito specifico utilizzando l'ID del transito. Utilizzabile dall'utente "admin". 
+* ```/api/transits/GatewayId/:id```: Recupera i transiti filtrati per tratta con il varco specificato. Utilizzabile dall'utente "admin".
+* ```/api/transits/:id```: Permette di eliminare il transito con l'ID specificato. Utilizzabile dall'utente "admin".
+* ```/api/transits/plate/:id```: Aggiorna il campo exit_at dell'ultimo transito per un veicolo, identificato dalla targa. Questa rotta è utilizzata per gestire il termine del transito e verificare eventuali violazioni. Utilizzabile dall'utente "admin".
+* ```/api/transits/```: Crea un nuovo record di Transit. Questa rotta è utilizzata per registrare un transito con i dettagli forniti nel corpo della richiesta. Utilizzabile dall'utente "admin" e dal ruolo "gateway".
+* ```/api/transitsimage```: Crea un nuovo record di Transit utilizzando un'immagine. Questa rotta permette di registrare il transito caricando un'immagine contenente la targa del veicolo e specificando le condizioni meteorologiche e la tratta di interesse. Utilizzabile solo dal ruolo "gateway".
+
+### Rotte Filtro
+Le seguenti rotte sono utilizzate per effettuare operazioni di filtraggio.
+* ```/api/unreadableTransits```: Recupera i transiti per i quali le targhe non sono state interpretate correttamente da Tesseract. È possibile filtrare i risultati per ID del gateway, se specificato come parametro di query.
+* ```/api/violationfilter```: Filtra le violazioni in base alla targa (o alle targhe) e al periodo temporale forniti tramite query. Gli automobilisti (driver) possono visualizzare solo le violazioni relative alle proprie targhe, mentre gli operatori (admin) possono visualizzare tutte le violazioni.
+
+### Rotta Download bollettino di pagamento
+La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di pagamento in formato PDF per una violazione specifica, identificata dall'ID fornito. Gli automobilisti (driver) possono scaricare solo i bollettini relativi alle proprie violazioni, mentre gli amministratori (admin) possono accedere a tutti i bollettini.
+
 ## Design Pattern
 
 ### Middleware
