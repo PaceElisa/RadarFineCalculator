@@ -28,7 +28,7 @@ class TransitController {
         var result: any;
         try {
             // Extract plate from route parameters
-            const plate = req.params.plate;
+            const plate = req.params.id;
             const { exit_at } = req.body;
 
             // Ottieni l'ultimo record inserito per la plate che è anche l'ultimo aggiornato
@@ -122,7 +122,7 @@ class TransitController {
                 unreadableTransits = await Transit.findUnreadableTransitsByGateway(gatewayId);
             } else {
                 unreadableTransits = await Transit.findAll({
-                    where: { img_readable: false }
+                    where: { img_readable: false, img_route: {[Op.ne]: null}}
                 });
             }
 

@@ -81,7 +81,7 @@ router.get(`${API_PREFIX}/transits/GatewayId/:id`, authMiddleware.authenticateJW
 // delete a Transit by its id
 router.delete(`${API_PREFIX}/transits/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), async (req: any, res: any) => CRUDController.deleteRecord(Transit, req, res));
 // update Transit by its id (used to interpret a plate from an image)
-router.put(`${API_PREFIX}/transits/transitId/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Segment), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Segment, req, res));
+router.put(`${API_PREFIX}/transits/transitId/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validateRequestId, generalCheck.checkIDParamsExist(Transit), validateData.validateTransitDataUpdate, async (req: any, res: any) => CRUDController.updateRecord(Transit, req, res));
 // update `exit_at` of the last transit of a vehicle (id = plate of the vehicle)
 router.put(`${API_PREFIX}/transits/plate/:id`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, validateData.validatePlate, async (req: any, res: any) => {
     // unisce i risultati delle due funzioni di update e check violation in un unico json
@@ -107,7 +107,7 @@ router.put(`${API_PREFIX}/transits/plate/:id`, authMiddleware.authenticateJWT, a
 router.get(`${API_PREFIX}/unreadableTransits`, authMiddleware.authenticateJWT, authMiddleware.isAdmin, async (req: any, res: any) => TransitController.getUnreadableTransits(req, res));
 
 // Filter Violations for plate and date; driver can only see his plates (es query ?plates=ZZ999ZZ&start_date=2024-01-01T00:00:00Z&end_date=2024-12-01T00:00:00Z)
-router.get(`${API_PREFIX}/violationsfilter`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, async (req: any, res: any) => {
+router.get(`${API_PREFIX}/violationsfilter`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, validateData.validateFilterQuery, async (req: any, res: any) => {
     const user = req.body.user;
 
     // Se l'utente è un admin, chiama il metodo generico di filtraggio
@@ -121,7 +121,7 @@ router.get(`${API_PREFIX}/violationsfilter`, authMiddleware.authenticateJWT, aut
     }
 });
 
-// Route for downloading pdf receipt of violation with specified id
-router.get(`${API_PREFIX}/receipt/:id_violation`, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
+// Route for downloading pdf receipt of violation with specified id (driver can only download his receipts)
+router.get(`${API_PREFIX}/receipt/:id_violation`, authMiddleware.authenticateJWT, authMiddleware.isAdminOrDriver, authMiddleware.driverViolationCheck, async (req: any, res: any) => PaymentController.generatePDFReceipt(req, res));
 
 export default router;

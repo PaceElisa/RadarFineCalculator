@@ -3,6 +3,8 @@ import { Database } from '../config/database';
 import Transit from './Transit';
 import Segment from './Segment';
 import Gateway from './Gateway';
+import Vehicle from './Vehicle';
+import User from './User';
 
 const sequelize: Sequelize = Database.getSequelize();
 
@@ -46,22 +48,23 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
     static async findViolationsByPlates(plates: string[], startDate: Date, endDate: Date): Promise<Violation[] | null> {
         try {
             const violations = await Violation.findAll({
-                attributes: ['created_at', 'average_speed', ['delta', 'delta_over_speed_limit']],
+                attributes: ['id', 'created_at', 'average_speed', ['delta', 'delta_over_speed_limit']],
                 where: {
                     created_at: {
                         [Op.between]: [startDate, endDate]  // Filter by date range
-                    }},
+                    }
+                },
                 include: [
                     {
                         model: Transit,
-                        attributes: ['plate', ['id', 'transit_id'],'weather_conditions'],
+                        attributes: ['plate', ['id', 'transit_id'], 'weather_conditions'],
                         where: {
                             plate: plates
                         },
                         include: [
                             {
                                 model: Segment,
-                                attributes: ['id', ['distance','segment_length']],
+                                attributes: ['id', ['distance', 'segment_length']],
                                 include: [
                                     {
                                         model: Gateway,
@@ -82,6 +85,45 @@ class Violation extends Model<ViolationAttributes, ViolationCreationAttributes> 
             return violations;
         } catch (err) {
             console.error('Error fetching violations by plates:', err);
+            return null;
+        }
+    }
+
+    // Method to find Violations by plates and by a time period
+    static async findViolationUserId(violation_id: number): Promise<number | null> {
+        try {
+            const violation = await Violation.findOne({
+                attributes: ['id'],
+                where: { id: violation_id },
+                include: [
+                    {
+                        model: Transit,
+                        attributes: ['plate'],
+                        include: [
+                            {
+                                model: Vehicle,
+                                attributes: ['id_user'],
+                                include: [
+                                    {
+                                        model: User,
+                                        attributes: ['id']
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            if (violation) {
+                const transit = violation.get('Transit') as Transit;
+                const vehicle = transit.get('Vehicle') as Vehicle;
+                const user = vehicle.get('User') as User;
+                return user.id;
+            }
+            return null; // Restituisce null se non trova la violazione
+        } catch (err) {
+            console.error('Error fetching violation user ID');
             return null;
         }
     }

@@ -86,11 +86,16 @@ CREATE TABLE payments (
 -- Inserimento di un record nella tabella "users"
 INSERT INTO users (role, username, password, deleted_at)
 VALUES 
-    ('test', 'unreadable', 'securepassword123', NULL),
-    ('admin', 'john_doe', 'securepassword123', NULL),
-    ('driver', 'driver1', 'securepassword156', NULL),
-    ('driver', 'driver2', 'securepassword145', NULL),
-    ('admin', 'mario_rossi', 'password', NULL);
+    ('test', 'unreadable', 'password', NULL), -- used to store a "unreadable" plate
+    ('admin', 'mario_rossi', 'password', NULL),
+    ('admin', 'giuseppe_verdi', 'password', NULL),
+    ('driver', 'francesco_bianchi', 'password', NULL),
+    ('driver', 'luigi_ferrari', 'password', NULL),
+    ('driver', 'andrea_conti', 'password', NULL),
+    ('driver', 'roberto_esposito', 'password', NULL),
+    ('driver', 'alessandro_galli', 'password', NULL),
+    ('driver', 'marco_pellegrini', 'password', NULL),
+    ('driver', 'luca_martini', 'password', NULL);
 
 -- Inserimento dei limiti di velocità per vari tipi di veicoli sulle autostrade italiane
 INSERT INTO limits (vehicle_type, good_weather_limits, bad_weather_limits)
@@ -108,44 +113,89 @@ VALUES
 INSERT INTO vehicles (plate, vehicle_type, id_user, deleted_at)
 VALUES 
     ('ZZ999ZZ', 'Auto', 1, NULL),
-    ('AB123AB', 'Auto', 2, NULL),
-    ('CC123CC', 'Autobus', 2, NULL),
-    ('AB345CS', 'Auto', 3, NULL);
+    ('AB123AB', 'Auto', 4, NULL),
+    ('AA123AA', 'Auto', 4, NULL),
+    ('DL900DD', 'Moto', 5, NULL),
+    ('DZ098FL', 'Autocarro', 5, NULL),
+    ('FF604FF', 'Camion', 6, NULL),
+    ('FZ988ZA', 'Camper', 7, NULL),
+    ('CG420GG', 'Furgone', 7, NULL),
+    ('CJ010GT', 'Rimorchio', 8, NULL),
+    ('PO000GG', 'Moto', 8, NULL),
+    ('DI400DI', 'Auto', 9, NULL),
+    ('CC123CC', 'Autobus', 10, NULL);
 
 -- Inserimento di 2 record nella tabella "gateways"
 INSERT INTO gateways (highway_name, kilometer, deleted_at)
 VALUES 
+    ('A1', 30, NULL),
+    ('A1', 60, NULL),
+    ('A1', 90, NULL),
     ('A1', 100, NULL),
+    ('A1', 150, NULL),
+    ('A1', 180, NULL),
     ('A1', 200, NULL),
-    ('A1', 300, NULL),
-    ('A1', 400, NULL),
-    ('A1', 450, NULL),
-    ('A1', 600, NULL);
+    ('A1', 230, NULL),
+    ('A2', 20, NULL),
+    ('A2', 50, NULL),
+    ('A2', 80, NULL),
+    ('A2', 120, NULL),
+    ('A2', 200, NULL),
+    ('A2', 250, NULL),
+    ('A3', 100, NULL),
+    ('A3', 150, NULL),
+    ('A3', 200, NULL),
+    ('A3', 240, NULL),
+    ('A4', 50, NULL),
+    ('A4', 150, NULL),
+    ('A4', 180, NULL),
+    ('A4', 200, NULL),
+    ('A5', 50, NULL),
+    ('A5', 100, NULL),
+    ('A5', 150, NULL),
+    ('A5', 180, NULL);
 
 -- Inserimento di un record nella tabella "segments"
 INSERT INTO segments (id_gateway1, id_gateway2, distance, deleted_at)
 VALUES 
-    (1, 2, 100, NULL),
-    (3, 4, 100, NULL),
-    (5, 6, 150, NULL);
+    (1, 2, 30, NULL),
+    (3, 4, 30, NULL), 
+    (5, 6, 30, NULL),
+    (7, 8, 30, NULL),
+    (9, 10, 30, NULL),
+    (11, 12, 40, NULL),
+    (13, 14, 50, NULL),
+    (15, 16, 50, NULL),
+    (17, 18, 40, NULL),
+    (19, 20, 100, NULL),
+    (21, 22, 20, NULL),
+    (23, 24, 50, NULL);
 
 -- Inserimento di un record nella tabella "transits"
 INSERT INTO transits (enter_at, exit_at, plate, id_segment, weather_conditions, img_route, img_readable, deleted_at) 
 VALUES 
-    ('2024-08-29 08:00:00', '2024-08-29 09:00:00', 'AB123AB', 1, 'good', 'plate1.png', TRUE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 09:10:00', 'CC123CC', 1, 'good', NULL, TRUE, NULL),
-    ('2024-08-29 08:20:00', NULL, 'CC123CC', 1, 'good', 'plate1.png', FALSE, NULL),
-    ('2024-08-29 08:10:00', '2024-08-29 08:10:00', 'AB345CS', 1, 'good', NULL, TRUE, NULL);
+    ('2024-08-29 08:00:00', '2024-08-29 08:20:00', 'AB123AB', 5, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 08:40:00', 'AA123AA', 3, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:20:00', '2024-08-29 08:50:00', 'DL900DD', 7, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:30:00', '2024-08-29 08:50:00', 'DZ098FL', 9, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:40:00', '2024-08-29 09:00:00', 'FF604FF', 10, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:50:00', '2024-08-29 09:02:00', 'FZ988ZA', 1, 'good', 'plate1.png', FALSE, NULL),
+    ('2024-08-29 09:00:00', '2024-08-29 09:20:00', 'CG420GG', 2, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:10:00', '2024-08-29 08:23:00', 'CJ010GT', 4, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:20:00', NULL, 'PO000GG', 8, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:10:00', NULL, 'DI400DI', 6, 'bad', NULL, FALSE, NULL),
+    ('2024-08-29 08:20:00', '2024-08-29 08:50:00', 'CC123CC', 11, 'good', NULL, FALSE, NULL),
+    ('2024-08-29 08:30:00', NULL, 'CC123CC', 12, 'fog', NULL, FALSE, NULL);
 
 -- Inserimento di un record nella tabella "violations"
-INSERT INTO violations (id_transit, fine, average_speed, delta, deleted_at)
-VALUES 
-    (1, 150.00, 140.00, 10.00, NULL),
-    (4, 150.00, 140.00, 10.00, NULL);
 INSERT INTO violations (id_transit, fine, average_speed, delta, created_at, deleted_at)
 VALUES 
-    (2, 150.00, 140.00, 10.00, '2024-12-01T00:00:00Z', NULL);
+    (6, 200.00, 150.00, 20.00, '2024-08-29T10:00:00Z', NULL),
+    (8, 50.00, 138.00, 10.00, '2024-09-01T00:00:00Z', NULL);
 
-
+INSERT INTO payments (id_violation)
+VALUES 
+    (1),
+    (2);
 
 

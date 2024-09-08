@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import User from '../models/User';
 import Gateway from '../models/Gateway';
+import Violation from '../models/Violation';
 
 dotenv.config();
 
@@ -98,15 +99,15 @@ class authMiddleware {
     async isAdminOrGateway(req: Request, res: Response, next: NextFunction) {
         const user = req.body.user;
         const gateway = req.body.gateway;
-
         try {
             // Se l'utente è presente nel corpo della richiesta, verifica se è un admin
             if (user) {
                 const userData = await User.findUserByUsername(user.username);
                 // Verifica se l'utente ha il ruolo di 'admin'
                 if (userData && userData.role === 'admin') {
+                    console.log(userData?.role);
                     req.body.rolecheck = userData.role;
-                    next(); // Passa al middleware successivo se l'utente è un admin
+                    return next(); // Passa al middleware successivo se l'utente è un admin
                 }
             }
             // Se il gateway è presente nel corpo della richiesta, verifica se esiste
@@ -114,7 +115,7 @@ class authMiddleware {
                 const GatewayData = await Gateway.findGatewayByHighwayAndKilometer(gateway.highway_name, gateway.kilometer);
                 if (GatewayData) {
                     req.body.rolecheck = 'gateway';
-                    next(); // Passa al middleware successivo se l'utente è gateway
+                    return next(); // Passa al middleware successivo se l'utente è gateway
                 }
             }
             // Se nessuna delle condizioni è soddisfatta, restituisci un errore
@@ -174,6 +175,26 @@ class authMiddleware {
             next();
         } catch (err) {
             return next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while logging in'));
+        }
+    }
+
+    async driverViolationCheck(req: Request, res: Response, next: NextFunction) {
+        const user = req.body.user;
+        const id = req.params.id_violation;
+        const idViolation = Number(id);
+        try {
+            const userData = await User.findUserByUsername(user.username);
+            if (userData && userData.role === 'driver') {
+                const ViolationUserId = await Violation.findViolationUserId(idViolation);
+                if (userData.id === ViolationUserId) {
+                    return next()
+                }
+                return next(errorMessageFactory.createMessage(ErrorMessage.notAuthorized, 'User not authorized'));
+            }
+            next();
+        } catch (err) {
+            // Gestisci gli errori generali
+            next(errorMessageFactory.createMessage(ErrorMessage.generalError, 'Error while checking logged user'));
         }
     }
 }

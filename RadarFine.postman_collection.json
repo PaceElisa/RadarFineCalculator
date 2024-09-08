@@ -1,0 +1,1653 @@
+{
+	"info": {
+		"_postman_id": "3c808569-09bf-4175-947b-30d5f40736b6",
+		"name": "RadarFine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "LOGIN",
+			"item": [
+				{
+					"name": "LOGIN User ADMIN (operatore)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"mario_rossi\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN User DRIVER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"francesco_bianchi\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN Gateway",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"highway_name\": \"A1\",\r\n    \"kilometer\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/loginGateway",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loginGateway"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "CRUD",
+			"item": [
+				{
+					"name": "GET User by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"utenteProva\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE User by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"utenteProva2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE User by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Vehicle by plate",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/vehicles/CJ010GT",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicles",
+								"CJ010GT"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new Vehicle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plate\": \"AI111AI\",\r\n    \"vehicle_type\": \"Auto\",\r\n    \"id_user\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/vehicles/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicles",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Vehicle by plate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_user\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/vehicles/AI111AI",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicles",
+								"AI111AI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Vehicle by plate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/vehicles/AI111AI",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicles",
+								"AI111AI"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Gateway by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/gateways/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"gateways",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new Gateway",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1NjM2NjYwLCJleHAiOjE3MjU2NDAyNjB9.Um8JLRYJq2_CMN-wjFlQxR_Whc-4wzdgGvyDBmMk7gc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"highway_name\": \"A2\",\r\n    \"kilometer\": 600\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/gateways/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"gateways",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Gateway by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"highway_name\": \"A4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/gateways/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"gateways",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Gateway by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1NjM2NjYwLCJleHAiOjE3MjU2NDAyNjB9.Um8JLRYJq2_CMN-wjFlQxR_Whc-4wzdgGvyDBmMk7gc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/gateways/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"gateways",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Segment by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/segments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"segments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new Segment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_gateway1\": 25,\r\n    \"id_gateway2\": 26,\r\n    \"distance\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/segments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"segments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Segment by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1NjM2NjYwLCJleHAiOjE3MjU2NDAyNjB9.Um8JLRYJq2_CMN-wjFlQxR_Whc-4wzdgGvyDBmMk7gc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_gateway1\": 8,\r\n    \"id_gateway2\": 9,\r\n    \"distance\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/segments/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"segments",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Segment by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1NjM2NjYwLCJleHAiOjE3MjU2NDAyNjB9.Um8JLRYJq2_CMN-wjFlQxR_Whc-4wzdgGvyDBmMk7gc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_gateway1\": 8,\r\n    \"id_gateway2\": 9,\r\n    \"distance\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/segments/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"segments",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Transit by Transit id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/transitId/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"transitId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Transit by Gateway id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/gatewayId/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"gatewayId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new Transit withoud input image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plate\": \"AB123AB\",\r\n    \"id_segment\": 1,\r\n    \"weather_conditions\": \"good\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE new Transit with input image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoaWdod2F5X25hbWUiOiJBMSIsImtpbG9tZXRlciI6MTAwLCJpYXQiOjE3MjU2MzkyMzAsImV4cCI6MTcyNTY0MjgzMH0.l4JHf-SJaDQrS92-CLCKlmDJB1Ld96W1N0HF9DVd35Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "plate_image",
+									"description": "inserire una delle immagini fornite",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "weather_conditions",
+									"value": "good",
+									"type": "text"
+								},
+								{
+									"key": "id_segment",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transitsimage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transitsimage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Transit by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE Transit by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plate\": \"CC123CC\",\r\n    \"weather_conditions\": \"bad\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/transitId/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"transitId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE exit_at of LAST Transit by plate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"exit_at\": \"2024-08-29T08:50:00Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/plate/CC123CC",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"plate",
+								"CC123CC"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE exit_at of LAST Transit by plate WITHOUT violation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"exit_at\": \"2024-08-29T08:50:00Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/plate/PO000GG",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"plate",
+								"PO000GG"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "OPERATIONS",
+			"item": [
+				{
+					"name": "FILTER Violations as admin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/violationsfilter?plates=FZ988ZA&start_date=2024-01-01T00:00:00Z&end_date=2024-12-01T00:00:00Z",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"violationsfilter"
+							],
+							"query": [
+								{
+									"key": "plates",
+									"value": "FZ988ZA"
+								},
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-01T00:00:00Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FILTER Violations as driver",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/violationsfilter?start_date=2024-01-01T00:00:00Z&end_date=2024-12-01T00:00:00Z",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"violationsfilter"
+							],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-01T00:00:00Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FILTER Unreadable Transits without Gateway Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/unreadableTransits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"unreadableTransits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FILTER Unreadable Transits with Gateway Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/unreadableTransits?id=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"unreadableTransits"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DOWNLOAD pdf receipt of a Violation by Violation Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNzI1Njk4NjkxLCJleHAiOjE3MjU3MDIyOTF9.kOEPoxqepwdgvoZSMytxL-rMO28-15xvWJmenR_lmEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/receipt/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"receipt",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SOME ERRORS",
+			"item": [
+				{
+					"name": "Invalid plate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plate\": \"AI1121AI\",\r\n    \"vehicle_type\": \"Auto\",\r\n    \"id_user\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/vehicles/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"vehicles",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid weather conditions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"plate\": \"AB123AB\",\r\n    \"id_segment\": 1,\r\n    \"weather_conditions\": \"rain\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transit with null exit_at not found for a certain plate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"exit_at\": \"2024-08-29T08:50:00Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/transits/plate/AB123AB",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"transits",
+								"plate",
+								"AB123AB"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid date format on query",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/violationsfilter?plates=FZ988ZA&start_date=20224-01-01T20:00:00Z&end_date=2024-12-01T00:00:00Z",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"violationsfilter"
+							],
+							"query": [
+								{
+									"key": "plates",
+									"value": "FZ988ZA"
+								},
+								{
+									"key": "start_date",
+									"value": "20224-01-01T20:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-01T00:00:00Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid plate array on query",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/violationsfilter?plates=FZ988ZA&plates=FZA123AA&plates=AA1111A&start_date=2024-01-01T20:00:00Z&end_date=2024-12-01T00:00:00Z",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"violationsfilter"
+							],
+							"query": [
+								{
+									"key": "plates",
+									"value": "FZ988ZA"
+								},
+								{
+									"key": "plates",
+									"value": "FZA123AA"
+								},
+								{
+									"key": "plates",
+									"value": "AA1111A"
+								},
+								{
+									"key": "start_date",
+									"value": "2024-01-01T20:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-01T00:00:00Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Segment must have 2 different gateway ids",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlvX3Jvc3NpIiwiaWF0IjoxNzI1NzE2Mzk2LCJleHAiOjE3MjU3MTk5OTZ9.zDBvKosdp88wLLImJIHtouu7yW8Ek94SU_PRA1nNOR0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_gateway1\": 4,\r\n    \"id_gateway2\": 4,\r\n    \"distance\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/segments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"segments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	}
+}

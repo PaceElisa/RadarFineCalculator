@@ -117,7 +117,7 @@ class validateData {
                     kilometer: kilometer
                 }
             });
-            
+
             //Check if a record, with the same attributes, exists
             if (highway)
                 return next(errorMessageFactory.createMessage(ErrorMessage.recordAlreadyExist, `This specific gateway ${highway_name} at the ${kilometer} km already exist.`));
@@ -549,6 +549,46 @@ class validateData {
 
 
 
+    }
+
+    //Middleware that validate data from query
+    validateFilterQuery(req: Request, res: Response, next: NextFunction) {
+        const { plates, start_date, end_date } = req.query;
+        const iso8601DateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
+        const plateRegex = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
+
+        // Verifica il formato di plates
+        if (plates) {
+            // Se plates è una stringa, convertila in array
+            const plateArray = Array.isArray(plates) ? plates : [plates];
+
+            // Verifica che tutte le plates siano stringhe valide
+            const invalidPlates = plateArray.filter((plate: any) => typeof plate !== 'string' || !plateRegex.test(plate));
+            if (invalidPlates.length > 0) {
+                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, `Invalid plate format. The following plates are invalid: ${invalidPlates.join(', ')}`));
+            }
+        }
+
+        // Controllo del formato delle date
+        // Gestione di start_date e end_date
+        if (start_date) {
+            if (typeof start_date !== 'string' || !iso8601DateRegex.test(start_date)) {
+                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid start_date format. Expect YYYY-MM-DDTHH:MM:SSZ"));
+            }
+        }
+
+        if (end_date) {
+            if (typeof end_date !== 'string' || !iso8601DateRegex.test(end_date)) {
+                return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "Invalid end_date format. Expect YYYY-MM-DDTHH:MM:SSZ"));
+            }
+        }
+
+        // Verifica che end_date sia successiva a start_date se entrambi sono forniti
+        if (start_date && end_date && new Date(start_date) > new Date(end_date)) {
+            return next(errorMessageFactory.createMessage(ErrorMessage.invalidFormat, "end_date must be after start_date."));
+        }
+
+        next();
     }
 }
 
