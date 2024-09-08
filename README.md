@@ -349,10 +349,18 @@ All'interno dell'applicazione sono presenti i seguenti middleware.
 * **validateData**: verifica che i dati inseriti per la creazione o l'aggiornamento di nuovi record nei vari modelli siano formattati correttamente e rispettino i requisiti di validazione definiti.
 * **errorHandler**: collocato alla fine della catena dei middleware, ha il compito di gestire le risposte al client in caso di errore. Questo middleware intercetta eventuali errori che potrebbero essere stati generati durante l'elaborazione della richiesta e restituisce una risposta JSON contenente i dettagli dell'errore.
 
+<p align="center">
+  <img src="./Images/readme_files/middleware.png" height="300px"/>
+</p>
+
 ### Factory
 Il pattern Factory è un tipo di Creational Pattern che fornisce un'interfaccia per creare oggetti in una superclasse, ma consente alle sottoclassi di modificare il tipo di oggetto che verrà creato. Questo pattern è stato utilizzato per gestire la creazione di messaggi di errore/successo personalizzati.  
 
-Abbiamo sviluppato una classe astratta (che funge da modello per i messaggi) e un'interfaccia factory (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+Abbiamo sviluppato una classe astratta(Products) (che funge da modello per i messaggi) e un'interfaccia factory(Creator) (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi(Concreate Products) di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory(Concreate Creator) devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+
+<p align="center">
+  <img src="./Images/readme_files/factory.png" height="300px"/>
+</p>
 
 ### Singleton
 Il pattern Singleton è un Creational Pattern che garantisce che una classe abbia solo un'istanza e fornisce un punto di accesso globale a quell'istanza. Questo è utile per risorse condivise o configurazioni di applicazione che devono essere uniche e accessibili da più punti del programma.  
