@@ -151,18 +151,18 @@ Sono riportati i diagrammi delle sequenze delle rotte implementate.
 
 ## Rotte
 
-### Login
+#### Login
 Per poter accedere alle altre rotte dell'applicazione, è necessario autenticarsi utilizzando una delle seguenti rotte:
 * ```/login```: Utilizzata per l'autenticazione degli utenti "operatore" (admin) e "automobilista" (driver). Nel corpo della richiesta dovranno essere forniti in formato JSON l'username e la password dell'utente.
 * ```/loginGateway``` Utilizzata per l'autenticazione degli utenti di tipo "gateway". Nel corpo della richiesta dovranno essere forniti il nome dell'autostrada e il chilometro del varco a cui si vuole accedere.
 Queste chiamate restituiscono un token JWT che deve essere inserito nell'header Authorization delle richieste successive. Questo token verrà verificato dal middleware authMiddleware per garantirne la validità e autorizzare l'accesso alle rotte protette.
 
-### CRUD Users, Vehicles, Gateways, Segments
+#### CRUD Users, Vehicles, Gateways, Segments
 Le operazioni CRUD di creazione, lettura, aggiornamento e rimozione di record delle tabelle Users, Vehicles, Gateways e Segments possono essere effettuate solo dall'utente "operatore" (admin).
 * ```/api/MODEL``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per la creazione di un nuovo record nella tabella corrispondente. Nel corpo della richiesta devono essere forniti gli attributi obbligatori per la creazione del record specificato.
 * ```/api/MODEL/:id``` (dove ```MODEL``` sta per ```users```, ```vehicles```, ```gateways``` o ```segments```): Utilizzata per leggere, aggiornare o rimuovere il record con l'ID specificato come parametro della richiesta. Se si tratta di un aggiornamento, nel corpo della richiesta devono essere forniti gli attributi da modificare.
 
-### Rotte CRUD Transit
+#### Rotte CRUD Transit
 Le operazioni CRUD su Transit sono strutturate in modo diverso rispetto a quanto riportato in precedenza.
 * ```/api/transits/transitId/:id```: Permette di leggere o modificare gli attributi di un transito specifico utilizzando l'ID del transito. Utilizzabile dall'utente "admin". 
 * ```/api/transits/GatewayId/:id```: Recupera i transiti filtrati per tratta con il varco specificato. Utilizzabile dall'utente "admin".
@@ -171,13 +171,52 @@ Le operazioni CRUD su Transit sono strutturate in modo diverso rispetto a quanto
 * ```/api/transits/```: Crea un nuovo record di Transit. Questa rotta è utilizzata per registrare un transito con i dettagli forniti nel corpo della richiesta. Utilizzabile dall'utente "admin" e dal ruolo "gateway".
 * ```/api/transitsimage```: Crea un nuovo record di Transit utilizzando un'immagine. Questa rotta permette di registrare il transito caricando un'immagine contenente la targa del veicolo e specificando le condizioni meteorologiche e la tratta di interesse. Utilizzabile solo dal ruolo "gateway".
 
-### Rotte Filtro
+#### Rotte Filtro
 Le seguenti rotte sono utilizzate per effettuare operazioni di filtraggio.
 * ```/api/unreadableTransits```: Recupera i transiti per i quali le targhe non sono state interpretate correttamente da Tesseract. È possibile filtrare i risultati per ID del gateway, se specificato come parametro di query.
 * ```/api/violationfilter```: Filtra le violazioni in base alla targa (o alle targhe) e al periodo temporale forniti tramite query. Gli automobilisti (driver) possono visualizzare solo le violazioni relative alle proprie targhe, mentre gli operatori (admin) possono visualizzare tutte le violazioni.
 
-### Rotta Download bollettino di pagamento
+#### Rotta Download bollettino di pagamento
 La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di pagamento in formato PDF per una violazione specifica, identificata dall'ID fornito. Gli automobilisti (driver) possono scaricare solo i bollettini relativi alle proprie violazioni, mentre gli amministratori (admin) possono accedere a tutti i bollettini.
+
+### Riepilogo
+## Descrizione delle Rotte API
+
+## Descrizione delle Rotte API
+
+| Rotta                                | Metodo HTTP | Descrizione                                                                                                             | Chi può accedervi             |
+|--------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| `/api/login`                         | POST        | Autenticazione degli utenti (admin e driver). Fornisce un token JWT.                                                    | Tutti gli utenti              |
+| `/api/loginGateway`                  | POST        | Autenticazione per gli utenti di tipo "gateway". Fornisce un token JWT.                                                  | Utenti gateway                |
+| `/api/users`                         | POST        | Crea un nuovo record nella tabella degli utenti.                                                                         | Solo admin                    |
+| `/api/users/:id`                     | GET         | Recupera un record utente specifico utilizzando l'ID passato come parametro.                                            | Solo admin                    |
+| `/api/users/:id`                     | DELETE      | Rimuove un record utente specifico utilizzando l'ID passato come parametro.                                             | Solo admin                    |
+| `/api/users/:id`                     | PUT         | Aggiorna un record utente specifico utilizzando l'ID passato come parametro.                                             | Solo admin                    |
+| `/api/vehicles`                      | POST        | Crea un nuovo record nella tabella dei veicoli.                                                                          | Solo admin                    |
+| `/api/vehicles/:id`                  | GET         | Recupera un record veicolo specifico utilizzando l'ID passato come parametro.                                           | Solo admin                    |
+| `/api/vehicles/:id`                  | DELETE      | Rimuove un record veicolo specifico utilizzando l'ID passato come parametro.                                            | Solo admin                    |
+| `/api/vehicles/:id`                  | PUT         | Aggiorna un record veicolo specifico utilizzando l'ID passato come parametro.                                           | Solo admin                    |
+| `/api/gateways`                      | POST        | Crea un nuovo record nella tabella dei gateway.                                                                         | Solo admin                    |
+| `/api/gateways/:id`                  | GET         | Recupera un record gateway specifico utilizzando l'ID passato come parametro.                                           | Solo admin                    |
+| `/api/gateways/:id`                  | DELETE      | Rimuove un record gateway specifico utilizzando l'ID passato come parametro.                                            | Solo admin                    |
+| `/api/gateways/:id`                  | PUT         | Aggiorna un record gateway specifico utilizzando l'ID passato come parametro.                                           | Solo admin                    |
+| `/api/segments`                      | POST        | Crea un nuovo record nella tabella dei segmenti.                                                                        | Solo admin                    |
+| `/api/segments/:id`                  | GET         | Recupera un record segmento specifico utilizzando l'ID passato come parametro.                                          | Solo admin                    |
+| `/api/segments/:id`                  | DELETE      | Rimuove un record segmento specifico utilizzando l'ID passato come parametro.                                           | Solo admin                    |
+| `/api/segments/:id`                  | PUT         | Aggiorna un record segmento specifico utilizzando l'ID passato come parametro.                                          | Solo admin                    |
+| `/api/transitsimage`                 | POST        | Crea un nuovo transito basato su un'immagine. Richiede un'immagine della targa del veicolo.                              | Solo gateway e admin          |
+| `/api/transits`                      | POST        | Crea un nuovo transito senza immagine. Solo gli admin possono specificare qualsiasi ID segmento, i gateway solo il proprio. | Solo admin e gateway         |
+| `/api/transits/transitId/:id`        | GET         | Recupera un transito specifico utilizzando l'ID passato come parametro.                                                 | Solo admin                    |
+| `/api/transits/GatewayId/:id`         | GET         | Recupera i transiti filtrati per ID del gateway.                                                                         | Solo admin                    |
+| `/api/transits/:id`                  | DELETE      | Rimuove un transito specifico utilizzando l'ID passato come parametro.                                                  | Solo admin                    |
+| `/api/transits/transitId/:id`        | PUT         | Aggiorna un transito specifico utilizzando l'ID passato come parametro. (Utilizzato per interpretare una targa da un'immagine) | Solo admin                    |
+| `/api/transits/plate/:id`            | PUT         | Aggiorna il campo `exit_at` dell'ultimo transito per un veicolo. L'ID corrisponde alla targa del veicolo.                  | Solo admin                    |
+| `/api/unreadableTransits`            | GET         | Recupera i transiti le cui targhe non sono state interpretate correttamente. Può essere filtrato per ID del gateway.     | Solo admin                    |
+| `/api/violationfilter`               | GET         | Filtra le violazioni per targa e periodo temporale. Gli automobilisti possono vedere solo le proprie violazioni, gli admin tutte. | Solo admin e driver           |
+| `/api/receipt/:id_violation`         | GET         | Scarica una ricevuta PDF per una violazione specifica. Gli automobilisti possono scaricare solo le loro ricevute.         | Solo admin e driver           |
+
+
+
 
 ## Design Pattern
 
