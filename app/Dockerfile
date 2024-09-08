@@ -5,8 +5,6 @@ WORKDIR /usr
 
 RUN  apt-get update && apt-get install tesseract-ocr -y && apt-get install tesseract-ocr-ita -y
 
-#COPY tsconfig.json .
-
 RUN npm install
 RUN npm install -g typescript 
 
@@ -14,7 +12,7 @@ WORKDIR /usr/app
 
 COPY . .
 
-#Prende build da packaga.json nella sezione script
+#Take build from packaga.json in the section script
 RUN npm run build
 #RUN tsc
 
