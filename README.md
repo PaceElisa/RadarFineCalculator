@@ -62,7 +62,7 @@ Inoltre, va specificato che un veicolo in un giorno può attraversare diversi va
 
 ### Database Schema
 Il database è progettato per memorizzare i dati dei veicoli e dei relativi proprietari, i transiti, le infrazioni e le informazioni relative ai varchi. Di seguito è riportato lo schema del database:
-![Database diagram](images/readme_files/modello_db.svg)  
+![Database diagram](Images/readme_files/modello_db.svg)  
 * **Utenti** (users): Contiene le informazioni necessarie al login dell'utente come username, password e ruolo.
 * **Veicoli** (vehicles): Contiene le informazioni relative ai veicoli come la targa, la tipologia di veicolo e l'utente al quale appartiene.
 * **Varchi** (gateways): Contiene i varchi autostradali identificati con il nome dell'autostrada e il chilometro in cui è situato il singolo varco.
@@ -71,6 +71,7 @@ Il database è progettato per memorizzare i dati dei veicoli e dei relativi prop
 * **Limits** (limiti di velocità): Definisce i limiti di velocità in base al tipo di veicolo e alle condizioni meteo.
 * **Violations** (multe): Registra le infrazioni dei limiti di velocità rilevate dal sistema. Contiene informazioni come la velocità media rilevata tra i due varchi, l'ammontare della multa, l'ID del transito a cui fa riferimento e la differenza rispetto al limite di velocità consentito. 
 * **Payments** (pagamenti): Contiene le informazioni relative ai pagamenti delle multe come l'uuid univoco del pagamento, l'ID della multa a cui fa riferimento e un indicatore sullo stato di pagamento della multa.
+
 ### Diagramma Casi D'Uso
 ### Rotte
 ### Diagramma Sequenze
