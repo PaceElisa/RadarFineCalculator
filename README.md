@@ -180,9 +180,6 @@ Le seguenti rotte sono utilizzate per effettuare operazioni di filtraggio.
 La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di pagamento in formato PDF per una violazione specifica, identificata dall'ID fornito. Gli automobilisti (driver) possono scaricare solo i bollettini relativi alle proprie violazioni, mentre gli amministratori (admin) possono accedere a tutti i bollettini.
 
 ### Riepilogo
-## Descrizione delle Rotte API
-
-## Descrizione delle Rotte API
 
 | Rotta                                | Metodo HTTP | Descrizione                                                                                                             | Chi può accedervi             |
 |--------------------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------|-------------------------------|
@@ -204,7 +201,7 @@ La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di
 | `/api/segments/:id`                  | GET         | Recupera un record segmento specifico utilizzando l'ID passato come parametro.                                          |  admin                    |
 | `/api/segments/:id`                  | DELETE      | Rimuove un record segmento specifico utilizzando l'ID passato come parametro.                                           |  admin                    |
 | `/api/segments/:id`                  | PUT         | Aggiorna un record segmento specifico utilizzando l'ID passato come parametro.                                          |  admin                    |
-| `/api/transitsimage`                 | POST        | Crea un nuovo transito basato su un'immagine. Richiede un'immagine della targa del veicolo.                              |  gateway, admin          |
+| `/api/transitsimage`                 | POST        | Crea un nuovo transito basato su un'immagine. Richiede un'immagine della targa del veicolo.                              |  admin, gateway          |
 | `/api/transits`                      | POST        | Crea un nuovo transito senza immagine. Solo gli admin possono specificare qualsiasi ID segmento, i gateway solo quello corrispondente al proprio. | admin, gateway         |
 | `/api/transits/transitId/:id`        | GET         | Recupera un transito specifico utilizzando l'ID passato come parametro.                                                 |  admin                    |
 | `/api/transits/GatewayId/:id`         | GET         | Recupera i transiti filtrati per ID del gateway.                                                                         |  admin                    |
@@ -216,12 +213,31 @@ La rotta ```/api/receipt/:id_violation``` permette il download del bollettino di
 | `/api/receipt/:id_violation`         | GET         | Scarica un bollettino PDF per una violazione specifica. Gli automobilisti possono scaricare solo i loro bollettini.         | admin, driver           |
 
 ## Design Pattern
+Durante lo sviluppo dell'applicazione sono stati utilizzati i seguenti pattern.
 
-### Middleware
+### CoR e Middleware
+Il pattern Chain of Responsibility è un pattern comportamentale che consente a più oggetti di gestire una richiesta senza che l'oggetto richiedente conosca il gestore finale. Ogni oggetto della catena ha la possibilità di elaborare la richiesta o di passarla al prossimo oggetto della catena. Questo pattern presenta forti analogie con il concetto di Middleware.  
+
+Il middleware è un Design Pattern usato principalmente nello sviluppo di applicazioni web. Funziona come uno strato intermedio che gestisce le richieste e le risposte tra il client e il server. I middleware possono essere concatenati uno dopo l'altro prima che la richiesta del client raggiunga il controller dell'applicazione, e ciascuno di essi svolge una funzione specifica. Per passare la richiesta al middleware successivo, viene utilizzata una chiamata alla funzione next() alla fine del codice. Se i controlli effettuati lungo la catena hanno esito positivo, la richiesta viene elaborata correttamente; in caso contrario, viene restituita una risposta contenente l'errore.
+All'interno dell'applicazione sono presenti i seguenti middleware.
+* **authMiddleware**: contiene varie funzioni che verificano se l'utente è autenticato e autorizzato a visualizzare un determinato contenuto.
+* **check - checkIDParamsExist**: verifica se l'ID passato come parametro identifica correttamente un record nella tabella.
+* **check - checkImage**: verifica se l'immagine passata come input contiene una targa leggibile dall'OCR Tesseract.
+* **uploadMiddleware**: utilizzato per gestire il caricamento delle immagini provenienti da dati multipart/form-data.
+* **validateData**: verifica che i dati inseriti per la creazione o l'aggiornamento di nuovi record nei vari modelli siano formattati correttamente e rispettino i requisiti di validazione definiti.
+* **errorHandler**: collocato alla fine della catena dei middleware, ha il compito di gestire le risposte al client in caso di errore. Questo middleware intercetta eventuali errori che potrebbero essere stati generati durante l'elaborazione della richiesta e restituisce una risposta JSON contenente i dettagli dell'errore.
+
 ### Factory
+Il pattern Factory è un tipo di Creational Pattern che fornisce un'interfaccia per creare oggetti in una superclasse, ma consente alle sottoclassi di modificare il tipo di oggetto che verrà creato. Questo pattern è stato utilizzato per gestire la creazione di messaggi di errore/successo personalizzati.
+Abbiamo sviluppato una classe astratta (che funge da modello per i messaggi) e un'interfaccia factory (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+
 ### Singleton
-### DAO
+Il pattern Singleton è un Creational Pattern che garantisce che una classe abbia solo un'istanza e fornisce un punto di accesso globale a quell'istanza. Questo è utile per risorse condivise o configurazioni di applicazione che devono essere uniche e accessibili da più punti del programma.
+Abbiamo adottato questo pattern per gestire la connessione a un database PostgreSQL utilizzando Sequelize. In questo modo si evita la creazione di più connessioni concorrenti, si migliorano le prestazioni e si facilita l'accesso al database da più punti del programma.
+
 ### Model View Controller
+Il pattern MVC è un pattern architetturale che separa un'applicazione in tre componenti principali: Model, View e Controller. Il Model rappresenta i dati e la logica di business, la View gestisce la presentazione e l'interfaccia utente, e il Controller gestisce l'interazione dell'utente e aggiorna il Model e la View di conseguenza. In questo modo il codice risulta più organizzato e aiuta a facilitare la manutenzione e lo sviluppo dell'applicazione.
+Nel nostro caso le View possono essere viste come le risposte JSON o PDF alle chiamate che vengono fatte dall'utente.
 
 ## Test Postman
 ## Altri Strumenti
