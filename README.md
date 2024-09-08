@@ -19,8 +19,14 @@
 
 # Progetto-Programmazione_Avanzata-2024: Creazione backend per la gestione e il calcolo di multe ottenute in autostrada
 <p align="center">
-   <img src="./Images/readme_files/logo-univpm.png" height="80"/>
-</p>
+   <img src="./Images/readme_files/logo-univpm.png" height="80" />
+   <img src="./Images/readme_files/logo-univpm2.png" height="80" />
+ </p>
+ 
+    
+
+
+
 
 ## Tabella dei Contenuti
 - [Introduzione e Specifiche Progetto](#introduzione-e-specifiche-progetto)
