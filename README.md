@@ -34,7 +34,6 @@
 - [Rotte](#rotte)
 - [Design Pattern](#design-pattern)
 - [Test Postman](#test-postman)
-- [Altri Strumenti](#altri-strumenti)
 - [Autori](#autori)
 - [License](#license)
 
@@ -241,14 +240,17 @@ Abbiamo adottato questo pattern per gestire la connessione a un database Postgre
 Il pattern MVC è un pattern architetturale che separa un'applicazione in tre componenti principali: Model, View e Controller. Il Model rappresenta i dati e la logica di business, la View gestisce la presentazione e l'interfaccia utente, e il Controller gestisce l'interazione dell'utente e aggiorna il Model e la View di conseguenza. In questo modo il codice risulta più organizzato e aiuta a facilitare la manutenzione e lo sviluppo dell'applicazione.
 Nel nostro caso le View possono essere viste come le risposte JSON o PDF alle chiamate che vengono fatte dall'utente.
 
+### Altri strumenti - Generics
+
+
 ## Test Postman
-## Altri Strumenti
-
-### Generics
-
-
 
 ## Autori
-## License
+- [Federico Paolucci](https://github.com/FedericoPaolucci)
+- [Elisa Pace](https://github.com/PaceElisa)
 
+## License
+Questo progetto è concesso in licenza sotto la MIT License
+
+Copyright © 2024 Federico Paolucci & Elisa Pace
 
