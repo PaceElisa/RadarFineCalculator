@@ -259,9 +259,9 @@ Sono riportati i diagrammi delle sequenze delle rotte implementate.
 #### Diagramma di Sequenze per la rotta di Login
 ![Seq login](Images/readme_files/seq_login.svg)
 #### Diagramma di Sequenze per le rotte CRUD di creazione
-![Seq create](Images/readme_files/seq_create.svg)
+![Seq create](Images/readme_files/seq_create.jpg)
 #### Diagramma di Sequenze per le rotte CRUD di lettura, aggiornamento e rimozione
-![Seq get upd rem](Images/readme_files/seq_update-get-remove.svg)
+![Seq get upd rem](Images/readme_files/seq_update-get-remove.jpg)
 #### Diagramma di Sequenze per la rotta di inserimento transito con immagine in input
 ![Seq image](Images/readme_files/seq_transit-image.svg)
 #### Diagramma di Sequenze per la rotta di filtraggio transiti per immagine con targa illeggibile
@@ -269,7 +269,7 @@ Sono riportati i diagrammi delle sequenze delle rotte implementate.
 #### Diagramma di Sequenze per la rotta di filtraggio multe
 ![Seq violations](Images/readme_files/seq_violations-filter.svg)
 #### Diagramma di Sequenze per la rotta di download bollettino di pagamento
-![Seq receipts](Images/readme_files/seq_receipt.svg)
+![Seq receipts](Images/readme_files/seq_receipt.jpg)
 
 ## Rotte
 

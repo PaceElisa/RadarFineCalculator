@@ -1347,7 +1347,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/receipt/4",
+							"raw": "http://localhost:3000/api/receipt/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1356,7 +1356,7 @@
 							"path": [
 								"api",
 								"receipt",
-								"4"
+								"1"
 							]
 						}
 					},
