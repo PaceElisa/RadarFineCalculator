@@ -384,9 +384,16 @@ Nel nostro caso questo tipo di funzionalità viene utilizzata nel `CRUDControlle
 
 ## Test Postman
 
-### Importa la collection Postman
+### Importare la collection Postman
+- Avere Postman installato sul tuo computer o scaricarlo dal sito ufficiale [Postman](https://www.postman.com/downloads/).
+- Scaricare la collection Postman fornita [qui](RadarFine.postman_collection.json)
+- Aprire Postman e clicca sul pulsante **Import** situato in alto a sinistra, poi selezionare la collection `.json` scaricata.
+- La collection verrà importata con il nome "RadarFine".
 
 ### Esecuzione dei Test
+- Una volta importata la collection, puoi eseguire i test utilizzando le request fornite.
+- Dopo aver eseguito la request di Login, copia il token riportato nella risposta della richiesta e incollalo nella sezione Authorization, selezionando Bearer Token.
+- A questo punto, possono essere eseguite anche le richieste alle rotte che richiedono autenticazione.
 
 ## Autori
 - [Federico Paolucci](https://github.com/FedericoPaolucci)
