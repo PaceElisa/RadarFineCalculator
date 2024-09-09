@@ -48,7 +48,7 @@ export enum ErrorMessage{
 
 /*Pattern Factory Method Components*/
 
-// Abstract Class
+// Product - Abstract Class
  export abstract class IMessage {
     protected abstract httpStatus: number;
     protected abstract content: string;

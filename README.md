@@ -205,6 +205,27 @@ In questo file possono essere apportata delle modifiche in base alle configurazi
 
 ### Tesseract OCR
 
+
+Tesseract OCR (Optical Character Recognition) è un software open-source per il riconoscimento ottico dei caratteri, sviluppata originariamente da HP e attualmente mantenuta da Google. Tesseract è in grado di riconoscere caratteri stampati e scritti a mano in oltre 100 lingue, ed è particolarmente utile in applicazioni dove è necessario estrarre testo da immagini, come per esempio l'elaborazione automatica di documenti, la scansione di libri o l'identificazione di testo in immagini.
+
+Nel caso del nostro applicativo, è stato impiegato per automatizzare il processo di acquisizione delle informazioni sui veicoli attraverso la lettura delle targhe. Al  momento del passaggio di un veicolo attraverso un varco autostradale, la sua targa viene catturata sotto forma di immagine e grazie a Tesseract OCR viene analizzata e il testo corrispondente alla targa viene estratto.
+
+La configurazione adottata per utilizzare Tesseract OCR, specificato nel file ```ocrService.ts``` è così strutturata:
+
+```plaintext
+const config = {
+    lang: "ita",  
+    oem: 3,      
+    psm: 6,      
+    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' 
+```
+
+- lang: indica la lingua utilizzata (italiano) nel modello di riconoscimento OCR
+- oem: si riferisce al motore OCR che viene utilizzato. In questa configurazione di default(3) utilizza automaticamente il motore più adatto al tipo di testo, spesso il motore LSTM(Long Short-Term Memory), che è una rete neurale ricorrente.
+- psm: (Page Segmentation Mode) specifica il modello di segmentazione del testo che Tesseract utilizzerà, in questo caso(6) si assume che l'immagine contenga un unico blocco uniforme di testo, come nel caso di una targa.
+- tessedit_char_whitelist: definisce una whitelist di caratteri, cioè i caratteri che Tesseract può considerare durante il riconoscimento.
+
+
 ### File database_init.sql
 Nel file ```database_init.sql``` viene specificata la struttura del database da creare al primo avvio del container. Vengono anche inizializzati dei dati per consentire di provare l'applicazione.
 
@@ -328,15 +349,28 @@ All'interno dell'applicazione sono presenti i seguenti middleware.
 * **validateData**: verifica che i dati inseriti per la creazione o l'aggiornamento di nuovi record nei vari modelli siano formattati correttamente e rispettino i requisiti di validazione definiti.
 * **errorHandler**: collocato alla fine della catena dei middleware, ha il compito di gestire le risposte al client in caso di errore. Questo middleware intercetta eventuali errori che potrebbero essere stati generati durante l'elaborazione della richiesta e restituisce una risposta JSON contenente i dettagli dell'errore.
 
+<p align="center">
+  <img src="./Images/readme_files/middleware.png" height="300px"/>
+</p>
+
 ### Factory
 Il pattern Factory è un tipo di Creational Pattern che fornisce un'interfaccia per creare oggetti in una superclasse, ma consente alle sottoclassi di modificare il tipo di oggetto che verrà creato. Questo pattern è stato utilizzato per gestire la creazione di messaggi di errore/successo personalizzati.  
 
-Abbiamo sviluppato una classe astratta (che funge da modello per i messaggi) e un'interfaccia factory (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+Abbiamo sviluppato una classe astratta(Products) (che funge da modello per i messaggi) e un'interfaccia factory(Creator) (che definisce il metodo di creazione). La classe astratta IMessage stabilisce la struttura base per tutti i messaggi e viene estesa sia dalle classi(Concreate Products) di errore in `FailMessage.ts` che dalle classi di successo in `SuccessMessage.ts`. L'interfaccia MessageFactory definisce il metodo createMessage, che le classi factory(Concreate Creator) devono implementare. Questo metodo è responsabile della creazione dei messaggi selezionando con uno switch il messaggio appropriato.
+
+<p align="center">
+  <img src="./Images/readme_files/factory.png" height="300px"/>
+</p>
 
 ### Singleton
 Il pattern Singleton è un Creational Pattern che garantisce che una classe abbia solo un'istanza e fornisce un punto di accesso globale a quell'istanza. Questo è utile per risorse condivise o configurazioni di applicazione che devono essere uniche e accessibili da più punti del programma.  
 
 Abbiamo adottato questo pattern per gestire la connessione a un database PostgreSQL utilizzando Sequelize. In questo modo si evita la creazione di più connessioni concorrenti, si migliorano le prestazioni e si facilita l'accesso al database da più punti del programma.
+
+<p align="center">
+  <img src="./Images/readme_files/Singleton.png" height="150px"/>
+</p>
+
 
 ### Model View Controller
 Il pattern MVC è un pattern architetturale che separa un'applicazione in tre componenti principali: Model, View e Controller. Il Model rappresenta i dati e la logica di business, la View gestisce la presentazione e l'interfaccia utente, e il Controller gestisce l'interazione dell'utente e aggiorna il Model e la View di conseguenza. In questo modo il codice risulta più organizzato e aiuta a facilitare la manutenzione e lo sviluppo dell'applicazione.
@@ -346,9 +380,13 @@ Nel nostro caso le View possono essere viste come le risposte JSON o PDF alle ch
 I generics in TypeScript sono una potente funzionalità che permette di creare componenti riutilizzabili e flessibili senza compromettere il tipo di sicurezza. Con i generics si possono scrivere funzioni, classi, e interfacce che funzionano con qualsiasi tipo di dato, consentendo al tempo stesso di mantenere un controllo rigoroso sui tipi.
 Un generico (generic) è un parametro placeholder che può rappresentare vari tipi di dati. Al momento dell'utilizzo della specifica classe o funzione, questo parametro viene sostituito con il tipo concreto che si desidera utilizzare.  
 
-Nel nostro caso questo tipo di funzionalità viene utilizzata nel `CRUDController.ts` per evitare di scrivere le stesse funzioni di lettura, creazione, aggiornamento e rimozione per modelli diversi.
+Nel nostro caso questo tipo di funzionalità viene utilizzata nel `CRUDController.ts` per evitare di scrivere le stesse funzioni di lettura, creazione, aggiornamento e rimozione per modelli diversi e nel file middleware ```check.ts``` per evitare di dover implementare diversi controllari dell'esistenza di record appartenenti a modelli differenti, attraverso il passaggio di una primary key.
 
 ## Test Postman
+
+### Importa la collection Postman
+
+### Esecuzione dei Test
 
 ## Autori
 - [Federico Paolucci](https://github.com/FedericoPaolucci)
